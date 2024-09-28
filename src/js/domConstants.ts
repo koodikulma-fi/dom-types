@@ -1,7 +1,7 @@
 
 // - Imports - //
 
-import { GlobalListeners } from "../ts";
+import { GlobalListeners_native } from "../ts";
 
 
 // - DOM related constants (specific to our system here) - //
@@ -248,4 +248,4 @@ export const domListenerProps = [
     "volumechange",
     "waiting",
     "wheel"
-].reduce((acc,evName) => (acc["on" + evName]=evName, acc), {}) as Record<keyof GlobalListeners & string, string>;
+].reduce((acc,evName) => (acc["on" + evName]=evName, acc), {}) as Record<keyof GlobalListeners_native & string, string>;

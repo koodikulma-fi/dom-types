@@ -220,18 +220,14 @@ export function getDictionaryDiffs<T extends Record<string, any>>(orig: Partial<
     // .. Deleted.
     for (const prop in orig) {
         const origValue = orig[prop];
-        if (origValue !== undefined && update[prop] === undefined) {
-            diffs[prop] = undefined;
-            hasDiffs = true;
-        }
+        if (origValue !== undefined && update[prop] === undefined)
+            diffs[prop] = (hasDiffs = true) && undefined;
     }
     // .. Added or changed.
     for (const prop in update) {
         const newValue = update[prop];
-        if (orig[prop] !== newValue) {
-            diffs[prop] = newValue;
-            hasDiffs = true;
-        }
+        if (orig[prop] !== newValue)
+            diffs[prop] = (hasDiffs = true) && newValue;
     }
     return hasDiffs ? diffs : null;
 }

@@ -24,6 +24,7 @@ const cssProps = { class: true, className: true, style: true };
 export function cleanDOMProps(origProps: DOMUncleanProps): DOMCleanProps {
     // Loop all mixed up props.
     const props: DOMCleanProps = {};
+    let lProp: string;
     for (const prop in origProps) {
         // Style and class.
         if (cssProps[prop]) {
@@ -42,14 +43,14 @@ export function cleanDOMProps(origProps: DOMUncleanProps): DOMCleanProps {
                 props.className = props.className ? props.className + " " + origProps[prop] : origProps[prop];
         }
         // Listeners.
-        if (domListenerProps[prop.toLowerCase()]) {
+        else if (lProp = domListenerProps[prop.toLowerCase()]) {
             // Don't assign empty.
             if (!origProps[prop])
                 continue;
             // Make sure has.
             props.listeners = props.listeners || {};
             // Assign.
-            props.listeners[prop.toLowerCase()] = origProps[prop] ?? undefined;
+            props.listeners[lProp] = origProps[prop] ?? undefined;
         }
         // Data.
         else if (prop.startsWith("data")) {
@@ -148,7 +149,7 @@ export function applyDOMProps(domElement: HTMLElement | SVGElement | Element | n
     }
 
     // Class.
-    if (oldProps.className !== undefined || newProps.className !== undefined) {
+    if (oldProps.className || newProps.className) {
         // Collect diffs.
         const classDiffs = getClassNameDiffs(oldProps.className, newProps.className);
         if (classDiffs)
@@ -190,12 +191,12 @@ export function applyDOMProps(domElement: HTMLElement | SVGElement | Element | n
         if (subDiffs && domElement) {
             for (const prop in subDiffs) {
                 // Remove old, if had.
-                const oldListener = oldProps.listeners?.[prop] as GlobalEventHandler | undefined;
+                const oldListener = oldProps.listeners?.[prop];
                 if (oldListener)
                     domElement.removeEventListener(prop, oldListener);
                 // Assign new listener.
                 if (subDiffs[prop])
-                    domElement.addEventListener(prop, subDiffs[prop]);
+                    domElement.addEventListener(prop, subDiffs[prop]!);
             }
         }
     }

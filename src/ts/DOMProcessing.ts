@@ -2,6 +2,7 @@
 // - Imports - //
 
 // Local.
+import { OrString } from "./common";
 import { CSSProperties } from "./CSSProperties";
 import { GlobalEventHandler } from "./GlobalListeners";
 import { DOMAttributesAny } from "./DOMAttributes";
@@ -34,7 +35,7 @@ export interface DOMCleanProps {
     /** Each value is in stringified form. None should be undefined, but if is, simply don't apply. */
     attributes?: Partial<Record<keyof DOMAttributesAny & string, string | undefined>>;
     /** Each value is a callback. None should be undefined, but if is, simply don't apply. */
-    listeners?: Partial<Record<keyof GlobalEventHandlersEventMap & string, GlobalEventHandler | undefined>>;
+    listeners?: Partial<Record<keyof GlobalEventHandlersEventMap & string | OrString, GlobalEventHandler | undefined>>;
 }
 
 /** Type for differences in the props. Should apply them to the existing element.
