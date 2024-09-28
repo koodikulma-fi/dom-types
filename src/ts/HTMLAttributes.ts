@@ -3,24 +3,35 @@
 
 // Local.
 import { BoolOrStr, DataAttributes, OrString } from "./common";
-import { ARIAAttributes, ARIAAttributes_native, AriaRole } from "./ARIAAttributes";
 import { GlobalListeners, GlobalListeners_native } from "./GlobalListeners";
 import { CSSProperties } from "./CSSProperties";
+import { ARIAAttributes, ARIAAttributes_native, AriaRole } from "./ARIAAttributes";
+
+
+// - Info source (at around Q3 2024) - //
+//
+// MDN docs: https://developer.mozilla.org/en-US/docs/Web/HTML
 
 
 // - HTML related typing - //
 
-// Tags and element.
+// Tags.
 /** All known HTML tag names. */
-export type HTMLTags = keyof HTMLNativeAttributesBy; // HTMLElementTagNameMap;
+export type HTMLTags = keyof HTMLNativeAttributesBy;
 
-// HTML attributes.
+// Attributes.
 /** HTML element attributes by tag name with camelCase listener and aria attributes. */
-export type HTMLAttributes<Tag extends HTMLTags = HTMLTags> = Partial<HTMLNativeAttributesBy[Tag] & HTMLGlobalAttributes & GlobalListeners & ARIAAttributes>;
+export type HTMLAttributes<Tag extends string, Fallback = HTMLAttributesAny> = [Tag] extends [HTMLTags] ? Partial<HTMLNativeAttributesBy[Tag] & HTMLGlobalAttributes & GlobalListeners & ARIAAttributes> : Fallback;
 /** HTML element attributes by tag name with lowercase listener and aria attributes. */
-export type HTMLAttributes_native<Tag extends HTMLTags = HTMLTags> = Partial<HTMLNativeAttributesBy_native[Tag] & HTMLGlobalAttributes_native & GlobalListeners_native & ARIAAttributes_native>;
+export type HTMLAttributes_native<Tag extends string, Fallback = HTMLAttributesAny> = [Tag] extends [HTMLTags] ? Partial<HTMLNativeAttributesBy_native[Tag] & HTMLGlobalAttributes_native & GlobalListeners_native & ARIAAttributes_native> : Fallback;
 /** HTML element attributes by tag name with both lowercase and camelCase listener keys. */
-export type HTMLAttributes_mixed<Tag extends HTMLTags = HTMLTags> = HTMLAttributes<Tag> & HTMLAttributes_native<Tag>;
+export type HTMLAttributes_mixed<Tag extends string, Fallback = HTMLAttributesAny & HTMLAttributesAny_native> = [Tag] extends [HTMLTags] ? HTMLAttributes<Tag> & HTMLAttributes_native<Tag> : Fallback;
+
+// Attributes without tag.
+/** The all possible attributes that HTML elements can have - in camelCase. */
+export type HTMLAttributesAny = Partial<HTMLOtherAttributes & HTMLGlobalAttributes & GlobalListeners & ARIAAttributes>;
+/** The all possible attributes that HTML elements can have - in native case. */
+export type HTMLAttributesAny_native = Partial<HTMLOtherAttributes_native & HTMLGlobalAttributes_native & GlobalListeners_native & ARIAAttributes_native>;
 
 
 // - DOM common attributes - //
@@ -102,7 +113,7 @@ export interface HTMLGlobalAttributes_native extends Partial<DataAttributes> {
 
 // - DOM attributes used by some tags only - camelCase - //
 
-interface HTMLManualAttributes extends Omit<HTMLManualAttributes_native,
+interface HTMLOtherAttributes extends Omit<HTMLOtherAttributes_native,
     | "accept-charset"
     | "autocomplete"
     | "bgcolor"
@@ -132,42 +143,42 @@ interface HTMLManualAttributes extends Omit<HTMLManualAttributes_native,
     | "srcset"
     | "usemap"
 > {
-    "acceptCharset": HTMLManualAttributes_native["accept-charset"]; // Special: "accept-charset"
-    "autoComplete": HTMLManualAttributes_native["autocomplete"];
-    "autoPlay": HTMLManualAttributes_native["autoplay"];
-    "bgColor": HTMLManualAttributes_native["bgcolor"];
-    "colSpan": HTMLManualAttributes_native["colspan"];
-    "crossOrigin": HTMLManualAttributes_native["crossorigin"];
-    "dateTime": HTMLManualAttributes_native["datetime"];
-    "dirName": HTMLManualAttributes_native["dirname"];
-    "encType": HTMLManualAttributes_native["enctype"];
-    // "enterKeyHint": HTMLManualAttributes_native["enterkeyhint"]; // Global.
-    "formAction": HTMLManualAttributes_native["formaction"];
-    "formEncType": HTMLManualAttributes_native["formenctype"];
-    "formMethod": HTMLManualAttributes_native["formmethod"];
-    "formNoValidate": HTMLManualAttributes_native["formnovalidate"];
-    "formTarget": HTMLManualAttributes_native["formtarget"];
-    "hrefLang": HTMLManualAttributes_native["hreflang"];
-    "httpEquiv": HTMLManualAttributes_native["http-equiv"]; // Special: "http-equiv"
+    "acceptCharset": HTMLOtherAttributes_native["accept-charset"]; // Special: "accept-charset"
+    "autoComplete": HTMLOtherAttributes_native["autocomplete"];
+    "autoPlay": HTMLOtherAttributes_native["autoplay"];
+    "bgColor": HTMLOtherAttributes_native["bgcolor"];
+    "colSpan": HTMLOtherAttributes_native["colspan"];
+    "crossOrigin": HTMLOtherAttributes_native["crossorigin"];
+    "dateTime": HTMLOtherAttributes_native["datetime"];
+    "dirName": HTMLOtherAttributes_native["dirname"];
+    "encType": HTMLOtherAttributes_native["enctype"];
+    // "enterKeyHint": HTMLOtherAttributes_native["enterkeyhint"]; // Global.
+    "formAction": HTMLOtherAttributes_native["formaction"];
+    "formEncType": HTMLOtherAttributes_native["formenctype"];
+    "formMethod": HTMLOtherAttributes_native["formmethod"];
+    "formNoValidate": HTMLOtherAttributes_native["formnovalidate"];
+    "formTarget": HTMLOtherAttributes_native["formtarget"];
+    "hrefLang": HTMLOtherAttributes_native["hreflang"];
+    "httpEquiv": HTMLOtherAttributes_native["http-equiv"]; // Special: "http-equiv"
     // "inputMode": string; // Global.
-    "isMap": HTMLManualAttributes_native["ismap"];
-    "maxLength": HTMLManualAttributes_native["maxlength"];
-    "minLength": HTMLManualAttributes_native["minlength"];
-    "noValidate": HTMLManualAttributes_native["novalidate"];
-    "playsInline": HTMLManualAttributes_native["playsinline"];
-    "readOnly": HTMLManualAttributes_native["readonly"];
-    "referrerPolicy": HTMLManualAttributes_native["referrerpolicy"];
-    "rowSpan": HTMLManualAttributes_native["rowspan"];
-    "srcDoc": HTMLManualAttributes_native["srcdoc"];
-    "srcLang": HTMLManualAttributes_native["srclang"];
-    "srcSet": HTMLManualAttributes_native["srcset"];
-    "useMap": HTMLManualAttributes_native["usemap"];
+    "isMap": HTMLOtherAttributes_native["ismap"];
+    "maxLength": HTMLOtherAttributes_native["maxlength"];
+    "minLength": HTMLOtherAttributes_native["minlength"];
+    "noValidate": HTMLOtherAttributes_native["novalidate"];
+    "playsInline": HTMLOtherAttributes_native["playsinline"];
+    "readOnly": HTMLOtherAttributes_native["readonly"];
+    "referrerPolicy": HTMLOtherAttributes_native["referrerpolicy"];
+    "rowSpan": HTMLOtherAttributes_native["rowspan"];
+    "srcDoc": HTMLOtherAttributes_native["srcdoc"];
+    "srcLang": HTMLOtherAttributes_native["srclang"];
+    "srcSet": HTMLOtherAttributes_native["srcset"];
+    "useMap": HTMLOtherAttributes_native["usemap"];
 }
 
 
 // - DOM attributes used by some tags only - lowercase - //
 
-interface HTMLManualAttributes_native {
+interface HTMLOtherAttributes_native {
     "accept": string;
     "accept-charset": string;
     "action": string;
@@ -279,49 +290,49 @@ interface HTMLManualAttributes_native {
 // - DOM attributes by tag name - camelCase - //
 
 interface HTMLNativeAttributesBy {
-    a: Pick<HTMLManualAttributes, "download" | "href" | "hrefLang" | "media" | "ping" | "referrerPolicy" | "rel" | "shape" | "target" | "type">;
+    a: Pick<HTMLOtherAttributes, "download" | "href" | "hrefLang" | "media" | "ping" | "referrerPolicy" | "rel" | "shape" | "target" | "type">;
     abbr: {};
     acronym: {};
     address: {};
-    area: Pick<HTMLManualAttributes, "alt" | "coords" | "download" | "href" | "media" | "ping" | "referrerPolicy" | "rel" | "shape" | "target">;
+    area: Pick<HTMLOtherAttributes, "alt" | "coords" | "download" | "href" | "media" | "ping" | "referrerPolicy" | "rel" | "shape" | "target">;
     article: {};
     aside: {};
-    audio: Pick<HTMLManualAttributes, "autoPlay" | "controls" | "crossOrigin" | "loop" | "muted" | "preload" | "src">;
+    audio: Pick<HTMLOtherAttributes, "autoPlay" | "controls" | "crossOrigin" | "loop" | "muted" | "preload" | "src">;
     b: {};
-    base: Pick<HTMLManualAttributes, "href" | "target">;
+    base: Pick<HTMLOtherAttributes, "href" | "target">;
     bdi: {};
     bdo: {};
     big: {};
-    blockquote: Pick<HTMLManualAttributes, "cite">;
-    body: Pick<HTMLManualAttributes, "background" | "bgColor">;
+    blockquote: Pick<HTMLOtherAttributes, "cite">;
+    body: Pick<HTMLOtherAttributes, "background" | "bgColor">;
     br: {};
-    button: Pick<HTMLManualAttributes, "disabled" | "form" | "formAction" | "formEncType" | "formMethod" | "formNoValidate" | "formTarget" | "name" | "type" | "value">;
-    canvas: Pick<HTMLManualAttributes, "height" | "width">;
-    caption: Pick<HTMLManualAttributes, "align">;
+    button: Pick<HTMLOtherAttributes, "disabled" | "form" | "formAction" | "formEncType" | "formMethod" | "formNoValidate" | "formTarget" | "name" | "type" | "value">;
+    canvas: Pick<HTMLOtherAttributes, "height" | "width">;
+    caption: Pick<HTMLOtherAttributes, "align">;
     center: {};
     cite: {};
     code: {};
-    col: Pick<HTMLManualAttributes, "align">;
-    colgroup: Pick<HTMLManualAttributes, "align">;
-    data: Pick<HTMLManualAttributes, "value">;
+    col: Pick<HTMLOtherAttributes, "align">;
+    colgroup: Pick<HTMLOtherAttributes, "align">;
+    data: Pick<HTMLOtherAttributes, "value">;
     datalist: {};
     dd: {};
-    del: Pick<HTMLManualAttributes, "cite" | "dateTime">;
-    details: Pick<HTMLManualAttributes, "open">;
+    del: Pick<HTMLOtherAttributes, "cite" | "dateTime">;
+    details: Pick<HTMLOtherAttributes, "open">;
     dfn: {};
-    dialog: Pick<HTMLManualAttributes, "open">;
-    div: {}; // Pick<HTMLManualAttributes, "height" | "width">; // Legacy
+    dialog: Pick<HTMLOtherAttributes, "open">;
+    div: {}; // Pick<HTMLOtherAttributes, "height" | "width">; // Legacy
     dl: {};
     dt: {};
     em: {};
-    embed: Pick<HTMLManualAttributes, "height" | "src" | "type" | "width">;
+    embed: Pick<HTMLOtherAttributes, "height" | "src" | "type" | "width">;
     fencedframe: {};
-    fieldset: Pick<HTMLManualAttributes, "disabled" | "form" | "name">;
+    fieldset: Pick<HTMLOtherAttributes, "disabled" | "form" | "name">;
     figcaption: {};
     figure: {};
-    font: Pick<HTMLManualAttributes, "color">;
+    font: Pick<HTMLOtherAttributes, "color">;
     footer: {};
-    form: Pick<HTMLManualAttributes, "accept" | "acceptCharset" | "action">;
+    form: Pick<HTMLOtherAttributes, "accept" | "acceptCharset" | "action">;
     frame: {};
     frameset: {};
     h1: {};
@@ -333,12 +344,12 @@ interface HTMLNativeAttributesBy {
     head: {};
     header: {};
     hgroup: {};
-    hr: Pick<HTMLManualAttributes, "color" | "align">;
+    hr: Pick<HTMLOtherAttributes, "color" | "align">;
     html: {};
     i: {};
-    iframe: Pick<HTMLManualAttributes, "align" | "allow" | "csp" | "height" | "loading" | "name" | "referrerPolicy" | "sandbox" | "src" | "srcDoc" | "width">;
-    img: Pick<HTMLManualAttributes, "align" | "alt" | "border" | "crossOrigin" | "decoding" | "height" | "isMap" | "loading" | "referrerPolicy" | "sizes" | "src" | "srcSet" | "useMap" | "width">; // | "intrinsicsize"
-    input: Pick<HTMLManualAttributes,
+    iframe: Pick<HTMLOtherAttributes, "align" | "allow" | "csp" | "height" | "loading" | "name" | "referrerPolicy" | "sandbox" | "src" | "srcDoc" | "width">;
+    img: Pick<HTMLOtherAttributes, "align" | "alt" | "border" | "crossOrigin" | "decoding" | "height" | "isMap" | "loading" | "referrerPolicy" | "sizes" | "src" | "srcSet" | "useMap" | "width">; // | "intrinsicsize"
+    input: Pick<HTMLOtherAttributes,
         | "accept"
         | "alt"
         | "capture"
@@ -372,37 +383,37 @@ interface HTMLNativeAttributesBy {
     > & {
         type: "button" | "checkbox" | "color" | "date" | "datetime-local" | "email" | "file" | "hidden" | "image" | "month" | "number" | "password" | "radio" | "range" | "reset" | "search" | "submit" | "tel" | "text" | "time" | "url" | "week";
     };
-    ins: Pick<HTMLManualAttributes, "cite" | "dateTime">;
+    ins: Pick<HTMLOtherAttributes, "cite" | "dateTime">;
     kbd: {};
-    label: Pick<HTMLManualAttributes, "for" | "form">;
+    label: Pick<HTMLOtherAttributes, "for" | "form">;
     legend: {};
-    li: Pick<HTMLManualAttributes, "value">;
-    link: Pick<HTMLManualAttributes, "as" | "crossOrigin" | "href" | "hrefLang" | "integrity" | "media" | "referrerPolicy" | "rel" | "sizes" | "type">;
+    li: Pick<HTMLOtherAttributes, "value">;
+    link: Pick<HTMLOtherAttributes, "as" | "crossOrigin" | "href" | "hrefLang" | "integrity" | "media" | "referrerPolicy" | "rel" | "sizes" | "type">;
     main: {};
-    map: Pick<HTMLManualAttributes, "name">;
+    map: Pick<HTMLOtherAttributes, "name">;
     mark: {};
-    marquee: Pick<HTMLManualAttributes, "bgColor" | "loop">;
-    menu: Pick<HTMLManualAttributes, "type">;
-    meta: Pick<HTMLManualAttributes, "charset" | "content" | "httpEquiv" | "name">;
-    meter: Pick<HTMLManualAttributes, "form" | "high" | "low" | "max" | "min" | "optimum" | "value">;
+    marquee: Pick<HTMLOtherAttributes, "bgColor" | "loop">;
+    menu: Pick<HTMLOtherAttributes, "type">;
+    meta: Pick<HTMLOtherAttributes, "charset" | "content" | "httpEquiv" | "name">;
+    meter: Pick<HTMLOtherAttributes, "form" | "high" | "low" | "max" | "min" | "optimum" | "value">;
     nav: {};
     nobr: {};
     noembed: {};
     noframes: {};
     noscript: {};
-    object: Pick<HTMLManualAttributes, "border" | "data" | "form" | "height" | "name" | "type" | "useMap" | "width">;
-    ol: Pick<HTMLManualAttributes, "reversed" | "start" | "type">;
-    optgroup: Pick<HTMLManualAttributes, "disabled" | "label">;
-    option: Pick<HTMLManualAttributes, "disabled" | "label" | "selected" | "value">;
-    output: Pick<HTMLManualAttributes, "for" | "form" | "name">;
+    object: Pick<HTMLOtherAttributes, "border" | "data" | "form" | "height" | "name" | "type" | "useMap" | "width">;
+    ol: Pick<HTMLOtherAttributes, "reversed" | "start" | "type">;
+    optgroup: Pick<HTMLOtherAttributes, "disabled" | "label">;
+    option: Pick<HTMLOtherAttributes, "disabled" | "label" | "selected" | "value">;
+    output: Pick<HTMLOtherAttributes, "for" | "form" | "name">;
     p: {};
-    param: Pick<HTMLManualAttributes, "name" | "value">;
+    param: Pick<HTMLOtherAttributes, "name" | "value">;
     picture: {};
     plaintext: {};
     portal: {};
     pre: {};
-    progress: Pick<HTMLManualAttributes, "form" | "max" | "value">;
-    q: Pick<HTMLManualAttributes, "cite">;
+    progress: Pick<HTMLOtherAttributes, "form" | "max" | "value">;
+    q: Pick<HTMLOtherAttributes, "cite">;
     rb: {};
     rp: {};
     rt: {};
@@ -410,25 +421,25 @@ interface HTMLNativeAttributesBy {
     ruby: {};
     s: {};
     samp: {};
-    script: Pick<HTMLManualAttributes, "async" | "crossOrigin" | "defer" | "integrity" | "language" | "referrerPolicy" | "src" | "type">;
+    script: Pick<HTMLOtherAttributes, "async" | "crossOrigin" | "defer" | "integrity" | "language" | "referrerPolicy" | "src" | "type">;
     search: {};
     section: {};
-    select: Pick<HTMLManualAttributes, "autoComplete" | "disabled" | "form" | "multiple" | "name" | "required" | "size">;
+    select: Pick<HTMLOtherAttributes, "autoComplete" | "disabled" | "form" | "multiple" | "name" | "required" | "size">;
     slot: {};
     small: {};
-    source: Pick<HTMLManualAttributes, "media" | "sizes" | "src" | "srcSet" | "type">;
+    source: Pick<HTMLOtherAttributes, "media" | "sizes" | "src" | "srcSet" | "type">;
     span: {};
     strike: {};
     strong: {};
-    style: Pick<HTMLManualAttributes, "media" | "type">; // "scoped"
+    style: Pick<HTMLOtherAttributes, "media" | "type">; // "scoped"
     sub: {};
     summary: {};
     sup: {};
-    table: Pick<HTMLManualAttributes, "align" | "background" | "bgColor" | "border" | "summary">;
-    tbody: Pick<HTMLManualAttributes, "align" | "bgColor">;
-    td: Pick<HTMLManualAttributes, "align" | "background" | "bgColor" | "colSpan" | "headers" | "rowSpan">;
+    table: Pick<HTMLOtherAttributes, "align" | "background" | "bgColor" | "border" | "summary">;
+    tbody: Pick<HTMLOtherAttributes, "align" | "bgColor">;
+    td: Pick<HTMLOtherAttributes, "align" | "background" | "bgColor" | "colSpan" | "headers" | "rowSpan">;
     template: {};
-    textarea: Pick<HTMLManualAttributes,
+    textarea: Pick<HTMLOtherAttributes,
         | "autoComplete"
         | "cols"
         | "dirName"
@@ -445,18 +456,18 @@ interface HTMLNativeAttributesBy {
         | "rows"
         | "wrap"
     >;
-    tfoot: Pick<HTMLManualAttributes, "align" | "bgColor">;
-    th: Pick<HTMLManualAttributes, "align" | "background" | "bgColor" | "colSpan" | "headers" | "rowSpan">; // "scope"
-    thead: Pick<HTMLManualAttributes, "align">;
-    time: Pick<HTMLManualAttributes, "dateTime">;
+    tfoot: Pick<HTMLOtherAttributes, "align" | "bgColor">;
+    th: Pick<HTMLOtherAttributes, "align" | "background" | "bgColor" | "colSpan" | "headers" | "rowSpan">; // "scope"
+    thead: Pick<HTMLOtherAttributes, "align">;
+    time: Pick<HTMLOtherAttributes, "dateTime">;
     title: {};
-    tr: Pick<HTMLManualAttributes, "align" | "bgColor">;
-    track: Pick<HTMLManualAttributes, "default" | "kind" | "label" | "src" | "srcLang">;
+    tr: Pick<HTMLOtherAttributes, "align" | "bgColor">;
+    track: Pick<HTMLOtherAttributes, "default" | "kind" | "label" | "src" | "srcLang">;
     tt: {};
     u: {};
     ul: {};
     var: {};
-    video: Pick<HTMLManualAttributes, "autoPlay" | "controls" | "crossOrigin" | "height" | "loop" | "muted" | "playsInline" | "preload" | "src" | "width">;
+    video: Pick<HTMLOtherAttributes, "autoPlay" | "controls" | "crossOrigin" | "height" | "loop" | "muted" | "playsInline" | "preload" | "src" | "width">;
     wbr: {};
     xmp: {};
 };
@@ -465,49 +476,49 @@ interface HTMLNativeAttributesBy {
 // - DOM attributes by tag name - lowercase - //
 
 interface HTMLNativeAttributesBy_native {
-    a: Pick<HTMLManualAttributes_native, "download" | "href" | "hreflang" | "media" | "ping" | "referrerpolicy" | "rel" | "shape" | "target">;
+    a: Pick<HTMLOtherAttributes_native, "download" | "href" | "hreflang" | "media" | "ping" | "referrerpolicy" | "rel" | "shape" | "target">;
     abbr: {};
     acronym: {};
     address: {};
-    area: Pick<HTMLManualAttributes_native, "alt" | "coords" | "download" | "href" | "media" | "ping" | "referrerpolicy" | "rel" | "shape" | "target">;
+    area: Pick<HTMLOtherAttributes_native, "alt" | "coords" | "download" | "href" | "media" | "ping" | "referrerpolicy" | "rel" | "shape" | "target">;
     article: {};
     aside: {};
-    audio: Pick<HTMLManualAttributes_native, "autoplay" | "controls" | "crossorigin" | "loop" | "muted" | "preload" | "src">;
+    audio: Pick<HTMLOtherAttributes_native, "autoplay" | "controls" | "crossorigin" | "loop" | "muted" | "preload" | "src">;
     b: {};
-    base: Pick<HTMLManualAttributes_native, "href" | "target">;
+    base: Pick<HTMLOtherAttributes_native, "href" | "target">;
     bdi: {};
     bdo: {};
     big: {};
-    blockquote: Pick<HTMLManualAttributes_native, "cite">;
-    body: Pick<HTMLManualAttributes_native, "background" | "bgcolor">;
+    blockquote: Pick<HTMLOtherAttributes_native, "cite">;
+    body: Pick<HTMLOtherAttributes_native, "background" | "bgcolor">;
     br: {};
-    button: Pick<HTMLManualAttributes_native, "disabled" | "form" | "formaction" | "formenctype" | "formmethod" | "formnovalidate" | "formtarget" | "name" | "type" | "value">;
-    canvas: Pick<HTMLManualAttributes_native, "height" | "width">;
-    caption: Pick<HTMLManualAttributes_native, "align">;
+    button: Pick<HTMLOtherAttributes_native, "disabled" | "form" | "formaction" | "formenctype" | "formmethod" | "formnovalidate" | "formtarget" | "name" | "type" | "value">;
+    canvas: Pick<HTMLOtherAttributes_native, "height" | "width">;
+    caption: Pick<HTMLOtherAttributes_native, "align">;
     center: {};
     cite: {};
     code: {};
-    col: Pick<HTMLManualAttributes_native, "align">;
-    colgroup: Pick<HTMLManualAttributes_native, "align">;
-    data: Pick<HTMLManualAttributes_native, "value">;
+    col: Pick<HTMLOtherAttributes_native, "align">;
+    colgroup: Pick<HTMLOtherAttributes_native, "align">;
+    data: Pick<HTMLOtherAttributes_native, "value">;
     datalist: {};
     dd: {};
-    del: Pick<HTMLManualAttributes_native, "cite" | "datetime">;
-    details: Pick<HTMLManualAttributes_native, "open">;
+    del: Pick<HTMLOtherAttributes_native, "cite" | "datetime">;
+    details: Pick<HTMLOtherAttributes_native, "open">;
     dfn: {};
-    dialog: Pick<HTMLManualAttributes_native, "open">;
-    div: {}; // Pick<HTMLManualAttributes_native, "height" | "width">; // Legacy
+    dialog: Pick<HTMLOtherAttributes_native, "open">;
+    div: {}; // Pick<HTMLOtherAttributes_native, "height" | "width">; // Legacy
     dl: {};
     dt: {};
     em: {};
-    embed: Pick<HTMLManualAttributes_native, "height" | "src" | "type" | "width">;
+    embed: Pick<HTMLOtherAttributes_native, "height" | "src" | "type" | "width">;
     fencedframe: {};
-    fieldset: Pick<HTMLManualAttributes_native, "disabled" | "form" | "name">;
+    fieldset: Pick<HTMLOtherAttributes_native, "disabled" | "form" | "name">;
     figcaption: {};
     figure: {};
-    font: Pick<HTMLManualAttributes_native, "color">;
+    font: Pick<HTMLOtherAttributes_native, "color">;
     footer: {};
-    form: Pick<HTMLManualAttributes_native, "accept" | "accept-charset" | "action">;
+    form: Pick<HTMLOtherAttributes_native, "accept" | "accept-charset" | "action">;
     frame: {};
     frameset: {};
     h1: {};
@@ -519,12 +530,12 @@ interface HTMLNativeAttributesBy_native {
     head: {};
     header: {};
     hgroup: {};
-    hr: Pick<HTMLManualAttributes_native, "color" | "align">;
+    hr: Pick<HTMLOtherAttributes_native, "color" | "align">;
     html: {};
     i: {};
-    iframe: Pick<HTMLManualAttributes_native, "align" | "allow" | "csp" | "height" | "loading" | "name" | "referrerpolicy" | "sandbox" | "src" | "srcdoc" | "width">;
-    img: Pick<HTMLManualAttributes_native, "align" | "alt" | "border" | "crossorigin" | "decoding" | "height" | "ismap" | "loading" | "referrerpolicy" | "sizes" | "src" | "srcset" | "usemap" | "width">; // | "intrinsicsize"
-    input: Pick<HTMLManualAttributes_native,
+    iframe: Pick<HTMLOtherAttributes_native, "align" | "allow" | "csp" | "height" | "loading" | "name" | "referrerpolicy" | "sandbox" | "src" | "srcdoc" | "width">;
+    img: Pick<HTMLOtherAttributes_native, "align" | "alt" | "border" | "crossorigin" | "decoding" | "height" | "ismap" | "loading" | "referrerpolicy" | "sizes" | "src" | "srcset" | "usemap" | "width">; // | "intrinsicsize"
+    input: Pick<HTMLOtherAttributes_native,
         | "accept"
         | "alt"
         | "capture"
@@ -558,37 +569,37 @@ interface HTMLNativeAttributesBy_native {
     > & {
         type: "button" | "checkbox" | "color" | "date" | "datetime-local" | "email" | "file" | "hidden" | "image" | "month" | "number" | "password" | "radio" | "range" | "reset" | "search" | "submit" | "tel" | "text" | "time" | "url" | "week";
     };
-    ins: Pick<HTMLManualAttributes_native, "cite" | "datetime">;
+    ins: Pick<HTMLOtherAttributes_native, "cite" | "datetime">;
     kbd: {};
-    label: Pick<HTMLManualAttributes_native, "for" | "form">;
+    label: Pick<HTMLOtherAttributes_native, "for" | "form">;
     legend: {};
-    li: Pick<HTMLManualAttributes_native, "value">;
-    link: Pick<HTMLManualAttributes_native, "as" | "crossorigin" | "href" | "hreflang" | "integrity" | "media" | "referrerpolicy" | "rel" | "sizes" | "type">;
+    li: Pick<HTMLOtherAttributes_native, "value">;
+    link: Pick<HTMLOtherAttributes_native, "as" | "crossorigin" | "href" | "hreflang" | "integrity" | "media" | "referrerpolicy" | "rel" | "sizes" | "type">;
     main: {};
-    map: Pick<HTMLManualAttributes_native, "name">;
+    map: Pick<HTMLOtherAttributes_native, "name">;
     mark: {};
-    marquee: Pick<HTMLManualAttributes_native, "bgcolor" | "loop">;
-    menu: Pick<HTMLManualAttributes_native, "type">;
-    meta: Pick<HTMLManualAttributes_native, "charset" | "content" | "http-equiv" | "name">;
-    meter: Pick<HTMLManualAttributes_native, "form" | "high" | "low" | "max" | "min" | "optimum" | "value">;
+    marquee: Pick<HTMLOtherAttributes_native, "bgcolor" | "loop">;
+    menu: Pick<HTMLOtherAttributes_native, "type">;
+    meta: Pick<HTMLOtherAttributes_native, "charset" | "content" | "http-equiv" | "name">;
+    meter: Pick<HTMLOtherAttributes_native, "form" | "high" | "low" | "max" | "min" | "optimum" | "value">;
     nav: {};
     nobr: {};
     noembed: {};
     noframes: {};
     noscript: {};
-    object: Pick<HTMLManualAttributes_native, "border" | "data" | "form" | "height" | "name" | "type" | "usemap" | "width">;
-    ol: Pick<HTMLManualAttributes_native, "reversed" | "start" | "type">;
-    optgroup: Pick<HTMLManualAttributes_native, "disabled" | "label">;
-    option: Pick<HTMLManualAttributes_native, "disabled" | "label" | "selected" | "value">;
-    output: Pick<HTMLManualAttributes_native, "for" | "form" | "name">;
+    object: Pick<HTMLOtherAttributes_native, "border" | "data" | "form" | "height" | "name" | "type" | "usemap" | "width">;
+    ol: Pick<HTMLOtherAttributes_native, "reversed" | "start" | "type">;
+    optgroup: Pick<HTMLOtherAttributes_native, "disabled" | "label">;
+    option: Pick<HTMLOtherAttributes_native, "disabled" | "label" | "selected" | "value">;
+    output: Pick<HTMLOtherAttributes_native, "for" | "form" | "name">;
     p: {};
-    param: Pick<HTMLManualAttributes_native, "name" | "value">;
+    param: Pick<HTMLOtherAttributes_native, "name" | "value">;
     picture: {};
     plaintext: {};
     portal: {};
     pre: {};
-    progress: Pick<HTMLManualAttributes_native, "form" | "max" | "value">;
-    q: Pick<HTMLManualAttributes_native, "cite">;
+    progress: Pick<HTMLOtherAttributes_native, "form" | "max" | "value">;
+    q: Pick<HTMLOtherAttributes_native, "cite">;
     rb: {};
     rp: {};
     rt: {};
@@ -596,25 +607,25 @@ interface HTMLNativeAttributesBy_native {
     ruby: {};
     s: {};
     samp: {};
-    script: Pick<HTMLManualAttributes_native, "async" | "crossorigin" | "defer" | "integrity" | "language" | "referrerpolicy" | "src" | "type">;
+    script: Pick<HTMLOtherAttributes_native, "async" | "crossorigin" | "defer" | "integrity" | "language" | "referrerpolicy" | "src" | "type">;
     search: {};
     section: {};
-    select: Pick<HTMLManualAttributes_native, "autocomplete" | "disabled" | "form" | "multiple" | "name" | "required" | "size">;
+    select: Pick<HTMLOtherAttributes_native, "autocomplete" | "disabled" | "form" | "multiple" | "name" | "required" | "size">;
     slot: {};
     small: {};
-    source: Pick<HTMLManualAttributes_native, "media" | "sizes" | "src" | "srcset" | "type">;
+    source: Pick<HTMLOtherAttributes_native, "media" | "sizes" | "src" | "srcset" | "type">;
     span: {};
     strike: {};
     strong: {};
-    style: Pick<HTMLManualAttributes_native, "media" | "type">; // "scoped"
+    style: Pick<HTMLOtherAttributes_native, "media" | "type">; // "scoped"
     sub: {};
     summary: {};
     sup: {};
-    table: Pick<HTMLManualAttributes_native, "align" | "background" | "bgcolor" | "border" | "summary">;
-    tbody: Pick<HTMLManualAttributes_native, "align" | "bgcolor">;
-    td: Pick<HTMLManualAttributes_native, "align" | "background" | "bgcolor" | "colspan" | "headers" | "rowspan">;
+    table: Pick<HTMLOtherAttributes_native, "align" | "background" | "bgcolor" | "border" | "summary">;
+    tbody: Pick<HTMLOtherAttributes_native, "align" | "bgcolor">;
+    td: Pick<HTMLOtherAttributes_native, "align" | "background" | "bgcolor" | "colspan" | "headers" | "rowspan">;
     template: {};
-    textarea: Pick<HTMLManualAttributes_native,
+    textarea: Pick<HTMLOtherAttributes_native,
         | "autocomplete"
         | "cols"
         | "dirname"
@@ -631,18 +642,18 @@ interface HTMLNativeAttributesBy_native {
         | "rows"
         | "wrap"
     >;
-    tfoot: Pick<HTMLManualAttributes_native, "align" | "bgcolor">;
-    th: Pick<HTMLManualAttributes_native, "align" | "background" | "bgcolor" | "colspan" | "headers" | "rowspan">; // "scope"
-    thead: Pick<HTMLManualAttributes_native, "align">;
-    time: Pick<HTMLManualAttributes_native, "datetime">;
+    tfoot: Pick<HTMLOtherAttributes_native, "align" | "bgcolor">;
+    th: Pick<HTMLOtherAttributes_native, "align" | "background" | "bgcolor" | "colspan" | "headers" | "rowspan">; // "scope"
+    thead: Pick<HTMLOtherAttributes_native, "align">;
+    time: Pick<HTMLOtherAttributes_native, "datetime">;
     title: {};
-    tr: Pick<HTMLManualAttributes_native, "align" | "bgcolor">;
-    track: Pick<HTMLManualAttributes_native, "default" | "kind" | "label" | "src" | "srclang">;
+    tr: Pick<HTMLOtherAttributes_native, "align" | "bgcolor">;
+    track: Pick<HTMLOtherAttributes_native, "default" | "kind" | "label" | "src" | "srclang">;
     tt: {};
     u: {};
     ul: {};
     var: {};
-    video: Pick<HTMLManualAttributes_native, "autoplay" | "controls" | "crossorigin" | "height" | "loop" | "muted" | "playsinline" | "preload" | "src" | "width">;
+    video: Pick<HTMLOtherAttributes_native, "autoplay" | "controls" | "crossorigin" | "height" | "loop" | "muted" | "playsinline" | "preload" | "src" | "width">;
     wbr: {};
     xmp: {};
 };

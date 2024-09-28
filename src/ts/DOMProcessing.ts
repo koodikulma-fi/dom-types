@@ -4,7 +4,7 @@
 // Local.
 import { CSSProperties } from "./CSSProperties";
 import { GlobalEventHandler } from "./GlobalListeners";
-import { DOMAttributes } from "./DOMAttributes";
+import { DOMAttributesAny } from "./DOMAttributes";
 
 
 // - DOM processing props - //
@@ -32,7 +32,7 @@ export interface DOMCleanProps {
     /** Data to be set with `element.dataset[prop] = value`. For example: `element.dataset.myKey = true` -> `<... data-my-key="true" />` */
     data?: Record<string, any>;
     /** Each value is in stringified form. None should be undefined, but if is, simply don't apply. */
-    attributes?: Partial<Record<keyof DOMAttributes & string, string | undefined>>;
+    attributes?: Partial<Record<keyof DOMAttributesAny & string, string | undefined>>;
     /** Each value is a callback. None should be undefined, but if is, simply don't apply. */
     listeners?: Partial<Record<keyof GlobalEventHandlersEventMap & string, GlobalEventHandler | undefined>>;
 }

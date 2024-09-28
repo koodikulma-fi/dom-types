@@ -2,11 +2,10 @@
 // - Imports - //
 
 // Local.
-import { ARIAAttributes, ARIAAttributes_native } from "./ARIAAttributes";
-import { OrString } from "./common";
-import { CSSColorNames, CSSBlendMode, CSSProperties } from "./CSSProperties";
+import { DataAttributes, OrString } from "./common";
 import { GlobalListeners, GlobalListeners_native } from "./GlobalListeners";
-import { DataAttributes } from "./common";
+import { CSSBlendMode, CSSColorNames, CSSProperties } from "./CSSProperties";
+import { ARIAAttributes, ARIAAttributes_native } from "./ARIAAttributes";
 // For reusing "a" definition.
 import { HTMLAttributes, HTMLAttributes_native } from "./HTMLAttributes";
 
@@ -18,17 +17,23 @@ import { HTMLAttributes, HTMLAttributes_native } from "./HTMLAttributes";
 
 // - Exports - //
 
-// Tags and element.
+// Tags.
 /** All known SVG tag names. */
 export type SVGTags = keyof SVGNativeAttributesBy;
 
-// SVG attributes.
+// Attributes.
 /** SVG element attributes by tag name with camelCase listener and aria attributes. */
-export type SVGAttributes<Tag extends SVGTags = SVGTags> = Partial<SVGNativeAttributesBy[Tag] & SVGCoreAttributes & GlobalListeners & ARIAAttributes>;
+export type SVGAttributes<Tag extends string, Fallback = SVGAttributesAny> = [Tag] extends [SVGTags] ? Partial<SVGNativeAttributesBy[Tag] & SVGCoreAttributes & GlobalListeners & ARIAAttributes> : Fallback;
 /** SVG element attributes by tag name with lowercase listener and aria attributes. */
-export type SVGAttributes_native<Tag extends SVGTags = SVGTags> = Partial<SVGNativeAttributesBy_native[Tag] & SVGCoreAttributes_native & GlobalListeners_native & ARIAAttributes_native>;
+export type SVGAttributes_native<Tag extends string, Fallback = SVGAttributesAny_native> = [Tag] extends [SVGTags] ? Partial<SVGNativeAttributesBy_native[Tag] & SVGCoreAttributes_native & GlobalListeners_native & ARIAAttributes_native> : Fallback;
 /** SVG element attributes by tag name with both lowercase and camelCase listener keys. */
-export type SVGAttributes_mixed<Tag extends SVGTags = SVGTags> = SVGAttributes<Tag> & SVGAttributes_native<Tag>;
+export type SVGAttributes_mixed<Tag extends string, Fallback = SVGAttributesAny & SVGAttributesAny_native> = [Tag] extends [SVGTags] ? SVGAttributes<Tag> & SVGAttributes_native<Tag> : Fallback;
+
+// Attributes without tag.
+/** The all possible attributes that SVG elements can have - in camelCase. */
+export type SVGAttributesAny = Partial<SVGOtherAttributes & SVGCoreAttributes & GlobalListeners & ARIAAttributes>;
+/** The all possible attributes that SVG elements can have - in native case. */
+export type SVGAttributesAny_native = Partial<SVGOtherAttributes_native & SVGCoreAttributes_native & GlobalListeners_native & ARIAAttributes_native>;
 
 
 // - SVG Generic attributes - //
