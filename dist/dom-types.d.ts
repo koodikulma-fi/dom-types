@@ -325,6 +325,7 @@ type HTMLAttributes_mixed<Tag extends HTMLTags = HTMLTags> = HTMLAttributes<Tag>
 interface HTMLGlobalAttributes extends Partial<DataAttributes>, Omit<HTMLGlobalAttributes_native, "autocapitalize" | "autofocus" | "contenteditable" | "enterkeyhint" | "exportparts" | "inputmode" | "itemid" | "itemprop" | "itemref" | "itemscope" | "itemtype" | "popover" | "spellcheck" | "tabindex" | "virtualkeyboardpolicy" | "writingsuggestions"> {
     autoCapitalize: "none" | "off" | "sentences" | "on" | "words" | "characters" | OrString;
     autoFocus: boolean | null;
+    className: string;
     contentEditable: BoolOrStr;
     enterKeyHint: string;
     exportParts: string;
@@ -810,8 +811,6 @@ interface SVGCoreAttributes extends DataAttributes {
 interface SVGCoreAttributes_native extends DataAttributes {
     "id": string | number;
     "class": string;
-    /** Alias for "class". */
-    "className": string;
     "lang": string;
     "style": string | CSSProperties;
     "tabindex": string | number;

@@ -46,6 +46,7 @@ export interface HTMLGlobalAttributes extends Partial<DataAttributes>, Omit<HTML
 > {
     autoCapitalize: "none" | "off" | "sentences" | "on" | "words" | "characters" | OrString;
     autoFocus: boolean | null;
+    className: string; // Add in addition to "class".
     contentEditable: BoolOrStr;
     enterKeyHint: string;
     exportParts: string;

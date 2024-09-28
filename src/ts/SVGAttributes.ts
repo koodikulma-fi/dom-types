@@ -55,8 +55,6 @@ interface SVGCoreAttributes extends DataAttributes {
 interface SVGCoreAttributes_native extends DataAttributes {
     "id": string | number;
     "class": string;
-    /** Alias for "class". */
-    "className": string;
     "lang": string;
     "style": string | CSSProperties;
     "tabindex": string | number;
