@@ -26,8 +26,6 @@ export type SVGTags = keyof SVGNativeAttributesBy;
 export type SVGAttributes<Tag extends string, Fallback = SVGAttributesAny> = [Tag] extends [SVGTags] ? Partial<SVGNativeAttributesBy[Tag] & SVGCoreAttributes & GlobalListeners & ARIAAttributes> : Fallback;
 /** SVG element attributes by tag name with lowercase listener and aria attributes. */
 export type SVGAttributes_native<Tag extends string, Fallback = SVGAttributesAny_native> = [Tag] extends [SVGTags] ? Partial<SVGNativeAttributesBy_native[Tag] & SVGCoreAttributes_native & GlobalListeners_native & ARIAAttributes_native> : Fallback;
-/** SVG element attributes by tag name with both lowercase and camelCase listener keys. */
-export type SVGAttributes_mixed<Tag extends string, Fallback = SVGAttributesAny & SVGAttributesAny_native> = [Tag] extends [SVGTags] ? SVGAttributes<Tag> & SVGAttributes_native<Tag> : Fallback;
 
 // Attributes without tag.
 /** The all possible attributes that SVG elements can have - in camelCase. */

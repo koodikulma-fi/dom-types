@@ -320,8 +320,6 @@ type HTMLTags = keyof HTMLNativeAttributesBy;
 type HTMLAttributes<Tag extends string, Fallback = HTMLAttributesAny> = [Tag] extends [HTMLTags] ? Partial<HTMLNativeAttributesBy[Tag] & HTMLGlobalAttributes & GlobalListeners & ARIAAttributes> : Fallback;
 /** HTML element attributes by tag name with lowercase listener and aria attributes. */
 type HTMLAttributes_native<Tag extends string, Fallback = HTMLAttributesAny> = [Tag] extends [HTMLTags] ? Partial<HTMLNativeAttributesBy_native[Tag] & HTMLGlobalAttributes_native & GlobalListeners_native & ARIAAttributes_native> : Fallback;
-/** HTML element attributes by tag name with both lowercase and camelCase listener keys. */
-type HTMLAttributes_mixed<Tag extends string, Fallback = HTMLAttributesAny & HTMLAttributesAny_native> = [Tag] extends [HTMLTags] ? HTMLAttributes<Tag> & HTMLAttributes_native<Tag> : Fallback;
 /** The all possible attributes that HTML elements can have - in camelCase. */
 type HTMLAttributesAny = Partial<HTMLOtherAttributes & HTMLGlobalAttributes & GlobalListeners & ARIAAttributes>;
 /** The all possible attributes that HTML elements can have - in native case. */
@@ -791,8 +789,6 @@ type SVGTags = keyof SVGNativeAttributesBy;
 type SVGAttributes<Tag extends string, Fallback = SVGAttributesAny> = [Tag] extends [SVGTags] ? Partial<SVGNativeAttributesBy[Tag] & SVGCoreAttributes & GlobalListeners & ARIAAttributes> : Fallback;
 /** SVG element attributes by tag name with lowercase listener and aria attributes. */
 type SVGAttributes_native<Tag extends string, Fallback = SVGAttributesAny_native> = [Tag] extends [SVGTags] ? Partial<SVGNativeAttributesBy_native[Tag] & SVGCoreAttributes_native & GlobalListeners_native & ARIAAttributes_native> : Fallback;
-/** SVG element attributes by tag name with both lowercase and camelCase listener keys. */
-type SVGAttributes_mixed<Tag extends string, Fallback = SVGAttributesAny & SVGAttributesAny_native> = [Tag] extends [SVGTags] ? SVGAttributes<Tag> & SVGAttributes_native<Tag> : Fallback;
 /** The all possible attributes that SVG elements can have - in camelCase. */
 type SVGAttributesAny = Partial<SVGOtherAttributes & SVGCoreAttributes & GlobalListeners & ARIAAttributes>;
 /** The all possible attributes that SVG elements can have - in native case. */
@@ -1321,11 +1317,15 @@ interface SVGNativeAttributesBy_native {
 
 type DOMElement<Tag extends DOMTags = DOMTags> = DOMTags extends Tag ? HTMLElement | SVGElement : Tag extends keyof SVGElementTagNameMap ? SVGElementTagNameMap[Tag] : Tag extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[Tag] : HTMLElement | SVGElement;
 type DOMTags = HTMLTags | SVGTags;
-type DOMAttributes<Tag extends string, Fallback = DOMAttributesAny> = [Tag] extends [HTMLTags] ? HTMLAttributes<Tag> : [Tag] extends [SVGTags] ? SVGAttributes<Tag> : Fallback;
-type DOMAttributes_native<Tag extends string, Fallback = DOMAttributesAny_native> = [Tag] extends [HTMLTags] ? HTMLAttributes_native<Tag> : [Tag] extends [SVGTags] ? SVGAttributes_native<Tag> : Fallback;
+/** Get DOM attributes by tag in camelCase. In case fits both (like "a" tag) then gives both. Otherwise either or Fallback if not found (defaults to DOMAttributesAny). */
+type DOMAttributes<Tag extends string, Fallback = DOMAttributesAny> = [Tag] extends [HTMLTags] ? [Tag] extends [SVGTags] ? HTMLAttributes<Tag> & SVGAttributes<Tag> : HTMLAttributes<Tag> : [Tag] extends [SVGTags] ? SVGAttributes<Tag> : Fallback;
+/** Get DOM attributes by tag in native case. In case fits both (like "a" tag) then gives both. Otherwise either or Fallback if not found (defaults to DOMAttributesAny). */
+type DOMAttributes_native<Tag extends string, Fallback = DOMAttributesAny_native> = [Tag] extends [HTMLTags] ? [Tag] extends [SVGTags] ? SVGAttributes_native<Tag> & HTMLAttributes_native<Tag> : HTMLAttributes_native<Tag> : [Tag] extends [SVGTags] ? SVGAttributes_native<Tag> : Fallback;
+/** Dictionary of DOM attributes by tag in camelCase. */
 type DOMAttributesBy = {
     [Tag in DOMTags]: DOMAttributes<Tag>;
 };
+/** Dictionary of DOM attributes by tag in native case. */
 type DOMAttributesBy_native = {
     [Tag in DOMTags]: DOMAttributes_native<Tag>;
 };
@@ -1550,4 +1550,4 @@ declare function equalDOMProps(a: DOMCleanProps, b: DOMCleanProps): boolean;
  */
 declare function applyDOMProps(domElement: HTMLElement | SVGElement | Element | null, newProps: DOMCleanProps, oldProps?: DOMCleanProps, logWarnings?: boolean): DOMDiffProps | null;
 
-export { CSSBlendMode, CSSColorNames, CSSNumericPropertyNames, CSSProperties, DOMAttributes, DOMAttributesAny, DOMAttributesAny_native, DOMAttributesBy, DOMAttributesBy_native, DOMAttributes_native, DOMCleanProps, DOMDef, DOMDiffProps, DOMElement, DOMTags, DOMTreeNode, DOMUncleanProps, DataAttributes, GlobalEventHandler, GlobalListeners, GlobalListeners_native, HTMLAttributes, HTMLAttributesAny, HTMLAttributesAny_native, HTMLAttributes_mixed, HTMLAttributes_native, HTMLGlobalAttributes, HTMLGlobalAttributes_native, HTMLTags, NameValidator, PreClassName, SVGAttributes, SVGAttributesAny, SVGAttributesAny_native, SVGAttributes_mixed, SVGAttributes_native, SVGTags, Split, SplitArr, ValidateNames, applyDOMProps, classNames, cleanDOMProps, collectNamesTo, createDOMElement, decapitalizeString, domListenerProps, domRenamedAttributes, domSkipAttributes, equalDOMProps, equalSubDictionaries, getClassNameDiffs, getDictionaryDiffs, isNodeSVG, parseDOMStyle, readAsString, readFromDOM, recapitalizeString };
+export { CSSBlendMode, CSSColorNames, CSSNumericPropertyNames, CSSProperties, DOMAttributes, DOMAttributesAny, DOMAttributesAny_native, DOMAttributesBy, DOMAttributesBy_native, DOMAttributes_native, DOMCleanProps, DOMDef, DOMDiffProps, DOMElement, DOMTags, DOMTreeNode, DOMUncleanProps, DataAttributes, GlobalEventHandler, GlobalListeners, GlobalListeners_native, HTMLAttributes, HTMLAttributesAny, HTMLAttributesAny_native, HTMLAttributes_native, HTMLGlobalAttributes, HTMLGlobalAttributes_native, HTMLTags, NameValidator, PreClassName, SVGAttributes, SVGAttributesAny, SVGAttributesAny_native, SVGAttributes_native, SVGTags, Split, SplitArr, ValidateNames, applyDOMProps, classNames, cleanDOMProps, collectNamesTo, createDOMElement, decapitalizeString, domListenerProps, domRenamedAttributes, domSkipAttributes, equalDOMProps, equalSubDictionaries, getClassNameDiffs, getDictionaryDiffs, isNodeSVG, parseDOMStyle, readAsString, readFromDOM, recapitalizeString };

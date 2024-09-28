@@ -24,8 +24,6 @@ export type HTMLTags = keyof HTMLNativeAttributesBy;
 export type HTMLAttributes<Tag extends string, Fallback = HTMLAttributesAny> = [Tag] extends [HTMLTags] ? Partial<HTMLNativeAttributesBy[Tag] & HTMLGlobalAttributes & GlobalListeners & ARIAAttributes> : Fallback;
 /** HTML element attributes by tag name with lowercase listener and aria attributes. */
 export type HTMLAttributes_native<Tag extends string, Fallback = HTMLAttributesAny> = [Tag] extends [HTMLTags] ? Partial<HTMLNativeAttributesBy_native[Tag] & HTMLGlobalAttributes_native & GlobalListeners_native & ARIAAttributes_native> : Fallback;
-/** HTML element attributes by tag name with both lowercase and camelCase listener keys. */
-export type HTMLAttributes_mixed<Tag extends string, Fallback = HTMLAttributesAny & HTMLAttributesAny_native> = [Tag] extends [HTMLTags] ? HTMLAttributes<Tag> & HTMLAttributes_native<Tag> : Fallback;
 
 // Attributes without tag.
 /** The all possible attributes that HTML elements can have - in camelCase. */
