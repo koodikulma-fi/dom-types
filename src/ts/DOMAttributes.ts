@@ -6,7 +6,7 @@ import { HTMLAttributes, HTMLAttributes_native, HTMLTags } from "./HTMLAttribute
 import { SVGAttributes, SVGAttributes_native, SVGTags } from "./SVGAttributes";
 
 
-// - DOM - //
+// - DOM tags and attributes - //
 
 // DOM types: combining HTML and SVG.
 export type DOMTags = HTMLTags | SVGTags;

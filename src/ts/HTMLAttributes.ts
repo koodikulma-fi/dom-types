@@ -4,7 +4,7 @@
 // Local.
 import { BoolOrStr, DataAttributes, OrString } from "./common";
 import { ARIAAttributes, ARIAAttributes_native, AriaRole } from "./ARIAAttributes";
-import { ListenerAttributes, ListenerAttributes_native } from "./ListenerAttributes";
+import { GlobalListeners, GlobalListeners_native } from "./GlobalListeners";
 import { CSSProperties } from "./CSSProperties";
 
 
@@ -16,9 +16,9 @@ export type HTMLTags = keyof HTMLNativeAttributesBy; // HTMLElementTagNameMap;
 
 // HTML attributes.
 /** HTML element attributes by tag name with camelCase listener and aria attributes. */
-export type HTMLAttributes<Tag extends HTMLTags = HTMLTags> = Partial<HTMLNativeAttributesBy[Tag] & HTMLGlobalAttributes & ListenerAttributes & ARIAAttributes>;
+export type HTMLAttributes<Tag extends HTMLTags = HTMLTags> = Partial<HTMLNativeAttributesBy[Tag] & HTMLGlobalAttributes & GlobalListeners & ARIAAttributes>;
 /** HTML element attributes by tag name with lowercase listener and aria attributes. */
-export type HTMLAttributes_native<Tag extends HTMLTags = HTMLTags> = Partial<HTMLNativeAttributesBy_native[Tag] & HTMLGlobalAttributes_native & ListenerAttributes_native & ARIAAttributes_native>;
+export type HTMLAttributes_native<Tag extends HTMLTags = HTMLTags> = Partial<HTMLNativeAttributesBy_native[Tag] & HTMLGlobalAttributes_native & GlobalListeners_native & ARIAAttributes_native>;
 /** HTML element attributes by tag name with both lowercase and camelCase listener keys. */
 export type HTMLAttributes_mixed<Tag extends HTMLTags = HTMLTags> = HTMLAttributes<Tag> & HTMLAttributes_native<Tag>;
 
@@ -26,38 +26,38 @@ export type HTMLAttributes_mixed<Tag extends HTMLTags = HTMLTags> = HTMLAttribut
 // - DOM common attributes - //
 
 // Global.
-export interface HTMLGlobalAttributes extends Partial<DataAttributes> {
-    accessKey: string;
-    anchor: string;
+export interface HTMLGlobalAttributes extends Partial<DataAttributes>, Omit<HTMLGlobalAttributes_native,
+    | "autocapitalize"
+    | "autofocus"
+    | "contenteditable"
+    | "enterkeyhint"
+    | "exportparts"
+    | "inputmode"
+    | "itemid"
+    | "itemprop"
+    | "itemref"
+    | "itemscope"
+    | "itemtype"
+    | "popover"
+    | "spellcheck"
+    | "tabindex"
+    | "virtualkeyboardpolicy"
+    | "writingsuggestions"
+> {
     autoCapitalize: "none" | "off" | "sentences" | "on" | "words" | "characters" | OrString;
     autoFocus: boolean | null;
-    class: string;
     contentEditable: BoolOrStr;
-    dir: "ltr" | "rtl" | "auto" | OrString;
-    data: Record<string, any>;
-    draggable: BoolOrStr;
     enterKeyHint: string;
     exportParts: string;
-    hidden: BoolOrStr;
-    id: string;
-    insert: BoolOrStr;
     inputMode: "none" | "text" | "decimal" | "numeric" | "tel" | "search" | "email" | "url" | OrString;
     itemId: string;
     itemProp: string;
     itemRef: string | string[];
     itemScope: string;
     itemType: string;
-    lang: string;
-    nonce: string;
-    part: string;
     popOver: string;
-    role: AriaRole;
-    slot: string;
     spellCheck: BoolOrStr;
-    style: string | CSSProperties;
     tabIndex: string | number;
-    title: string;
-    translate: "yes" | "no" | OrString;
     virtualKeyboardPolicy: "auto" | "manual" | OrString;
     writingSuggestions: BoolOrStr;
 }
@@ -140,7 +140,7 @@ interface HTMLManualAttributes extends Omit<HTMLManualAttributes_native,
     "dateTime": HTMLManualAttributes_native["datetime"];
     "dirName": HTMLManualAttributes_native["dirname"];
     "encType": HTMLManualAttributes_native["enctype"];
-    "enterKeyHint": HTMLManualAttributes_native["enterkeyhint"];
+    // "enterKeyHint": HTMLManualAttributes_native["enterkeyhint"]; // Global.
     "formAction": HTMLManualAttributes_native["formaction"];
     "formEncType": HTMLManualAttributes_native["formenctype"];
     "formMethod": HTMLManualAttributes_native["formmethod"];
@@ -201,7 +201,7 @@ interface HTMLManualAttributes_native {
     "disabled": BoolOrStr;
     "download": string;
     "enctype": "application/x-www-form-urlencoded" | "multipart/form-data" | "text/plain" | OrString;
-    "enterkeyhint": string;
+    // "enterkeyhint": string; // Global.
     "for": string;
     "form": string;
     "formaction": string;
@@ -432,7 +432,7 @@ interface HTMLNativeAttributesBy {
         | "cols"
         | "dirName"
         | "disabled"
-        | "enterKeyHint"
+        // | "enterKeyHint" // Global.
         | "form"
         // | "inputmode" // Global.
         | "maxLength"
@@ -618,7 +618,7 @@ interface HTMLNativeAttributesBy_native {
         | "cols"
         | "dirname"
         | "disabled"
-        | "enterkeyhint"
+        // | "enterkeyhint" // Global.
         | "form"
         // | "inputmode" // Global.
         | "maxlength"

@@ -2,7 +2,7 @@
 // - DOM listeners - //
 
 export type GlobalEventHandler = (this: GlobalEventHandlers, ev: UIEvent) => void;
-export interface ListenerAttributes_native extends GlobalEventHandlers {
+export interface GlobalListeners_native extends GlobalEventHandlers {
     onactivate: GlobalEventHandler;
     onbegin: GlobalEventHandler;
     onend: GlobalEventHandler;
@@ -15,7 +15,7 @@ export interface ListenerAttributes_native extends GlobalEventHandlers {
 }
 
 /** All listener attributes (matching GlobalEventHandlers) with camelCase keys referring to the lowercase originals in type. */
-export interface ListenerAttributes {
+export interface GlobalListeners {
     onAbort: GlobalEventHandlers["onabort"];
     onActivate: GlobalEventHandler;
     onAnimationCancel: GlobalEventHandlers["onanimationcancel"];

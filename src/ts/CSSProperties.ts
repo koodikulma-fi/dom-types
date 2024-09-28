@@ -1,7 +1,7 @@
 
 // - Imports - //
 
-import { OrString } from "./common";
+import { GetMethodKeys, InheritInitialRevUnset, OrString } from "./common";
 
 
 // - CSS - //
@@ -10,17 +10,16 @@ import { OrString } from "./common";
 export type CSSColorNames = "transparent" | "currentcolor" | "currentColor" | OrString;
 /** Common blend modes. */
 export type CSSBlendMode = "normal" | "multiply" | "screen" | "overlay" | "darken" | "lighten" | "color-dodge" | "color-burn" | "hard-light" | "soft-light" | "difference" | "exclusion" | "hue" | "saturation" | "color" | "luminosity" | OrString;
-
 /** The CSS properties with camelCase keys. Values are strings, or numbers for certain natively supported style properties (like "width", "height", "opacity" and others). */
 export interface CSSProperties extends Partial<Omit<CSSStyleDeclaration,
-    | "item"
-    | "getPropertyPriority"
-    | "getPropertyValue"
-    | "removeProperty"
-    | "setProperty"
+    | GetMethodKeys<CSSStyleDeclaration>
     | CSSNumericPropertyNames
 > & Record<CSSNumericPropertyNames, string | number>> {
+    // Skip iterable and interface.
     [index: number]: never;
+    
+    // Could apply more specific here.
+    position?: "absolute" | "relative" | "fixed" | "static" | "sticky" | InheritInitialRevUnset | OrString;
 };
 /** Commonly used CSS properties that can receive numeric input natively. */
 export type CSSNumericPropertyNames = 

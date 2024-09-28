@@ -74,8 +74,15 @@ type ValidateNames<Valid extends string, Nulls extends any = undefined | null | 
 
 type BoolOrStr = boolean | "true" | "false";
 type OrString = string & {};
+type InheritInitial = "inherit" | "initial";
+type InheritInitialRevUnset = InheritInitial | "revert" | "revert-layer" | "unset";
+/** Exclude methods and property functions from an object like. */
+type GetMethodKeys<T> = {
+    [Key in keyof T]: T[Key] extends Function ? Key : never;
+}[keyof T];
+/** Each value gets stringified when applied to `element.dataset`, but we can allow inputting numbers and booleans. (Could even allow arrays but perhaps it'd just be misleading.) */
 interface DataAttributes {
-    [dataKey: `data-${string}`]: Record<string, any> | any[] | string | number | boolean | null | undefined;
+    [dataKey: `data-${string}`]: string | number | boolean | null | undefined;
 }
 
 /** There's over 100 color names + PascalCase vs. lowercase. See https://www.w3schools.com/cssref/css_colors.php */
@@ -83,14 +90,15 @@ type CSSColorNames = "transparent" | "currentcolor" | "currentColor" | OrString;
 /** Common blend modes. */
 type CSSBlendMode = "normal" | "multiply" | "screen" | "overlay" | "darken" | "lighten" | "color-dodge" | "color-burn" | "hard-light" | "soft-light" | "difference" | "exclusion" | "hue" | "saturation" | "color" | "luminosity" | OrString;
 /** The CSS properties with camelCase keys. Values are strings, or numbers for certain natively supported style properties (like "width", "height", "opacity" and others). */
-interface CSSProperties extends Partial<Omit<CSSStyleDeclaration, "item" | "getPropertyPriority" | "getPropertyValue" | "removeProperty" | "setProperty" | CSSNumericPropertyNames> & Record<CSSNumericPropertyNames, string | number>> {
+interface CSSProperties extends Partial<Omit<CSSStyleDeclaration, GetMethodKeys<CSSStyleDeclaration> | CSSNumericPropertyNames> & Record<CSSNumericPropertyNames, string | number>> {
     [index: number]: never;
+    position?: "absolute" | "relative" | "fixed" | "static" | "sticky" | InheritInitialRevUnset | OrString;
 }
 /** Commonly used CSS properties that can receive numeric input natively. */
 type CSSNumericPropertyNames = "borderWidth" | "borderBottomWidth" | "borderLeftWidth" | "borderRightWidth" | "borderTopWidth" | "bottom" | "columnGap" | "flexGrow" | "flexShrink" | "fontWeight" | "gap" | "gridColumnEnd" | "gridColumnGap" | "gridColumnStart" | "gridRowEnd" | "gridRowGap" | "gridRowStart" | "height" | "inset" | "left" | "margin" | "marginBottom" | "marginLeft" | "marginRight" | "marginTop" | "maxWidth" | "maxHeight" | "minWidth" | "minHeight" | "offsetDistance" | "opacity" | "order" | "outlineWidth" | "padding" | "paddingTop" | "paddingBottom" | "paddingLeft" | "paddingRight" | "right" | "rowGap" | "scrollMargin" | "scrollMarginBlock" | "scrollMarginBlockEnd" | "scrollMarginBlockStart" | "scrollMarginBottom" | "scrollMarginInline" | "scrollMarginInlineEnd" | "scrollMarginInlineStart" | "scrollMarginLeft" | "scrollMarginRight" | "scrollMarginTop" | "scrollPadding" | "scrollPaddingBlock" | "scrollPaddingBlockEnd" | "scrollPaddingBlockStart" | "scrollPaddingBottom" | "scrollPaddingInline" | "scrollPaddingInlineEnd" | "scrollPaddingInlineStart" | "scrollPaddingLeft" | "scrollPaddingRight" | "scrollPaddingTop" | "stopOpacity" | "strokeWidth" | "strokeOpacity" | "tabIndex" | "tabSize" | "top" | "width" | "zIndex";
 
 type GlobalEventHandler = (this: GlobalEventHandlers, ev: UIEvent) => void;
-interface ListenerAttributes_native extends GlobalEventHandlers {
+interface GlobalListeners_native extends GlobalEventHandlers {
     onactivate: GlobalEventHandler;
     onbegin: GlobalEventHandler;
     onend: GlobalEventHandler;
@@ -102,7 +110,7 @@ interface ListenerAttributes_native extends GlobalEventHandlers {
     onunload: GlobalEventHandler;
 }
 /** All listener attributes (matching GlobalEventHandlers) with camelCase keys referring to the lowercase originals in type. */
-interface ListenerAttributes {
+interface GlobalListeners {
     onAbort: GlobalEventHandlers["onabort"];
     onActivate: GlobalEventHandler;
     onAnimationCancel: GlobalEventHandlers["onanimationcancel"];
@@ -309,43 +317,26 @@ interface ARIAAttributes_native {
 /** All known HTML tag names. */
 type HTMLTags = keyof HTMLNativeAttributesBy;
 /** HTML element attributes by tag name with camelCase listener and aria attributes. */
-type HTMLAttributes<Tag extends HTMLTags = HTMLTags> = Partial<HTMLNativeAttributesBy[Tag] & HTMLGlobalAttributes & ListenerAttributes & ARIAAttributes>;
+type HTMLAttributes<Tag extends HTMLTags = HTMLTags> = Partial<HTMLNativeAttributesBy[Tag] & HTMLGlobalAttributes & GlobalListeners & ARIAAttributes>;
 /** HTML element attributes by tag name with lowercase listener and aria attributes. */
-type HTMLAttributes_native<Tag extends HTMLTags = HTMLTags> = Partial<HTMLNativeAttributesBy_native[Tag] & HTMLGlobalAttributes_native & ListenerAttributes_native & ARIAAttributes_native>;
+type HTMLAttributes_native<Tag extends HTMLTags = HTMLTags> = Partial<HTMLNativeAttributesBy_native[Tag] & HTMLGlobalAttributes_native & GlobalListeners_native & ARIAAttributes_native>;
 /** HTML element attributes by tag name with both lowercase and camelCase listener keys. */
 type HTMLAttributes_mixed<Tag extends HTMLTags = HTMLTags> = HTMLAttributes<Tag> & HTMLAttributes_native<Tag>;
-interface HTMLGlobalAttributes extends Partial<DataAttributes> {
-    accessKey: string;
-    anchor: string;
+interface HTMLGlobalAttributes extends Partial<DataAttributes>, Omit<HTMLGlobalAttributes_native, "autocapitalize" | "autofocus" | "contenteditable" | "enterkeyhint" | "exportparts" | "inputmode" | "itemid" | "itemprop" | "itemref" | "itemscope" | "itemtype" | "popover" | "spellcheck" | "tabindex" | "virtualkeyboardpolicy" | "writingsuggestions"> {
     autoCapitalize: "none" | "off" | "sentences" | "on" | "words" | "characters" | OrString;
     autoFocus: boolean | null;
-    class: string;
     contentEditable: BoolOrStr;
-    dir: "ltr" | "rtl" | "auto" | OrString;
-    data: Record<string, any>;
-    draggable: BoolOrStr;
     enterKeyHint: string;
     exportParts: string;
-    hidden: BoolOrStr;
-    id: string;
-    insert: BoolOrStr;
     inputMode: "none" | "text" | "decimal" | "numeric" | "tel" | "search" | "email" | "url" | OrString;
     itemId: string;
     itemProp: string;
     itemRef: string | string[];
     itemScope: string;
     itemType: string;
-    lang: string;
-    nonce: string;
-    part: string;
     popOver: string;
-    role: AriaRole;
-    slot: string;
     spellCheck: BoolOrStr;
-    style: string | CSSProperties;
     tabIndex: string | number;
-    title: string;
-    translate: "yes" | "no" | OrString;
     virtualKeyboardPolicy: "auto" | "manual" | OrString;
     writingSuggestions: BoolOrStr;
 }
@@ -394,7 +385,6 @@ interface HTMLManualAttributes extends Omit<HTMLManualAttributes_native, "accept
     "dateTime": HTMLManualAttributes_native["datetime"];
     "dirName": HTMLManualAttributes_native["dirname"];
     "encType": HTMLManualAttributes_native["enctype"];
-    "enterKeyHint": HTMLManualAttributes_native["enterkeyhint"];
     "formAction": HTMLManualAttributes_native["formaction"];
     "formEncType": HTMLManualAttributes_native["formenctype"];
     "formMethod": HTMLManualAttributes_native["formmethod"];
@@ -450,7 +440,6 @@ interface HTMLManualAttributes_native {
     "disabled": BoolOrStr;
     "download": string;
     "enctype": "application/x-www-form-urlencoded" | "multipart/form-data" | "text/plain" | OrString;
-    "enterkeyhint": string;
     "for": string;
     "form": string;
     "formaction": string;
@@ -639,7 +628,7 @@ interface HTMLNativeAttributesBy {
     tbody: Pick<HTMLManualAttributes, "align" | "bgColor">;
     td: Pick<HTMLManualAttributes, "align" | "background" | "bgColor" | "colSpan" | "headers" | "rowSpan">;
     template: {};
-    textarea: Pick<HTMLManualAttributes, "autoComplete" | "cols" | "dirName" | "disabled" | "enterKeyHint" | "form" | "maxLength" | "minLength" | "name" | "placeholder" | "readOnly" | "required" | "rows" | "wrap">;
+    textarea: Pick<HTMLManualAttributes, "autoComplete" | "cols" | "dirName" | "disabled" | "form" | "maxLength" | "minLength" | "name" | "placeholder" | "readOnly" | "required" | "rows" | "wrap">;
     tfoot: Pick<HTMLManualAttributes, "align" | "bgColor">;
     th: Pick<HTMLManualAttributes, "align" | "background" | "bgColor" | "colSpan" | "headers" | "rowSpan">;
     thead: Pick<HTMLManualAttributes, "align">;
@@ -774,7 +763,7 @@ interface HTMLNativeAttributesBy_native {
     tbody: Pick<HTMLManualAttributes_native, "align" | "bgcolor">;
     td: Pick<HTMLManualAttributes_native, "align" | "background" | "bgcolor" | "colspan" | "headers" | "rowspan">;
     template: {};
-    textarea: Pick<HTMLManualAttributes_native, "autocomplete" | "cols" | "dirname" | "disabled" | "enterkeyhint" | "form" | "maxlength" | "minlength" | "name" | "placeholder" | "readonly" | "required" | "rows" | "wrap">;
+    textarea: Pick<HTMLManualAttributes_native, "autocomplete" | "cols" | "dirname" | "disabled" | "form" | "maxlength" | "minlength" | "name" | "placeholder" | "readonly" | "required" | "rows" | "wrap">;
     tfoot: Pick<HTMLManualAttributes_native, "align" | "bgcolor">;
     th: Pick<HTMLManualAttributes_native, "align" | "background" | "bgcolor" | "colspan" | "headers" | "rowspan">;
     thead: Pick<HTMLManualAttributes_native, "align">;
@@ -794,12 +783,12 @@ interface HTMLNativeAttributesBy_native {
 /** All known SVG tag names. */
 type SVGTags = keyof SVGNativeAttributesBy;
 /** SVG element attributes by tag name with camelCase listener and aria attributes. */
-type SVGAttributes<Tag extends SVGTags = SVGTags> = Partial<SVGNativeAttributesBy[Tag] & SVGCoreAttributes & ListenerAttributes & ARIAAttributes>;
+type SVGAttributes<Tag extends SVGTags = SVGTags> = Partial<SVGNativeAttributesBy[Tag] & SVGCoreAttributes & GlobalListeners & ARIAAttributes>;
 /** SVG element attributes by tag name with lowercase listener and aria attributes. */
-type SVGAttributes_native<Tag extends SVGTags = SVGTags> = Partial<SVGNativeAttributesBy_native[Tag] & SVGCoreAttributes_native & ListenerAttributes_native & ARIAAttributes_native>;
+type SVGAttributes_native<Tag extends SVGTags = SVGTags> = Partial<SVGNativeAttributesBy_native[Tag] & SVGCoreAttributes_native & GlobalListeners_native & ARIAAttributes_native>;
 /** SVG element attributes by tag name with both lowercase and camelCase listener keys. */
 type SVGAttributes_mixed<Tag extends SVGTags = SVGTags> = SVGAttributes<Tag> & SVGAttributes_native<Tag>;
-interface SVGCoreAttributes {
+interface SVGCoreAttributes extends DataAttributes {
     "id": string | number;
     "class": string;
     /** Alias for "class". */
@@ -815,12 +804,14 @@ interface SVGCoreAttributes {
     /** Translates to "xml:space". */
     "xmlSpace": string;
     "xmlns": string;
-    /** Translates to "xml:xlink". */
+    /** Translates to "xmlns:xlink". */
     "xmlnsXlink": string;
 }
-interface SVGCoreAttributes_native {
+interface SVGCoreAttributes_native extends DataAttributes {
     "id": string | number;
     "class": string;
+    /** Alias for "class". */
+    "className": string;
     "lang": string;
     "style": string | CSSProperties;
     "tabindex": string | number;
@@ -868,8 +859,8 @@ interface SVGPresentationAttributes extends Pick<SVGOtherAttributes_native, "ali
 }
 /** All tag specific SVG other attributes in camelCase. */
 interface SVGOtherAttributes extends Omit<SVGOtherAttributes_native, "accent-height" | "alignment-baseline" | "allow-reorder" | "arabic-form" | "baseline-shift" | "color-interpolation" | "color-interpolation-filters" | "color-rendering" | "crossorigin" | "dominant-baseline" | "fill-opacity" | "fill-rule" | "flood-color" | "flood-opacity" | "font-family" | "font-size" | "font-size-adjust" | "font-style" | "font-variant" | "font-weight" | "glyph-name" | "glyph-orientation-horizontal" | "glyph-orientation-vertical" | "horiz-adv-x" | "horiz-origin-x" | "horiz-origin-y" | "image-rendering" | "letter-spacing" | "lighting-color" | "marker-end" | "marker-mid" | "marker-start" | "overline-position" | "overline-thickness" | "paint-order" | "pointer-events" | "shape-rendering" | "stop-color" | "stop-opacity" | "stroke-dasharray" | "stroke-dashoffset" | "stroke-linecap" | "stroke-linejoin" | "stroke-miterlimit" | "stroke-opacity" | "stroke-width" | "text-anchor" | "text-decoration" | "text-rendering" | "transform-origin" | "underline-position" | "underline-thickness" | "unicode-bidi" | "unicode-range" | "units-per-em" | "v-alphabetic" | "v-hanging" | "v-ideographic" | "v-mathematical" | "vector-effect" | "vert-adv-y" | "vert-origin-x" | "vert-origin-y" | "word-spacing" | "writing-mode" | "xlink:actuate" | "xlink:arcrole" | "xlink:href" | "xlink:role" | "xlink:show" | "xlink:title" | "xlink:type"> {
-    "alignmentBaseline": SVGOtherAttributes_native["alignment-baseline"];
     "accentHeight": SVGOtherAttributes_native["accent-height"];
+    "alignmentBaseline": SVGOtherAttributes_native["alignment-baseline"];
     "allowReorder": SVGOtherAttributes_native["allow-reorder"];
     "arabicForm": SVGOtherAttributes_native["arabic-form"];
     "baselineShift": SVGOtherAttributes_native["baseline-shift"];
@@ -922,8 +913,8 @@ interface SVGOtherAttributes extends Omit<SVGOtherAttributes_native, "accent-hei
     "textDecoration": SVGOtherAttributes_native["text-decoration"];
     "textRendering": SVGOtherAttributes_native["text-rendering"];
     "transformOrigin": SVGOtherAttributes_native["transform-origin"];
-    "underline-position": SVGOtherAttributes_native["underline-position"];
-    "underline-thickness": SVGOtherAttributes_native["underline-thickness"];
+    "underlinePosition": SVGOtherAttributes_native["underline-position"];
+    "underlineThickness": SVGOtherAttributes_native["underline-thickness"];
     "unicodeBidi": SVGOtherAttributes_native["unicode-bidi"];
     "unicodeRange": SVGOtherAttributes_native["unicode-range"];
     "unitsPerEm": SVGOtherAttributes_native["units-per-em"];
@@ -946,7 +937,7 @@ interface SVGOtherAttributes extends Omit<SVGOtherAttributes_native, "accent-hei
     "xlinkType": SVGOtherAttributes_native["xlink:type"];
 }
 /** All attributes that are specific to tags - so excluding SVGCoreAttributes. */
-interface SVGOtherAttributes_native extends DataAttributes {
+interface SVGOtherAttributes_native {
     "accent-height": string | number;
     "alignment-baseline": "auto" | "baseline" | "before-edge" | "text-before-edge" | "middle" | "central" | "after-edge" | "text-after-edge" | "ideographic" | "alphabetic" | "hanging" | "mathematical" | "inherit" | OrString;
     "allow-reorder": "no" | "yes" | OrString;
@@ -1332,27 +1323,88 @@ type DOMAttributesBy_native = {
     [Tag in DOMTags]: DOMAttributes_native<Tag>;
 };
 
-/** Collect shallow differences in two dictionaries. Assumes first one is original and second are the updates (= the next state) of the dictionary. Returns `null` if no changes detected. */
-declare function getDictionaryDiffs<T extends Record<string, any>>(orig: Partial<T>, update: Partial<T>): Partial<T> | null;
-/** Inlined comparison method specialized into domProps (attributes of a dom element). */
-declare function equalDOMProps(a: Record<string, any>, b: Record<string, any>): boolean;
-/** Clean the given DOM properties.
- * - Handles "style" separately supporting string vs. dictionary, combines to a dictionary with camelCase names. (Does not clean existing styles dictionary.)
- * - Combines "class" and "className" to "className".
- * - Cleans "aria" related: eg. "ariaAutoComplete" becomes "aria-autocomplete".
- * - However, does _not_ rename listeners - since they are anyway detected separately in the flow.
- */
-declare function cleanDOMProps<Props extends Record<string, any> & {
+/** The type for unclean DOM props - before processing them to the main categories by functionality: `{ style, className, data, attributes, listeners }`. */
+interface DOMUncleanProps extends Record<string, any> {
+    style?: CSSProperties | string;
     class?: string;
     className?: string;
-    style?: string | CSSProperties;
-} = {}>(origProps: Props, copy?: boolean): Omit<Props, "class" | "style"> & (Props["style"] extends {} | string ? {
-    style: CSSProperties;
-} : {
+    data?: Record<string, any>;
+}
+/** Type for clean DOM props.
+ * - Represents the _total state_. For example, after creating a new element should apply all features here.
+ * - To see type for _changes_ in the states, see `DOMDiffProps` type.
+ */
+interface DOMCleanProps {
+    /** Style in camelCase keys. Can apply directly with `element.style[prop] = value ?? null`.
+     * - When value is null, the style property is removed.
+     * - The `element.style[prop]` form supports both naming: eg. "backgroundColor" and "background-color".
+     */
     style?: CSSProperties;
-});
+    /** Class name as a string. Use `className.split(" ")` to get each name. */
+    className?: string;
+    /** Data to be set with `element.dataset[prop] = value`. For example: `element.dataset.myKey = true` -> `<... data-my-key="true" />` */
+    data?: Record<string, any>;
+    /** Each value is in stringified form. None should be undefined, but if is, simply don't apply. */
+    attributes?: Partial<Record<keyof DOMAttributes & string, string | undefined>>;
+    /** Each value is a callback. None should be undefined, but if is, simply don't apply. */
+    listeners?: Partial<Record<keyof GlobalEventHandlersEventMap & string, GlobalEventHandler | undefined>>;
+}
+/** Type for differences in the props. Should apply them to the existing element.
+ * - All values are dictionaries.
+ *      * The dictionaries only contain keys for _changes_ (against the previous state) - not the full state.
+ *      * If any sub-value in the dictionary is undefined, should remove the feature, otherwise apply.
+ *      * In case of class names, the value is `true` for adding a class, and `false` for removing.
+ * - To see type for _total state_, see `DOMCleanProps` type.
+ */
+interface DOMDiffProps {
+    /** If no style, no changes in styles. If value in the dictionary is undefined means removed. */
+    style?: CSSProperties;
+    /** If no classNames, no changes in class names. The keys are class names: for each, if true class name was added, if false name was removed. */
+    classNames?: Record<string, boolean>;
+    /** If no data, no changes in data attribute. If value in the dictionary is undefined means removed: eg. `delete element.dataSet.myKey`. */
+    data?: Record<string, any>;
+    /** If no attributes, no changes in general attributes. If value in the dictionary is undefined means removed: eg. `element.removeAttribute(attr)`. Otherwise apply: `element.setAttribute(attr, val)`. */
+    attributes?: Record<string, any>;
+    /** If no listeners, no changes in listeners. If value in the dictionary is undefined means removed: eg. `element.removeEventListener(name, callback)`. Otherwise apply: `element.addEventListener(name, callback)`. */
+    listeners?: Partial<Record<keyof GlobalEventHandlersEventMap & string, GlobalEventHandler | undefined>>;
+}
+/** A base type for a definition of a state, that can contain dom information (if the tag is a string). */
+interface DOMDef {
+    /** The tag of the thing to render. Typically a string for DOM related features, like "div". For complex, it's likely a function or a class. */
+    tag: any;
+    /** If wanting to insert simple content, or an external node inside. */
+    domContent?: string | number | Node | null;
+    /** If wanting to apply props to a foreign element. */
+    domElement?: Element | null;
+}
+/** A base type for a tree hierarchy for DOM-grounded defs.
+ * - Each tree node can contain other tree nodes as `children`.
+ * - Each tree node should have a "def" referring to DOMDef, `{ tag, domContent?, domElement? }`.
+ * - Each tree node can have "domProps" if related to dom.
+ */
+interface DOMTreeNode {
+    /** Any child DOMTreeNodes. Used to form a clean nested tree structure (no cyclical references - or the tree goes forever). */
+    children?: DOMTreeNode[];
+    /** Render definition that ultimately produced this tree node. */
+    def?: DOMDef;
+    /** The applied domProps. Useful for comparing against last state. Should be updated after applying the props to the DOM. */
+    domProps?: DOMCleanProps;
+}
+
+/**
+ * - With "-" as replaceBy, functions like this: "testProp" => "test-prop", and "TestProp" => "-test-prop".
+ * - This behaviour mirrors how element.dataset[prop] = value works. For example: `data.TestProp = true`   =>   `<div data--test-prop="true" />`
+ */
+declare function decapitalizeString(str: string, replaceBy?: string): string;
+/**
+ * - With "-" as splitter, functions like this: "test-prop" => "testProp", and "-test-prop" => "TestProp".
+ * - This behaviour mirrors how element.dataset[prop] = value works. For example: `data.TestProp = true`   =>   `<div data--test-prop="true" />`
+ */
+declare function recapitalizeString(str: string, splitter?: string): string;
 /** Parse style string to a dictionary with camelCase keys. Value is string or undefined. */
-declare function parseDOMStyle(cssText: string): CSSProperties;
+declare function parseDOMStyle(cssText: string, nullIfEmpty: true): CSSProperties | null;
+declare function parseDOMStyle(cssText: string, nullIfEmpty?: false): CSSProperties;
+declare function parseDOMStyle(cssText: string, nullIfEmpty?: boolean): CSSProperties | null;
 /** Returns a string to be used as class name (with no duplicates and optional nested TypeScript verification).
  * - Each item in the classNames can be:
  *     1. ValidName (single className string),
@@ -1428,7 +1480,63 @@ declare function classNames<ValidNames extends string = string, SingleName exten
  */
 declare function collectNamesTo(names: PreClassName, record: Record<string, true>, stringSplitter?: string): void;
 /** Get diffs in class names in the form of: Record<string, boolean>, where true means added, false removed, otherwise not included.
- * - Note. This process only checks for changes - it ignores changes in order completely. */
+ * - Note. This process only checks for changes - it ignores changes in order completely.
+ */
 declare function getClassNameDiffs(origName?: string, newName?: string): Record<string, boolean> | null;
+/** Collect shallow differences in two dictionaries. Assumes first one is original and second are the updates (= the next state) of the dictionary. Returns `null` if no changes detected. */
+declare function getDictionaryDiffs<T extends Record<string, any>>(orig: Partial<T>, update: Partial<T>): Partial<T> | null;
+/** Checks if both `a` and `b` contains the same property, which is presumably a dictionary, and if so whether the dictionaries are equal in the shallow sense. If not, returns false. */
+declare function equalSubDictionaries<Prop extends string>(a: Partial<Record<Prop, any>>, b: Partial<Record<Prop, any>>, prop: Prop): boolean;
+/** Creates a new HTML or SVG node - the tag should be in lowercase.
+ * - Does not insert it the new node into parent, but only uses the parent to help determine whether should be SVG or HTML element.
+ * - The namespaceURI defaults to: "http://www.w3.org/2000/svg".
+ */
+declare function createElement(tag: string, checkByParentNode?: Node | null | undefined, namespaceURI?: string): Element;
+/** Check if a node is SVG (using ownerSVGElement property on the SVGElement, not present for HTMLElement or basic Node). */
+declare function isNodeSVG(node: Node | null | undefined): boolean;
 
-export { CSSBlendMode, CSSColorNames, CSSNumericPropertyNames, CSSProperties, DOMAttributes, DOMAttributesBy, DOMAttributesBy_native, DOMAttributes_native, DOMElement, DOMTags, DataAttributes, GlobalEventHandler, HTMLAttributes, HTMLAttributes_mixed, HTMLAttributes_native, HTMLGlobalAttributes, HTMLGlobalAttributes_native, HTMLTags, ListenerAttributes, ListenerAttributes_native, NameValidator, PreClassName, SVGAttributes, SVGAttributes_mixed, SVGAttributes_native, SVGTags, Split, SplitArr, ValidateNames, classNames, cleanDOMProps, collectNamesTo, equalDOMProps, getClassNameDiffs, getDictionaryDiffs, parseDOMStyle };
+declare const domSkipAttributes: {
+    innerHTML: boolean;
+    outerHTML: boolean;
+    textContent: boolean;
+    innerText: boolean;
+    outerText: boolean;
+};
+/** Contains all the attributes that cannot be directly translated.
+ * - The key is the camelCase name, the value is the native name.
+ * - Note that ones not found in here, are directly the same.
+ *      * Note that this also includes capitalized ones from HTML (about a dozen) that could likely work also _without_ lowercasing them, eg. "contentEditable" ~ "contenteditable".
+ */
+declare const domRenamedAttributes: Partial<Record<string, string>>;
+/** Maps native listener attribute names to the event names. For example: `{ "onclick": "click" }`. Assumed usage: `const listenerProp = domListenerProps[attr.toLowerCase()]`. */
+declare const domListenerProps: Record<"onAbort" | "onActivate" | "onAnimationCancel" | "onAnimationEnd" | "onAnimationIteration" | "onAnimationStart" | "onAuxClick" | "onBegin" | "onBlur" | "onCanPlay" | "onCanPlayThrough" | "onChange" | "onClick" | "onClose" | "onContextMenu" | "onCueChange" | "onDblClick" | "onDrag" | "onDragEnd" | "onDragEnter" | "onDragLeave" | "onDragOver" | "onDragStart" | "onDrop" | "onDurationChange" | "onEmptied" | "onEnded" | "onError" | "onFocus" | "onFocusIn" | "onFocusOut" | "onGotPointerCapture" | "onInput" | "onInvalid" | "onKeyDown" | "onKeyPress" | "onKeyUp" | "onLoad" | "onLoadedData" | "onLoadedMetaData" | "onLoadStart" | "onLostPointerCapture" | "onMouseDown" | "onMouseEnter" | "onMouseLeave" | "onMouseMove" | "onMouseOut" | "onMouseOver" | "onMouseUp" | "onMouseWheel" | "onPause" | "onPlay" | "onPlaying" | "onPointerCancel" | "onPointerDown" | "onPointerEnter" | "onPointerLeave" | "onPointerMove" | "onPointerOut" | "onPointerOver" | "onPointerUp" | "onProgress" | "onRateChange" | "onRepeat" | "onReset" | "onResize" | "onScroll" | "onSecurityPolicyViolation" | "onSeeked" | "onSeeking" | "onSelect" | "onShow" | "onStalled" | "onSubmit" | "onSuspend" | "onTimeUpdate" | "onToggle" | "onTouchCancel" | "onTouchEnd" | "onTouchMove" | "onTouchStart" | "onTransitionCancel" | "onTransitionEnd" | "onTransitionRun" | "onTransitionStart" | "onUnload" | "onVolumeChange" | "onWaiting" | "onWheel", string>;
+
+/** Read the domProps from a node. Does not read listeners, but returns: `{ className?, style?, data?, attributes? }`. */
+declare function readFromDOM(node: HTMLElement | SVGElement | Node): DOMCleanProps;
+/** Read the content inside a (root) tree node as a html string. Useful for server side or static rendering.
+ * - Note that the DOMTreeNode is a simple type, that in "dom-types" is only used for this purpose.
+ *      * In a state based rendering library, it could be used to keep track of the grounded DOM tree and which def is where.
+ *      * But you can also manually convert your structure to the simple DOMTreeNode type, just to use this reader function.
+ * - If onlyClosedTagsFor is an array, only uses closed tag (`<div />`) for elements with matching tag (if they have no kids).
+ *      * If it's null | undefined, then uses closed tags based on whether has children or not (= only if no children). Defaults to ["img"].
+ */
+declare function readAsString(treeNode: DOMTreeNode, onlyClosedTagsFor?: string[] | null | undefined): string;
+
+/** Clean the given DOM properties. Returns: `{ style?, className?, data?, listeners?, attributes? }`.
+ *      * Note. Does not clean existing styles dictionary, only converts a string format style to dictionary format.
+ * - _className_: Combines "class" and "className" to "className". With both: `props.class + " " + props.className`.
+ * - _style_: Handles "style" separately supporting string vs. dictionary, combines to a dictionary with camelCase names.
+ * - _data_: Converts all "data-*" to a dictionary with camelCase keys (according to the native data attribute convention), and also supports "data" as a stand alone dictionary.
+ * - _listeners_: Converts any known listener props to its listener form, eg. "onClick" or "onclick" both become "click" - with both, the latter value overrides.
+ * - _attributes_: Any other are found in `{ attributes }`. Cleans "aria" related: eg. "ariaAutoComplete" becomes "aria-autocomplete" - with both, the latter value overrides.
+ */
+declare function cleanDOMProps(origProps: DOMUncleanProps): DOMCleanProps;
+/** Comparison method specialized into DOMCleanProps (= cleaned up attributes description of a dom element). */
+declare function equalDOMProps(a: DOMCleanProps, b: DOMCleanProps): boolean;
+/** Returns the dictionaries for differences.
+ * - After the process, the given nextProps then represents the appliedProps, so to speak.
+ * - If element is null, just returns the diffs without applying anything.
+ */
+declare function applyDOMProps(domElement: HTMLElement | SVGElement | Element | null, nextProps: DOMCleanProps, prevProps?: DOMCleanProps, logWarnings?: boolean): DOMDiffProps | null;
+
+export { CSSBlendMode, CSSColorNames, CSSNumericPropertyNames, CSSProperties, DOMAttributes, DOMAttributesBy, DOMAttributesBy_native, DOMAttributes_native, DOMCleanProps, DOMDef, DOMDiffProps, DOMElement, DOMTags, DOMTreeNode, DOMUncleanProps, DataAttributes, GlobalEventHandler, GlobalListeners, GlobalListeners_native, HTMLAttributes, HTMLAttributes_mixed, HTMLAttributes_native, HTMLGlobalAttributes, HTMLGlobalAttributes_native, HTMLTags, NameValidator, PreClassName, SVGAttributes, SVGAttributes_mixed, SVGAttributes_native, SVGTags, Split, SplitArr, ValidateNames, applyDOMProps, classNames, cleanDOMProps, collectNamesTo, createElement, decapitalizeString, domListenerProps, domRenamedAttributes, domSkipAttributes, equalDOMProps, equalSubDictionaries, getClassNameDiffs, getDictionaryDiffs, isNodeSVG, parseDOMStyle, readAsString, readFromDOM, recapitalizeString };

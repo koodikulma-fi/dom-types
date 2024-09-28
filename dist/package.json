@@ -22,13 +22,13 @@
       "type": "git",
       "url": "git+https://github.com/koodikulma-fi/dom-types.git"
     },
-    "module": "./dist/dom-types.module.js",
-    "main": "./dist/dom-types.js",
-    "types": "./dist/dom-types.d.ts",
+    "module": "./dom-types.module.js",
+    "main": "./dom-types.js",
+    "types": "./dom-types.d.ts",
     "exports": {
       ".": {
-        "import": "./dist/dom-types.module.js",
-        "require": "./dist/dom-types.js"
+        "import": "./dom-types.module.js",
+        "require": "./dom-types.js"
       },
       "./package.json": "./package.json"
     }

@@ -30,4 +30,3 @@ A couple of helpers related to style, class names and the camelCase -> native co
 ## 1. TS TOOLS (doc)
 
 ## 2. JS TOOLS (doc)
-

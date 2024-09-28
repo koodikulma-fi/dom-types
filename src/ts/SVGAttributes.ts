@@ -5,7 +5,7 @@
 import { ARIAAttributes, ARIAAttributes_native } from "./ARIAAttributes";
 import { OrString } from "./common";
 import { CSSColorNames, CSSBlendMode, CSSProperties } from "./CSSProperties";
-import { ListenerAttributes, ListenerAttributes_native } from "./ListenerAttributes";
+import { GlobalListeners, GlobalListeners_native } from "./GlobalListeners";
 import { DataAttributes } from "./common";
 // For reusing "a" definition.
 import { HTMLAttributes, HTMLAttributes_native } from "./HTMLAttributes";
@@ -24,16 +24,16 @@ export type SVGTags = keyof SVGNativeAttributesBy;
 
 // SVG attributes.
 /** SVG element attributes by tag name with camelCase listener and aria attributes. */
-export type SVGAttributes<Tag extends SVGTags = SVGTags> = Partial<SVGNativeAttributesBy[Tag] & SVGCoreAttributes & ListenerAttributes & ARIAAttributes>;
+export type SVGAttributes<Tag extends SVGTags = SVGTags> = Partial<SVGNativeAttributesBy[Tag] & SVGCoreAttributes & GlobalListeners & ARIAAttributes>;
 /** SVG element attributes by tag name with lowercase listener and aria attributes. */
-export type SVGAttributes_native<Tag extends SVGTags = SVGTags> = Partial<SVGNativeAttributesBy_native[Tag] & SVGCoreAttributes_native & ListenerAttributes_native & ARIAAttributes_native>;
+export type SVGAttributes_native<Tag extends SVGTags = SVGTags> = Partial<SVGNativeAttributesBy_native[Tag] & SVGCoreAttributes_native & GlobalListeners_native & ARIAAttributes_native>;
 /** SVG element attributes by tag name with both lowercase and camelCase listener keys. */
 export type SVGAttributes_mixed<Tag extends SVGTags = SVGTags> = SVGAttributes<Tag> & SVGAttributes_native<Tag>;
 
 
 // - SVG Generic attributes - //
 
-interface SVGCoreAttributes {
+interface SVGCoreAttributes extends DataAttributes {
     "id": string | number;
     "class": string;
     /** Alias for "class". */
@@ -49,12 +49,14 @@ interface SVGCoreAttributes {
     /** Translates to "xml:space". */
     "xmlSpace": string;
     "xmlns": string;
-    /** Translates to "xml:xlink". */
+    /** Translates to "xmlns:xlink". */
     "xmlnsXlink": string;
 }
-interface SVGCoreAttributes_native {
+interface SVGCoreAttributes_native extends DataAttributes {
     "id": string | number;
     "class": string;
+    /** Alias for "class". */
+    "className": string;
     "lang": string;
     "style": string | CSSProperties;
     "tabindex": string | number;
@@ -253,8 +255,8 @@ interface SVGOtherAttributes extends Omit<SVGOtherAttributes_native,
     | "xlink:title"
     | "xlink:type"
 > {
-    "alignmentBaseline": SVGOtherAttributes_native["alignment-baseline"];
     "accentHeight": SVGOtherAttributes_native["accent-height"];
+    "alignmentBaseline": SVGOtherAttributes_native["alignment-baseline"];
     "allowReorder": SVGOtherAttributes_native["allow-reorder"];
     "arabicForm": SVGOtherAttributes_native["arabic-form"];
     "baselineShift": SVGOtherAttributes_native["baseline-shift"];
@@ -307,8 +309,8 @@ interface SVGOtherAttributes extends Omit<SVGOtherAttributes_native,
     "textDecoration": SVGOtherAttributes_native["text-decoration"];
     "textRendering": SVGOtherAttributes_native["text-rendering"];
     "transformOrigin": SVGOtherAttributes_native["transform-origin"];
-    "underline-position": SVGOtherAttributes_native["underline-position"];
-    "underline-thickness": SVGOtherAttributes_native["underline-thickness"];
+    "underlinePosition": SVGOtherAttributes_native["underline-position"];
+    "underlineThickness": SVGOtherAttributes_native["underline-thickness"];
     "unicodeBidi": SVGOtherAttributes_native["unicode-bidi"];
     "unicodeRange": SVGOtherAttributes_native["unicode-range"];
     "unitsPerEm": SVGOtherAttributes_native["units-per-em"];
@@ -331,7 +333,7 @@ interface SVGOtherAttributes extends Omit<SVGOtherAttributes_native,
     "xlinkType": SVGOtherAttributes_native["xlink:type"];
 }
 /** All attributes that are specific to tags - so excluding SVGCoreAttributes. */
-interface SVGOtherAttributes_native extends DataAttributes {
+interface SVGOtherAttributes_native {
     "accent-height": string | number;
     "alignment-baseline": "auto" | "baseline" | "before-edge" | "text-before-edge" | "middle" | "central" | "after-edge" | "text-after-edge" | "ideographic" | "alphabetic" | "hanging" | "mathematical" | "inherit" | OrString;
     "allow-reorder": "no" | "yes" | OrString;
