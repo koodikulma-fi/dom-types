@@ -285,6 +285,13 @@ export function isNodeSVG(node: Node | null | undefined): boolean {
 }
 
 
+// - - - - - - - - - - - - - - - - - //
+// - - - - - - - - - - - - - - - - - //
+// - - Old alternatives (below)  - - //
+// - - - - - - - - - - - - - - - - - //
+// - - - - - - - - - - - - - - - - - //
+
+
 // // - Imports - //
 //
 // // Typing.
