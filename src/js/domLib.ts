@@ -196,13 +196,13 @@ export function getClassNameDiffs(origName?: string, newName?: string): Record<s
     let did: null | boolean = null;
     if (origNames)
         for (const name of origNames) {
-            if (name && (!newNames || newNames.indexOf(name) === -1))
+            if (name && (!newNames || !newNames.includes(name)))
                 diffs[name] = did = false;
         }
     // Added.
     if (newNames)
         for (const name of newNames) {
-            if (name && (!origNames || origNames.indexOf(name) === -1))
+            if (name && (!origNames || !origNames.includes(name)))
                 diffs[name] = did = true;
         }
     // Return diffs if has any.
