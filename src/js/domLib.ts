@@ -269,11 +269,11 @@ export function equalSubDictionaries<Prop extends string>(a: Partial<Record<Prop
 
 // - DOM - //
 
-/** Creates a new HTML or SVG node - the tag should be in lowercase.
+/** Creates a new HTML or SVG node - the tag is assumed to be in lowercase, only used to detect for "svg", and otherwise fed to the createElement or createElementNS.
  * - Does not insert it the new node into parent, but only uses the parent to help determine whether should be SVG or HTML element.
  * - The namespaceURI defaults to: "http://www.w3.org/2000/svg".
  */
-export function createElement(tag: string, checkByParentNode?: Node | null | undefined, namespaceURI?: string) {
+export function createDOMElement(tag: string, checkByParentNode?: Node | null | undefined, namespaceURI?: string) {
     return tag === "svg" || checkByParentNode && checkByParentNode["ownerSVGElement"] !== undefined ?
         document.createElementNS(namespaceURI || "http://www.w3.org/2000/svg", tag) :
         document.createElement(tag);

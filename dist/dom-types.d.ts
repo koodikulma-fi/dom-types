@@ -1487,11 +1487,11 @@ declare function getClassNameDiffs(origName?: string, newName?: string): Record<
 declare function getDictionaryDiffs<T extends Record<string, any>>(orig: Partial<T>, update: Partial<T>): Partial<T> | null;
 /** Checks if both `a` and `b` contains the same property, which is presumably a dictionary, and if so whether the dictionaries are equal in the shallow sense. If not, returns false. */
 declare function equalSubDictionaries<Prop extends string>(a: Partial<Record<Prop, any>>, b: Partial<Record<Prop, any>>, prop: Prop): boolean;
-/** Creates a new HTML or SVG node - the tag should be in lowercase.
+/** Creates a new HTML or SVG node - the tag is assumed to be in lowercase, only used to detect for "svg", and otherwise fed to the createElement or createElementNS.
  * - Does not insert it the new node into parent, but only uses the parent to help determine whether should be SVG or HTML element.
  * - The namespaceURI defaults to: "http://www.w3.org/2000/svg".
  */
-declare function createElement(tag: string, checkByParentNode?: Node | null | undefined, namespaceURI?: string): Element;
+declare function createDOMElement(tag: string, checkByParentNode?: Node | null | undefined, namespaceURI?: string): Element;
 /** Check if a node is SVG (using ownerSVGElement property on the SVGElement, not present for HTMLElement or basic Node). */
 declare function isNodeSVG(node: Node | null | undefined): boolean;
 
@@ -1534,9 +1534,9 @@ declare function cleanDOMProps(origProps: DOMUncleanProps): DOMCleanProps;
 /** Comparison method specialized into DOMCleanProps (= cleaned up attributes description of a dom element). */
 declare function equalDOMProps(a: DOMCleanProps, b: DOMCleanProps): boolean;
 /** Returns the dictionaries for differences.
- * - After the process, the given nextProps then represents the appliedProps, so to speak.
+ * - After the process, the given newProps then represents the appliedProps, so to speak.
  * - If element is null, just returns the diffs without applying anything.
  */
-declare function applyDOMProps(domElement: HTMLElement | SVGElement | Element | null, nextProps: DOMCleanProps, prevProps?: DOMCleanProps, logWarnings?: boolean): DOMDiffProps | null;
+declare function applyDOMProps(domElement: HTMLElement | SVGElement | Element | null, newProps: DOMCleanProps, oldProps?: DOMCleanProps, logWarnings?: boolean): DOMDiffProps | null;
 
-export { CSSBlendMode, CSSColorNames, CSSNumericPropertyNames, CSSProperties, DOMAttributes, DOMAttributesBy, DOMAttributesBy_native, DOMAttributes_native, DOMCleanProps, DOMDef, DOMDiffProps, DOMElement, DOMTags, DOMTreeNode, DOMUncleanProps, DataAttributes, GlobalEventHandler, GlobalListeners, GlobalListeners_native, HTMLAttributes, HTMLAttributes_mixed, HTMLAttributes_native, HTMLGlobalAttributes, HTMLGlobalAttributes_native, HTMLTags, NameValidator, PreClassName, SVGAttributes, SVGAttributes_mixed, SVGAttributes_native, SVGTags, Split, SplitArr, ValidateNames, applyDOMProps, classNames, cleanDOMProps, collectNamesTo, createElement, decapitalizeString, domListenerProps, domRenamedAttributes, domSkipAttributes, equalDOMProps, equalSubDictionaries, getClassNameDiffs, getDictionaryDiffs, isNodeSVG, parseDOMStyle, readAsString, readFromDOM, recapitalizeString };
+export { CSSBlendMode, CSSColorNames, CSSNumericPropertyNames, CSSProperties, DOMAttributes, DOMAttributesBy, DOMAttributesBy_native, DOMAttributes_native, DOMCleanProps, DOMDef, DOMDiffProps, DOMElement, DOMTags, DOMTreeNode, DOMUncleanProps, DataAttributes, GlobalEventHandler, GlobalListeners, GlobalListeners_native, HTMLAttributes, HTMLAttributes_mixed, HTMLAttributes_native, HTMLGlobalAttributes, HTMLGlobalAttributes_native, HTMLTags, NameValidator, PreClassName, SVGAttributes, SVGAttributes_mixed, SVGAttributes_native, SVGTags, Split, SplitArr, ValidateNames, applyDOMProps, classNames, cleanDOMProps, collectNamesTo, createDOMElement, decapitalizeString, domListenerProps, domRenamedAttributes, domSkipAttributes, equalDOMProps, equalSubDictionaries, getClassNameDiffs, getDictionaryDiffs, isNodeSVG, parseDOMStyle, readAsString, readFromDOM, recapitalizeString };

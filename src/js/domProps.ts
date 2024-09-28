@@ -102,20 +102,20 @@ export function equalDOMProps(a: DOMCleanProps, b: DOMCleanProps): boolean {
 }
 
 /** Returns the dictionaries for differences.
- * - After the process, the given nextProps then represents the appliedProps, so to speak.
+ * - After the process, the given newProps then represents the appliedProps, so to speak.
  * - If element is null, just returns the diffs without applying anything.
  */
-export function applyDOMProps(domElement: HTMLElement | SVGElement | Element | null, nextProps: DOMCleanProps, prevProps: DOMCleanProps = {}, logWarnings: boolean = true): DOMDiffProps | null {
+export function applyDOMProps(domElement: HTMLElement | SVGElement | Element | null, newProps: DOMCleanProps, oldProps: DOMCleanProps = {}, logWarnings: boolean = true): DOMDiffProps | null {
     
     // Prepare.
     const diffs: DOMDiffProps = {};
 
     // Style and/or data.
-    const runStyleData = (prevProps.style || nextProps.style ? 1 : 0) | (prevProps.data || nextProps.data ? 2 : 0) as 0 | 1 | 2 | 3;
+    const runStyleData = (oldProps.style || newProps.style ? 1 : 0) | (oldProps.data || newProps.data ? 2 : 0) as 0 | 1 | 2 | 3;
     if (runStyleData) {
         for (const attr of runStyleData === 1 ? ["style"] : runStyleData === 2 ? ["data"] : ["style", "data"]) {
             // Collect diffs.
-            const subDiffs = getDictionaryDiffs(prevProps[attr] || {}, nextProps[attr] || {});
+            const subDiffs = getDictionaryDiffs(oldProps[attr] || {}, newProps[attr] || {});
             if (subDiffs)
                 diffs[attr] = subDiffs;
             // Apply.
@@ -140,9 +140,9 @@ export function applyDOMProps(domElement: HTMLElement | SVGElement | Element | n
     }
 
     // Class.
-    if (prevProps.className !== undefined || nextProps.className !== undefined) {
+    if (oldProps.className !== undefined || newProps.className !== undefined) {
         // Collect diffs.
-        const classDiffs = getClassNameDiffs(prevProps.className, nextProps.className);
+        const classDiffs = getClassNameDiffs(oldProps.className, newProps.className);
         if (classDiffs)
             diffs.classNames = classDiffs;
         // Apply.
@@ -152,9 +152,9 @@ export function applyDOMProps(domElement: HTMLElement | SVGElement | Element | n
     }
 
     // Attributes.
-    if (prevProps.attributes || nextProps.attributes) {
+    if (oldProps.attributes || newProps.attributes) {
         // Collect diffs.
-        const subDiffs = getDictionaryDiffs(prevProps.attributes || {}, nextProps.attributes || {});
+        const subDiffs = getDictionaryDiffs(oldProps.attributes || {}, newProps.attributes || {});
         if (subDiffs)
             diffs.attributes = subDiffs;
         // Apply.
@@ -173,16 +173,16 @@ export function applyDOMProps(domElement: HTMLElement | SVGElement | Element | n
     }
 
     // Listeners.
-    if (prevProps.listeners || nextProps.listeners) {
+    if (oldProps.listeners || newProps.listeners) {
         // Collect diffs.
-        const subDiffs = getDictionaryDiffs(prevProps.listeners || {}, nextProps.listeners || {});
+        const subDiffs = getDictionaryDiffs(oldProps.listeners || {}, newProps.listeners || {});
         if (subDiffs)
             diffs.attributes = subDiffs;
         // Apply.
         if (subDiffs && domElement) {
             for (const prop in subDiffs) {
                 // Remove old, if had.
-                const oldListener = prevProps.listeners?.[prop] as GlobalEventHandler | undefined;
+                const oldListener = oldProps.listeners?.[prop] as GlobalEventHandler | undefined;
                 if (oldListener)
                     domElement.removeEventListener(prop, oldListener);
                 // Assign new listener.
