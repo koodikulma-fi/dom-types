@@ -11,6 +11,8 @@ import { domListenerProps, domRenamedAttributes, domSkipAttributes } from "./dom
 
 // - DOM props helpers - //
 
+const cssProps = { class: true, className: true, style: true };
+
 /** Clean the given DOM properties. Returns: `{ style?, className?, data?, listeners?, attributes? }`.
  *      * Note. Does not clean existing styles dictionary, only converts a string format style to dictionary format.
  * - _className_: Combines "class" and "className" to "className". With both: `props.class + " " + props.className`.
@@ -20,45 +22,50 @@ import { domListenerProps, domRenamedAttributes, domSkipAttributes } from "./dom
  * - _attributes_: Any other are found in `{ attributes }`. Cleans "aria" related: eg. "ariaAutoComplete" becomes "aria-autocomplete" - with both, the latter value overrides.
  */
 export function cleanDOMProps(origProps: DOMUncleanProps): DOMCleanProps {
-    // Copy.
+    // Loop all mixed up props.
     const props: DOMCleanProps = {};
-    // Class.
-    if (origProps.class)
-        props.className = origProps.className ? origProps.class + " " + origProps.className : origProps.class;
-    // Style.
-    if (origProps.style) {
-        const style = typeof origProps.style === "string" ? parseDOMStyle(origProps.style) : origProps.style;
-        for (const _p in style) {
-            props.style = style;
-            break;
+    for (const prop in origProps) {
+        // Style and class.
+        if (cssProps[prop]) {
+            // Style.
+            if (prop === "style") {
+                // Parse from string, or use a dictionary directly.
+                const style = typeof origProps.style === "string" ? parseDOMStyle(origProps.style) : origProps.style || {};
+                // If has any, assign. (Otherwise leave "style" unassigned.)
+                for (const _p in style) {
+                    props.style = style;
+                    break;
+                }
+            }
+            // Class.
+            else if (origProps[prop])
+                props.className = props.className ? props.className + " " + origProps[prop] : origProps[prop];
         }
-    }
-    // Data.
-    if (origProps.data)
-        props.data = { ...origProps.data };
-    // Attributes, including finding listeners and more data.
-    for (const prop of Object.keys(origProps)) {
         // Listeners.
         if (domListenerProps[prop.toLowerCase()]) {
             // Don't assign empty.
             if (!origProps[prop])
                 continue;
             // Make sure has.
-            if (!props.listeners)
-                props.listeners = {};
+            props.listeners = props.listeners || {};
             // Assign.
             props.listeners[prop.toLowerCase()] = origProps[prop] ?? undefined;
         }
         // Data.
-        else if (prop.startsWith("data-")) {
+        else if (prop.startsWith("data")) {
             // // Don't assign empty.
             // if (origProps[prop] === undefined)
             //     continue;
-            // Make sure has.
-            if (!props.data)
-                props.data = {};
-            // Assign, but convert prop to camelCase and drop "data-". For example: "data-my-value" -> "myValue".
-            props.data[recapitalizeString(prop.slice(5), "-")] = origProps[prop];
+            // One data property.
+            if (prop[4] === "-") {
+                // Make sure has.
+                props.data = props.data || {};
+                // Assign, but convert prop to camelCase and drop "data-". For example: "data-my-value" -> "myValue".
+                props.data[recapitalizeString(prop.slice(5), "-")] = origProps[prop];
+            }
+            // The whole thing.
+            else
+                props.data = { ...props.data, ...origProps.data };
         }
         // Normal attributes.
         else {
@@ -66,14 +73,13 @@ export function cleanDOMProps(origProps: DOMUncleanProps): DOMCleanProps {
             if (origProps[prop] === undefined)
                 continue;
             // Make sure has.
-            if (!props.attributes)
-                props.attributes = {};
+            props.attributes = props.attributes || {};
             // Assign and handle naming conversion for "aria" related.
-            props[domRenamedAttributes[prop] || prop.startsWith("aria") && !prop.startsWith("aria-") && "aria-" + prop.slice(4).toLowerCase() || prop] = origProps[prop];
+            props.attributes[domRenamedAttributes[prop] || prop.startsWith("aria") && prop[4] !== "-" && "aria-" + prop.slice(4).toLowerCase() || prop] = origProps[prop];
         }
     }
     // Return cleaned.
-    return props as any;
+    return props;
 }
 
 /** Comparison method specialized into DOMCleanProps (= cleaned up attributes description of a dom element). */
@@ -122,18 +128,20 @@ export function applyDOMProps(domElement: HTMLElement | SVGElement | Element | n
             if (subDiffs && domElement) {
                 // Data.
                 if (attr === "data") {
-                    const dMap: DOMStringMap | undefined = (domElement as HTMLElement).dataset;
-                    if (dMap)
-                        for (const prop in subDiffs)
-                            subDiffs[prop] !== undefined ? dMap[prop] = subDiffs[prop] : delete dMap[prop];
+                    const dMap = (domElement as HTMLElement | { dataset?: undefined; }).dataset;
+                    if (dMap) {
+                        for (const p in subDiffs)
+                            subDiffs[p] !== undefined ? dMap[p] = subDiffs[p] : delete dMap[p];
+                    }
                 }
                 // For styles, we use the very flexible element.style[prop] = value. If value is null, then will remove.
                 // .. This way, we support both ways to input styles: "backgroundColor" and "background-color".
                 else {
-                    const s: CSSStyleDeclaration | undefined = (domElement as HTMLElement).style;
-                    if (s)
-                        for (const prop in subDiffs)
-                            s[prop] = subDiffs[prop] ?? null;
+                    const s = (domElement as HTMLElement | { style?: undefined; }).style;
+                    if (s) {
+                        for (const p in subDiffs)
+                            s[p] = subDiffs[p] ?? null;
+                    }
                 }
             }
         }
