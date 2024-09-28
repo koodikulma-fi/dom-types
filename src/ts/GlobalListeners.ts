@@ -1,7 +1,7 @@
 
 // - DOM listeners - //
 
-export type GlobalEventHandler = (this: GlobalEventHandlers, ev: UIEvent) => void;
+export type GlobalEventHandler = EventListener;
 export interface GlobalListeners_native extends GlobalEventHandlers {
     onactivate: GlobalEventHandler;
     onbegin: GlobalEventHandler;
