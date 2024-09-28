@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "es2017",
+    "esModuleInterop": false,
+    "module": "es6",
+    "outDir": "./dist",
+    "moduleResolution": "node",
+    "noEmitOnError": true,
+    "declaration": true,
+    "declarationDir": "./dist/dts",
+    "strictNullChecks": true
+  },
+  "include": ["src/index.ts"],
+  "exclude": ["node_modules"]
+}

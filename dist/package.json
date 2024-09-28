@@ -1,0 +1,36 @@
+{
+    "name": "dom-types",
+    "version": "1.0.0",
+    "description": "Typing helpers for DOM attributes (HTML, SVG, CSS).",
+    "keywords": [
+      "DomTypes",
+      "dom-types",
+      "dom types",
+      "dom",
+      "types",
+      "tools",
+      "web",
+      "ts",
+      "typescript",
+      "library"
+    ],
+    "homepage": "https://github.com/koodikulma-fi/dom-types",
+    "author": "Mikael Saurén",
+    "license": "MIT",
+    "private": false,
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/koodikulma-fi/dom-types.git"
+    },
+    "module": "./dist/dom-types.module.js",
+    "main": "./dist/dom-types.js",
+    "types": "./dist/dom-types.d.ts",
+    "exports": {
+      ".": {
+        "import": "./dist/dom-types.module.js",
+        "require": "./dist/dom-types.js"
+      },
+      "./package.json": "./package.json"
+    }
+}
+  
