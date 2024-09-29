@@ -1379,28 +1379,6 @@ interface DOMDiffProps {
     /** If no listeners, no changes in listeners. If value in the dictionary is undefined means removed: eg. `element.removeEventListener(name, callback)`. Otherwise apply: `element.addEventListener(name, callback)`. */
     listeners?: Partial<Record<keyof GlobalEventHandlersEventMap & string, GlobalEventHandler | undefined>>;
 }
-/** A base type for a definition of a state, that can contain dom information (if the tag is a string). */
-interface DOMDef {
-    /** The tag of the thing to render. Typically a string for DOM related features, like "div". For complex, it's likely a function or a class. */
-    tag: any;
-    /** If wanting to insert simple content, or an external node inside. */
-    domContent?: string | number | Node | null;
-    /** If wanting to apply props to a foreign element. */
-    domElement?: Element | null;
-}
-/** A base type for a tree hierarchy for DOM-grounded defs.
- * - Each tree node can contain other tree nodes as `children`.
- * - Each tree node should have a "def" referring to DOMDef, `{ tag, domContent?, domElement? }`.
- * - Each tree node can have "domProps" if related to dom.
- */
-interface DOMTreeNode {
-    /** Any child DOMTreeNodes. Used to form a clean nested tree structure (no cyclical references - or the tree goes forever). */
-    children?: DOMTreeNode[];
-    /** Render definition that ultimately produced this tree node. */
-    def?: DOMDef;
-    /** The applied domProps. Useful for comparing against last state. Should be updated after applying the props to the DOM. */
-    domProps?: DOMCleanProps;
-}
 
 /**
  * - With "-" as replaceBy, functions like this: "testProp" => "test-prop", and "TestProp" => "-test-prop".
@@ -1524,14 +1502,14 @@ declare const domListenerProps: Record<"addEventListener" | "removeEventListener
 
 /** Read the domProps from a node. Does not read listeners, but returns: `{ className?, style?, data?, attributes? }`. */
 declare function readFromDOM(node: HTMLElement | SVGElement | Node): DOMCleanProps;
-/** Read the content inside a (root) tree node as a html string. Useful for server side or static rendering.
- * - Note that the DOMTreeNode is a simple type, that in "dom-types" is only used for this purpose.
- *      * In a state based rendering library, it could be used to keep track of the grounded DOM tree and which def is where.
- *      * But you can also manually convert your structure to the simple DOMTreeNode type, just to use this reader function.
- * - If onlyClosedTagsFor is an array, only uses closed tag (`<div />`) for elements with matching tag (if they have no kids).
- *      * If it's null | undefined, then uses closed tags based on whether has children or not (= only if no children). Defaults to ["img"].
+/** Helper to write a DOM string for a single tag.
+ * - To write a DOM string for a tree of infos, handle the tree externally with recursion and call this with childrenContent for each.
+ * @param tag The tag of the DOM element. If "", reads it from readFromNode if given, or assumes it's a text node like situation: just output the textContent.
+ * @param domProps The cleaned dom props to apply.
+ * @param childrenContent String for the children content to insert inside, or `true` to force a separate opening and closing tag in any case.
+ * @param readFromNode If provided, then sets the tag (if not given) and extends the domProps by reading from the element. If a node, then just the textContent.
  */
-declare function readAsString(treeNode: DOMTreeNode, onlyClosedTagsFor?: string[] | null | undefined): string;
+declare function readDOMString(tag: string, domProps?: DOMCleanProps | null, childrenContent?: string | null | boolean, readFromNode?: Node | null): string;
 
 /** Clean the given DOM properties. Returns: `{ style?, className?, data?, listeners?, attributes? }`.
  *      * Note. Does not clean existing styles dictionary, only converts a string format style to dictionary format.
@@ -1550,4 +1528,4 @@ declare function equalDOMProps(a: DOMCleanProps, b: DOMCleanProps): boolean;
  */
 declare function applyDOMProps(domElement: HTMLElement | SVGElement | Element | null, newProps: DOMCleanProps, oldProps?: DOMCleanProps, logWarnings?: boolean): DOMDiffProps | null;
 
-export { CSSBlendMode, CSSColorNames, CSSNumericPropertyNames, CSSProperties, DOMAttributes, DOMAttributesAny, DOMAttributesAny_native, DOMAttributesBy, DOMAttributesBy_native, DOMAttributes_native, DOMCleanProps, DOMDef, DOMDiffProps, DOMElement, DOMTags, DOMTreeNode, DOMUncleanProps, DataAttributes, GlobalEventHandler, GlobalListeners, GlobalListeners_native, HTMLAttributes, HTMLAttributesAny, HTMLAttributesAny_native, HTMLAttributes_native, HTMLGlobalAttributes, HTMLGlobalAttributes_native, HTMLTags, NameValidator, PreClassName, SVGAttributes, SVGAttributesAny, SVGAttributesAny_native, SVGAttributes_native, SVGTags, Split, SplitArr, ValidateNames, applyDOMProps, classNames, cleanDOMProps, collectNamesTo, createDOMElement, decapitalizeString, domListenerProps, domRenamedAttributes, domSkipAttributes, equalDOMProps, equalSubDictionaries, getClassNameDiffs, getDictionaryDiffs, isNodeSVG, parseDOMStyle, readAsString, readFromDOM, recapitalizeString };
+export { CSSBlendMode, CSSColorNames, CSSNumericPropertyNames, CSSProperties, DOMAttributes, DOMAttributesAny, DOMAttributesAny_native, DOMAttributesBy, DOMAttributesBy_native, DOMAttributes_native, DOMCleanProps, DOMDiffProps, DOMElement, DOMTags, DOMUncleanProps, DataAttributes, GlobalEventHandler, GlobalListeners, GlobalListeners_native, HTMLAttributes, HTMLAttributesAny, HTMLAttributesAny_native, HTMLAttributes_native, HTMLGlobalAttributes, HTMLGlobalAttributes_native, HTMLTags, NameValidator, PreClassName, SVGAttributes, SVGAttributesAny, SVGAttributesAny_native, SVGAttributes_native, SVGTags, Split, SplitArr, ValidateNames, applyDOMProps, classNames, cleanDOMProps, collectNamesTo, createDOMElement, decapitalizeString, domListenerProps, domRenamedAttributes, domSkipAttributes, equalDOMProps, equalSubDictionaries, getClassNameDiffs, getDictionaryDiffs, isNodeSVG, parseDOMStyle, readDOMString, readFromDOM, recapitalizeString };

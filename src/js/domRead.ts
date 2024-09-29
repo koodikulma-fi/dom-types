@@ -2,7 +2,7 @@
 // - Import - //
 
 // Typing.
-import { DOMCleanProps, DOMTags, DOMTreeNode } from "../ts";
+import { DOMCleanProps, DOMTags } from "../ts";
 // Reading.
 import { parseDOMStyle, decapitalizeString, recapitalizeString } from "./domLib";
 // Constants.
@@ -47,55 +47,34 @@ export function readFromDOM(node: HTMLElement | SVGElement | Node): DOMCleanProp
     return domProps;
 }
 
-/** Read the content inside a (root) tree node as a html string. Useful for server side or static rendering.
- * - Note that the DOMTreeNode is a simple type, that in "dom-types" is only used for this purpose.
- *      * In a state based rendering library, it could be used to keep track of the grounded DOM tree and which def is where.
- *      * But you can also manually convert your structure to the simple DOMTreeNode type, just to use this reader function.
- * - If onlyClosedTagsFor is an array, only uses closed tag (`<div />`) for elements with matching tag (if they have no kids).
- *      * If it's null | undefined, then uses closed tags based on whether has children or not (= only if no children). Defaults to ["img"]. 
+/** Helper to write a DOM string for a single tag.
+ * - To write a DOM string for a tree of infos, handle the tree externally with recursion and call this with childrenContent for each.
+ * @param tag The tag of the DOM element. If "", reads it from readFromNode if given, or assumes it's a text node like situation: just output the textContent.
+ * @param domProps The cleaned dom props to apply.
+ * @param childrenContent String for the children content to insert inside, or `true` to force a separate opening and closing tag in any case.
+ * @param readFromNode If provided, then sets the tag (if not given) and extends the domProps by reading from the element. If a node, then just the textContent.
  */
-export function readAsString(treeNode: DOMTreeNode, onlyClosedTagsFor: string[] | null | undefined = ["img"]): string {
-
-    // Get def.
-    const def = treeNode.def;
-    if (!def)
-        return "";
-
-    // Read content.
-    let tag = def.tag;
+export function readDOMString(tag: string, domProps?: DOMCleanProps | null, childrenContent?: string | null | boolean, readFromNode?: Node | null): string {
+    
+    // Prepare.
     let dom = "";
-    // Not dom type - just return the contents inside.
-    if (typeof tag !== "string") {
-        if (treeNode.children)
-            for (const tNode of treeNode.children)
-                dom += readAsString(tNode);
-        return dom;
-    }
+    if (!domProps)
+        domProps = {};
 
-    // Prepare dom type.
-    let element: Node | null = null;
-    // Tagless - text node.
+    // No tag.
     if (!tag) {
-        const content = def.domContent;
-        if (content)
-            content instanceof Node ? element = content : dom += content.toString();
-    }
-    // PseudoElement - get the tag.
-    else if (tag === "_")
-        element = def.domElement || null;
-    // Not valid - or was simple. Not that in the case of simple, there should be no innerDom (it's the same with real dom elements).
-    if (!tag && !element)
-        return dom;
-
-    // Read from element.
-    let domProps = treeNode.domProps || {};
-    if (element) {
-        if (element instanceof Element)
-            tag = element.tagName.toLowerCase() as DOMTags || "";
+        // From element.
+        if (readFromNode instanceof Element)
+            tag = readFromNode.tagName.toLowerCase() as DOMTags || "";
+        // If has no tag at this point, we stop and return the childrenContent and/or our textContent from the simple node.
         if (!tag)
-            return element.textContent || "";
+            return (readFromNode && readFromNode.textContent || "") + (childrenContent === true ? "" : childrenContent || "");
+    }
+
+    // Read from node.
+    if (readFromNode) {
         // Read props from element.
-        const { className, style, data, attributes } = readFromDOM(def.domElement as Element);
+        const { className, style, data, attributes } = readFromDOM(readFromNode);
         // Merge the props together - for conflicts use higher preference for what was just read from dom.
         if (className)
             domProps.className = domProps.className ? domProps.className + " " + className : className;
@@ -112,9 +91,13 @@ export function readAsString(treeNode: DOMTreeNode, onlyClosedTagsFor: string[] 
         for (const prop in attributes)
             domProps[prop] = attributes[prop];
     }
-    // Start tag.
+
+    // Parse.
     const { className, style, data, attributes } = domProps;
+
+    // Start tag.
     dom += "<" + tag;
+
     // Add props.
     // .. Class.
     if (className)
@@ -139,18 +122,20 @@ export function readAsString(treeNode: DOMTreeNode, onlyClosedTagsFor: string[] 
             if (attributes[prop] && !domSkipAttributes[prop] && !domListenerProps[prop.toLowerCase()])
                 dom += ' ' + prop + '="' + attributes[prop]!.toString() + '"';
     }
+
     // Close the tag.
-    if (treeNode.children && treeNode.children[0] !== undefined ? false : !onlyClosedTagsFor || onlyClosedTagsFor.includes(tag))
+    if (!childrenContent)
         dom += "/>";
     else {
         // Close the initial tag.
         dom += ">";
         // Add contents.
-        for (const tNode of treeNode.children || [])
-            dom += readAsString(tNode);
+        if (childrenContent !== true)
+            dom += childrenContent;
         // Close the tag.
         dom += '</' + tag + '>';
     }
 
+    // Return the combined string.
     return dom;
 }

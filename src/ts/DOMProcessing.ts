@@ -57,29 +57,3 @@ export interface DOMDiffProps {
     /** If no listeners, no changes in listeners. If value in the dictionary is undefined means removed: eg. `element.removeEventListener(name, callback)`. Otherwise apply: `element.addEventListener(name, callback)`. */
     listeners?: Partial<Record<keyof GlobalEventHandlersEventMap & string, GlobalEventHandler | undefined>>;
 }
-
-
-// - Abstract DOM tree modelling - //
-
-/** A base type for a definition of a state, that can contain dom information (if the tag is a string). */
-export interface DOMDef {
-    /** The tag of the thing to render. Typically a string for DOM related features, like "div". For complex, it's likely a function or a class. */
-    tag: any;
-    /** If wanting to insert simple content, or an external node inside. */
-    domContent?: string | number | Node | null;
-    /** If wanting to apply props to a foreign element. */
-    domElement?: Element | null;
-}
-/** A base type for a tree hierarchy for DOM-grounded defs.
- * - Each tree node can contain other tree nodes as `children`.
- * - Each tree node should have a "def" referring to DOMDef, `{ tag, domContent?, domElement? }`.
- * - Each tree node can have "domProps" if related to dom.
- */
-export interface DOMTreeNode {
-    /** Any child DOMTreeNodes. Used to form a clean nested tree structure (no cyclical references - or the tree goes forever). */
-    children?: DOMTreeNode[];
-    /** Render definition that ultimately produced this tree node. */
-    def?: DOMDef;
-    /** The applied domProps. Useful for comparing against last state. Should be updated after applying the props to the DOM. */
-    domProps?: DOMCleanProps;
-}
