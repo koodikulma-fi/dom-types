@@ -1,11 +1,13 @@
+/** False like JS values. */
+type FalseLike = "" | 0 | false | null | undefined | void;
 /** Type for className input.
- * - Represents what can be fed into the MixDOM.classNames method with (ValidName extends string):
- *     1. ValidName (single className string),
- *     2. Array<ValidName>,
- *     3. Record<ValidName, any>.
- *     + If you want to use the validation only for Arrays and Records but not Strings, add 2nd parameter `string` to the type: `CleanClassName<ValidName, string>`
+ * - Represents what can be fed into the classNames method with (Valid extends string):
+ *     1. Single string: `Valid | FalseLike`
+ *     2. Array, set or such: `Iterable<Valid | FalseLike>`
+ *     3. Dictionary: `Record<Valid, any>`
+ *     + If you want to use deeper validation use `ValidateNames<Valid>`
  */
-type PreClassName<Valid extends string = string, Single extends string = Valid> = Single | Partial<Record<Valid, any>> | Array<Valid> | Set<Valid>;
+type ClassNameInput<Valid extends string = string, Nulls = FalseLike> = Valid | Nulls | Partial<Record<Valid, any>> | Iterable<Valid | Nulls>;
 /** Split a string into a typed array.
  * - Use with PropType to validate and get deep value types with, say, dotted strings.
  */
@@ -70,7 +72,7 @@ type NameValidator<Valid extends any, Input> = [
  *
  * ```
  */
-type ValidateNames<Valid extends string, Nulls extends any = undefined | null | false | 0 | ""> = <T1 extends NameValidator<Valid | Nulls, T1>, T2 extends NameValidator<Valid | Nulls, T2>, T3 extends NameValidator<Valid | Nulls, T3>, T4 extends NameValidator<Valid | Nulls, T4>, T5 extends NameValidator<Valid | Nulls, T5>, T6 extends NameValidator<Valid | Nulls, T6>, T7 extends NameValidator<Valid | Nulls, T7>, T8 extends NameValidator<Valid | Nulls, T8>, T9 extends NameValidator<Valid | Nulls, T9>, T10 extends NameValidator<Valid | Nulls, T10>, Tn extends NameValidator<Valid, Tn>>(t1?: T1, t2?: T2, t3?: T3, t4?: T4, t5?: T5, t6?: T6, t7?: T7, t8?: T8, t9?: T9, t10?: T10, ...tn: Tn[]) => string;
+type ValidateNames<Valid extends string, Nulls = FalseLike> = <T1 extends NameValidator<Valid | Nulls, T1>, T2 extends NameValidator<Valid | Nulls, T2>, T3 extends NameValidator<Valid | Nulls, T3>, T4 extends NameValidator<Valid | Nulls, T4>, T5 extends NameValidator<Valid | Nulls, T5>, T6 extends NameValidator<Valid | Nulls, T6>, T7 extends NameValidator<Valid | Nulls, T7>, T8 extends NameValidator<Valid | Nulls, T8>, T9 extends NameValidator<Valid | Nulls, T9>, T10 extends NameValidator<Valid | Nulls, T10>, Tn extends NameValidator<Valid, Tn>>(t1?: T1 | ClassNameInput<Valid, Nulls>, t2?: T2 | ClassNameInput<Valid, Nulls>, t3?: T3 | ClassNameInput<Valid, Nulls>, t4?: T4 | ClassNameInput<Valid, Nulls>, t5?: T5 | ClassNameInput<Valid, Nulls>, t6?: T6 | ClassNameInput<Valid, Nulls>, t7?: T7 | ClassNameInput<Valid, Nulls>, t8?: T8 | ClassNameInput<Valid, Nulls>, t9?: T9 | ClassNameInput<Valid, Nulls>, t10?: T10 | ClassNameInput<Valid, Nulls>, ...tn: Tn[]) => string;
 
 type BoolOrStr = boolean | "true" | "false";
 type OrString = string & {};
@@ -1381,13 +1383,19 @@ interface DOMDiffProps {
 }
 
 /**
- * - With "-" as replaceBy, functions like this: "testProp" => "test-prop", and "TestProp" => "-test-prop".
- * - This behaviour mirrors how element.dataset[prop] = value works. For example: `data.TestProp = true`   =>   `<div data--test-prop="true" />`
+ * - With "-" (default) as replaceBy, functions like this:
+ *      * "testProp" => "test-prop"
+ *      * "TestProp" => "-test-prop"
+ *      * "TEST" => "-t-e-s-t"
+ * - This behaviour mirrors how element.dataset[prop] = value works. For example: `dataset.TestProp = true`  =>  `<div data--test-prop="true" />`
  */
 declare function decapitalizeString(str: string, replaceBy?: string): string;
 /**
- * - With "-" as splitter, functions like this: "test-prop" => "testProp", and "-test-prop" => "TestProp".
- * - This behaviour mirrors how element.dataset[prop] = value works. For example: `data.TestProp = true`   =>   `<div data--test-prop="true" />`
+ * - With "-" (default) as splitter, functions like this:
+ *      * "test-prop" => "testProp"
+ *      * "-test-prop" => "TestProp"
+ *      * "--test---prop" => "TestProp"
+ * - This behaviour mirrors how element.dataset[prop] = value works. For example: `<div data--test-prop="true" />`  =>  `dataset.TestProp` // true
  */
 declare function recapitalizeString(str: string, splitter?: string): string;
 /** Parse style string to a dictionary with camelCase keys. Value is string or undefined. */
@@ -1396,78 +1404,99 @@ declare function parseDOMStyle(cssText: string, nullIfEmpty?: false): CSSPropert
 declare function parseDOMStyle(cssText: string, nullIfEmpty?: boolean): CSSProperties | null;
 /** Returns a string to be used as class name (with no duplicates and optional nested TypeScript verification).
  * - Each item in the classNames can be:
- *     1. ValidName (single className string),
- *     2. Array<ValidName>,
- *     3. Record<ValidName, any>.
- *     + If you want to use the validation only for Arrays and Records but not Strings, add 2nd parameter `string` to the type: `classNames<ValidName, string>`
- * - Unfortunately, the name validation inputted here only works for Array and Record types, and single strings.
+ *      1. Single string: `Valid | FalseLike`
+ *      2. Array or set: `Array<Valid | FalseLike> | Set<Valid | FalseLike>`
+ *      3. Dictionary: `Record<Valid, any>`
  * - To use concatenated class name strings (eg. "bold italic"), you should:
- *     1. Declare a validator by: `const classNames: ValidateNames<ValidName> = classNames;`
- *     2. Then use it like this: `const okName = classNames("bold italic", ["bold"], {"italic": false, "bold": true})`;
+ *      1. Declare a validator by: `const classNames: ValidateNames<ValidName> = classNames;`
+ *      2. Then use it like this: `const okName = classNames("bold italic", ["bold"], {"italic": false, "bold": true})`;
  *
  * ```
- *
- * // - Basic JS usage - //
- *
- * // Simple addition with duplication prevention and cutting false-like ("", 0, false, null, undefined).
- * classNames("a", "b", 0, undefined, [false, "b", "c"]); // "a b c"
- * // With long strings, duplicates can happen within - simply checks the new ones to be added.
- * classNames("a b", "b"); // "a b b"
- * // Simulate some validation.
- * classNames("a", 1 && "b", ["b", 0 && "c"], { "d": true, "e": null }); // "a b d"
- *
- *
- * // - Simple usage with typing - //
- *
- * // Let's say only "a" and "b" are valid.
- * type Names = "a" | "b";
- *
- * // Just try "a" and "b" separately.
- * classNames<Names>("a", "b", ["b", "a"]); // "a b"
- * classNames<Names>("a", "a b", ["a b"]); // This fails for "a b" since not valid.
- * // Let's allow anything as simple strings, so we can do "a b".
- * classNames<Names, string>("a", "a b", ["a b"]); // "a a b"
- * // We could use this pattern, if only has like 2 or 3 names. But not recommended.
- * classNames<Names, Names | `${Names} ${Names}`>("a", "a b"); // "a b"
- *
- *
- * // - For full validation use ValidateNames type - //
- *
- * // Prepare.
- * type Names = "a" | "b";
- * const validate = classNames as ValidateNames<Names>;
- *
- * // Do tests.
- * // .. These should not produce errors in typing.
- * validate(["a"]);
- * validate(["a", "b", ""]);
- * validate(["a", "b", "a b", "b a"]);
- * validate(["a", false, undefined, "b"]);
- * validate(["a", false, undefined, "b"] as const);
- * validate({"a": true, "b a": false});
- * validate({"a": true, "b a": false} as const);
- * validate("a", "a b", false, ["a"], ["b a", ""], undefined, {"a": true, "b a": false});
- * // .. These should fail each in typing, since "FAIL" is not part of ValidNames.
- * validate("FAIL");
- * validate(["FAIL"]);
- * validate({"FAIL": false});
- * validate("a", "a b", undefined, "FAIL", ["a", false]);
- * validate("a", "a b", undefined, ["a", "FAIL", false]);
- * validate(["a", "b", "a b", "FAIL", false]);
- * validate("a", "a b", false, ["a"], ["b a", ""], undefined, {"a": true, "b a": false, "FAIL": true});
- * validate("a", "FAIL", "a b", false, ["a"], ["b a", ""], undefined, {"a": true, "b a": false});
- * validate("a", "a b", false, ["a", "FAIL"], ["b a", ""], undefined, {"a": true, "b a": false});
- *
- * ```
+
+// - Basic JS usage - //
+
+// Numeric and false-like are cut off ("", false, null, undefined).
+classNames("a", "b", 0, undefined, [false, "c"], { d: true }); // "a b c d"
+// Each string is splitted by " " and collected to a record, so duplicates are dropped easily.
+classNames("a b", "b", "b b a a", ["b"], { a: true }); // "a b"
+// Simulate some validation.
+classNames("a", 1 && "b", ["b", 0 && "c"], { "d": true, "e": null }); // "a b d"
+// If you input numbers other than 0, they are type guarded - guard stops at first fail.
+classNames(0, 1, -1); // "", though note that 1 nor -1 won't be allowed by TS.
+
+
+// - Simple usage with typing - //
+
+// Let's define our valid names.
+type Names = "a" | "b";
+
+// Just try "a" and "b" separately.
+classNames<Names>("a", "b", ["b", "a"], { a: true }); // "a b"
+classNames<Names>("a", "b", ["b", "a"], { a: true }, "c"); // Type guards against "c"
+classNames<Names>("a", "a b", "b", ["a b"]); // Type guards against "a b".
+// Let's allow any string, but still use suggestions.
+classNames<Names | string & {}>("a", "a b", ["a b"], "c"); // "a b c", won't suggest "c" but allows it.
+// We could also use this pattern for some very specific cases - though, get type heavy quickly.
+classNames<Names | `${Names} ${Names}`>("a", "a b", ["a b"]); // "a b", would not allow "a b b"
+
+
+// - For full concatenated validation use ValidateNames type - //
+
+// Prepare.
+const validNames = classNames as ValidateNames<Names>;
+
+// Do tests. All below output "a b".
+// .. These should not produce errors in typing.
+validNames(["a"], { b: true });
+validNames(["a", "b", ""]);
+validNames(["a", "b", "a b", "b a"]);
+validNames(["a", false, undefined, "b"]);
+validNames(["a", false, undefined, "b"] as const);
+validNames({"a": true, "b a": false});
+validNames({"a": true, "b a": false} as const);
+validNames("a", "a b", false, ["a"], ["b a", ""], undefined, { "a": true, "b a": false });
+// .. These should fail each in typing, since "FAIL" is not part of ValidNames.
+validNames("FAIL");
+validNames(["FAIL"]);
+validNames({"FAIL": false});
+validNames("a", "a b", undefined, "FAIL", ["a", false]);
+validNames("a", "a b", undefined, ["a", "FAIL", false]);
+validNames(["a", "b", "a b", "FAIL", false]);
+validNames("a", "a b", false, ["a"], ["b a", ""], undefined, {"a": true, "FAIL": true, "b a": false});
+validNames("a", "FAIL", "a b", false, ["a"], ["b a", ""], undefined, {"a": true, "b a": false});
+validNames("a", "a b", false, ["a", "FAIL"], ["b a", ""], undefined, {"a": true, "b a": false});
+
+```
  */
-declare function classNames<ValidNames extends string = string, SingleName extends string = ValidNames>(...classNames: Array<PreClassName<ValidNames, SingleName> | "" | false | 0 | null | undefined>): string;
+declare function classNames<ValidNames extends string = string, Inputs extends ClassNameInput<string>[] = [
+    ClassNameInput<ValidNames>?,
+    ClassNameInput<ValidNames>?,
+    ClassNameInput<ValidNames>?,
+    ClassNameInput<ValidNames>?,
+    ClassNameInput<ValidNames>?,
+    ClassNameInput<ValidNames>?,
+    ClassNameInput<ValidNames>?,
+    ClassNameInput<ValidNames>?,
+    ClassNameInput<ValidNames>?,
+    ClassNameInput<ValidNames>?,
+    ClassNameInput<ValidNames>?,
+    ClassNameInput<ValidNames>?,
+    ClassNameInput<ValidNames>?,
+    ClassNameInput<ValidNames>?,
+    ClassNameInput<ValidNames>?,
+    ClassNameInput<ValidNames>?,
+    ClassNameInput<ValidNames>?,
+    ClassNameInput<ValidNames>?,
+    ClassNameInput<ValidNames>?,
+    ClassNameInput<ValidNames>?
+]>(...classNames: Inputs): string;
 /** Collects unique names as dictionary keys with value `true` for each found.
  * - The names are assumed to be:
  *      1. String (use stringSplitter),
  *      2. Iterable of string names, or an iterable of this type itself (recursively).
  *      3. Record where names are keys, values tells whether to include or not.
  */
-declare function collectNamesTo(names: PreClassName, record: Record<string, true>, stringSplitter?: string): void;
+declare function collectNamesTo(names: Exclude<ClassNameInput, FalseLike>, record: Record<string, true>, stringSplitter?: string): void;
 /** Get diffs in class names in the form of: Record<string, boolean>, where true means added, false removed, otherwise not included.
  * - Note. This process only checks for changes - it ignores changes in order completely.
  */
@@ -1476,13 +1505,6 @@ declare function getClassNameDiffs(origName?: string, newName?: string): Record<
 declare function getDictionaryDiffs<T extends Record<string, any>>(orig: Partial<T>, update: Partial<T>): Partial<T> | null;
 /** Checks if both `a` and `b` contains the same property, which is presumably a dictionary, and if so whether the dictionaries are equal in the shallow sense. If not, returns false. */
 declare function equalSubDictionaries<Prop extends string>(a: Partial<Record<Prop, any>>, b: Partial<Record<Prop, any>>, prop: Prop): boolean;
-/** Creates a new HTML or SVG node - the tag is assumed to be in lowercase, only used to detect for "svg", and otherwise fed to the createElement or createElementNS.
- * - Does not insert it the new node into parent, but only uses the parent to help determine whether should be SVG or HTML element.
- * - The namespaceURI defaults to: "http://www.w3.org/2000/svg".
- */
-declare function createDOMElement(tag: string, checkByParentNode?: Node | null | undefined, namespaceURI?: string): Element;
-/** Check if a node is SVG (using ownerSVGElement property on the SVGElement, not present for HTMLElement or basic Node). */
-declare function isNodeSVG(node: Node | null | undefined): boolean;
 
 declare const domSkipAttributes: {
     innerHTML: boolean;
@@ -1500,17 +1522,16 @@ declare const domRenamedAttributes: Partial<Record<string, string>>;
 /** Maps native listener attribute names to the event names. For example: `{ "onclick": "click" }`. Assumed usage: `const listenerProp = domListenerProps[attr.toLowerCase()]`. */
 declare const domListenerProps: Record<"addEventListener" | "removeEventListener" | "onabort" | "onanimationcancel" | "onanimationend" | "onanimationiteration" | "onanimationstart" | "onauxclick" | "onbeforeinput" | "onblur" | "oncancel" | "oncanplay" | "oncanplaythrough" | "onchange" | "onclick" | "onclose" | "oncontextmenu" | "oncuechange" | "ondblclick" | "ondrag" | "ondragend" | "ondragenter" | "ondragleave" | "ondragover" | "ondragstart" | "ondrop" | "ondurationchange" | "onemptied" | "onended" | "onerror" | "onfocus" | "onformdata" | "ongotpointercapture" | "oninput" | "oninvalid" | "onkeydown" | "onkeypress" | "onkeyup" | "onload" | "onloadeddata" | "onloadedmetadata" | "onloadstart" | "onlostpointercapture" | "onmousedown" | "onmouseenter" | "onmouseleave" | "onmousemove" | "onmouseout" | "onmouseover" | "onmouseup" | "onpause" | "onplay" | "onplaying" | "onpointercancel" | "onpointerdown" | "onpointerenter" | "onpointerleave" | "onpointermove" | "onpointerout" | "onpointerover" | "onpointerup" | "onprogress" | "onratechange" | "onreset" | "onresize" | "onscroll" | "onsecuritypolicyviolation" | "onseeked" | "onseeking" | "onselect" | "onselectionchange" | "onselectstart" | "onslotchange" | "onstalled" | "onsubmit" | "onsuspend" | "ontimeupdate" | "ontoggle" | "ontouchcancel" | "ontouchend" | "ontouchmove" | "ontouchstart" | "ontransitioncancel" | "ontransitionend" | "ontransitionrun" | "ontransitionstart" | "onvolumechange" | "onwaiting" | "onwebkitanimationend" | "onwebkitanimationiteration" | "onwebkitanimationstart" | "onwebkittransitionend" | "onwheel" | "onunload" | "onactivate" | "onbegin" | "onend" | "onfocusin" | "onfocusout" | "onmousewheel" | "onrepeat" | "onshow", string>;
 
-/** Read the domProps from a node. Does not read listeners, but returns: `{ className?, style?, data?, attributes? }`. */
-declare function readFromDOM(node: HTMLElement | SVGElement | Node): DOMCleanProps;
-/** Helper to write a DOM string for a single tag.
- * - To write a DOM string for a tree of infos, handle the tree externally with recursion and call this with childrenContent for each.
- * @param tag The tag of the DOM element. If "", reads it from readFromNode if given, or assumes it's a text node like situation: just output the textContent.
- * @param domProps The cleaned dom props to apply.
- * @param childrenContent String for the children content to insert inside, or `true` to force a separate opening and closing tag in any case.
- * @param readFromNode If provided, then sets the tag (if not given) and extends the domProps by reading from the element. If a node, then just the textContent.
+/** Creates a new HTML or SVG node - the tag is assumed to be in lowercase, only used to detect for "svg", and otherwise fed to the createElement or createElementNS.
+ * - Does not insert it the new node into parent, but only uses the parent to help determine whether should be SVG or HTML element.
+ * - The namespaceURI defaults to: "http://www.w3.org/2000/svg".
  */
-declare function readDOMString(tag: string, domProps?: DOMCleanProps | null, childrenContent?: string | null | boolean, readFromNode?: Node | null): string;
+declare function createDOMElement(tag: string, checkByParentNode?: Node | null | undefined, namespaceURI?: string): Element;
+/** Check if a node is SVG (using ownerSVGElement property on the SVGElement, not present for HTMLElement or basic Node). */
+declare function isNodeSVG(node: Node | null | undefined): boolean;
 
+/** Read the domProps from a node. Does not read listeners, but returns: `{ className?, style?, data?, attributes? }`. */
+declare function readDOMProps(node: HTMLElement | SVGElement | Node): DOMCleanProps;
 /** Clean the given DOM properties. Returns: `{ style?, className?, data?, listeners?, attributes? }`.
  *      * Note. Does not clean existing styles dictionary, only converts a string format style to dictionary format.
  * - _className_: Combines "class" and "className" to "className". With both: `props.class + " " + props.className`.
@@ -1528,4 +1549,13 @@ declare function equalDOMProps(a: DOMCleanProps, b: DOMCleanProps): boolean;
  */
 declare function applyDOMProps(domElement: HTMLElement | SVGElement | Element | null, newProps: DOMCleanProps, oldProps?: DOMCleanProps, logWarnings?: boolean): DOMDiffProps | null;
 
-export { CSSBlendMode, CSSColorNames, CSSNumericPropertyNames, CSSProperties, DOMAttributes, DOMAttributesAny, DOMAttributesAny_native, DOMAttributesBy, DOMAttributesBy_native, DOMAttributes_native, DOMCleanProps, DOMDiffProps, DOMElement, DOMTags, DOMUncleanProps, DataAttributes, GlobalEventHandler, GlobalListeners, GlobalListeners_native, HTMLAttributes, HTMLAttributesAny, HTMLAttributesAny_native, HTMLAttributes_native, HTMLGlobalAttributes, HTMLGlobalAttributes_native, HTMLTags, NameValidator, PreClassName, SVGAttributes, SVGAttributesAny, SVGAttributesAny_native, SVGAttributes_native, SVGTags, Split, SplitArr, ValidateNames, applyDOMProps, classNames, cleanDOMProps, collectNamesTo, createDOMElement, decapitalizeString, domListenerProps, domRenamedAttributes, domSkipAttributes, equalDOMProps, equalSubDictionaries, getClassNameDiffs, getDictionaryDiffs, isNodeSVG, parseDOMStyle, readDOMString, readFromDOM, recapitalizeString };
+/** Helper to write a DOM string for a single tag.
+ * - To write a DOM string for a tree of infos, handle the tree externally with recursion and call this with childrenContent for each.
+ * @param tag The tag of the DOM element. If "", reads it from readFromNode if given, or assumes it's a text node like situation: just output the textContent.
+ * @param domProps The cleaned dom props to apply.
+ * @param childrenContent String for the children content to insert inside, or `true` to force a separate opening and closing tag in any case.
+ * @param readFromNode If provided, then sets the tag (if not given) and extends the domProps by reading from the element. If a node, then just the textContent.
+ */
+declare function readDOMString(tag: string, domProps?: DOMCleanProps | null, childrenContent?: string | null | boolean, readFromNode?: Node | null): string;
+
+export { CSSBlendMode, CSSColorNames, CSSNumericPropertyNames, CSSProperties, ClassNameInput, DOMAttributes, DOMAttributesAny, DOMAttributesAny_native, DOMAttributesBy, DOMAttributesBy_native, DOMAttributes_native, DOMCleanProps, DOMDiffProps, DOMElement, DOMTags, DOMUncleanProps, DataAttributes, FalseLike, GlobalEventHandler, GlobalListeners, GlobalListeners_native, HTMLAttributes, HTMLAttributesAny, HTMLAttributesAny_native, HTMLAttributes_native, HTMLGlobalAttributes, HTMLGlobalAttributes_native, HTMLTags, NameValidator, SVGAttributes, SVGAttributesAny, SVGAttributesAny_native, SVGAttributes_native, SVGTags, Split, SplitArr, ValidateNames, applyDOMProps, classNames, cleanDOMProps, collectNamesTo, createDOMElement, decapitalizeString, domListenerProps, domRenamedAttributes, domSkipAttributes, equalDOMProps, equalSubDictionaries, getClassNameDiffs, getDictionaryDiffs, isNodeSVG, parseDOMStyle, readDOMProps, readDOMString, recapitalizeString };

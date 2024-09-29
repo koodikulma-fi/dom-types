@@ -2,7 +2,7 @@
 // - Imports - //
 
 // Typing.
-import { DOMCleanProps, DOMDiffProps, DOMUncleanProps, GlobalEventHandler } from "../ts";
+import { DOMCleanProps, DOMDiffProps, DOMUncleanProps } from "../ts";
 // Library.
 import { equalSubDictionaries, getClassNameDiffs, getDictionaryDiffs, parseDOMStyle, recapitalizeString } from "./domLib";
 // Constants.
@@ -12,6 +12,45 @@ import { domListenerProps, domRenamedAttributes, domSkipAttributes } from "./dom
 // - DOM props helpers - //
 
 const cssProps = { class: true, className: true, style: true };
+
+
+// - Reading from DOM (skipping listeners) - //
+
+/** Read the domProps from a node. Does not read listeners, but returns: `{ className?, style?, data?, attributes? }`. */
+export function readDOMProps(node: HTMLElement | SVGElement | Node): DOMCleanProps {
+    // Prepare.
+    const domProps: DOMCleanProps = {};
+    if (!(node instanceof Element))
+        return domProps;
+    // Read from attributes.
+    for (const attr of node.getAttributeNames()) {
+        switch(attr) {
+            case "style": {
+                const style = parseDOMStyle((node as HTMLElement | SVGElement).style.cssText, true);
+                if (style)
+                    domProps.style = style;
+                break;
+            }
+            case "class":
+                domProps.className = node.className;
+                break;
+            default: {
+                // Data based.
+                if (attr.startsWith("data-")) {
+                    domProps.data = domProps.data || {};
+                    domProps.data[recapitalizeString(attr.slice(5))] = node.getAttribute(attr);
+                }
+                // Others are just attributes, we don't get listeners by getAttributeNames.
+                else {
+                    domProps.attributes = domProps.attributes || {};
+                    domProps.attributes[attr] = node.getAttribute(attr) ?? undefined;
+                }
+            }
+        }
+    }
+    // Return collected.
+    return domProps;
+}
 
 /** Clean the given DOM properties. Returns: `{ style?, className?, data?, listeners?, attributes? }`.
  *      * Note. Does not clean existing styles dictionary, only converts a string format style to dictionary format.
@@ -62,7 +101,7 @@ export function cleanDOMProps(origProps: DOMUncleanProps): DOMCleanProps {
                 // Make sure has.
                 props.data = props.data || {};
                 // Assign, but convert prop to camelCase and drop "data-". For example: "data-my-value" -> "myValue".
-                props.data[recapitalizeString(prop.slice(5), "-")] = origProps[prop];
+                props.data[recapitalizeString(prop.slice(5))] = origProps[prop];
             }
             // The whole thing.
             else

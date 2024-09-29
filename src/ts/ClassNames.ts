@@ -1,16 +1,16 @@
 
 // - Simple validation - //
 
+/** False like JS values. */
+export type FalseLike = "" | 0 | false | null | undefined | void;
 /** Type for className input.
- * - Represents what can be fed into the MixDOM.classNames method with (ValidName extends string):
- *     1. ValidName (single className string),
- *     2. Array<ValidName>,
- *     3. Record<ValidName, any>.
- *     + If you want to use the validation only for Arrays and Records but not Strings, add 2nd parameter `string` to the type: `CleanClassName<ValidName, string>`
+ * - Represents what can be fed into the classNames method with (Valid extends string):
+ *     1. Single string: `Valid | FalseLike`
+ *     2. Array, set or such: `Iterable<Valid | FalseLike>`
+ *     3. Dictionary: `Record<Valid, any>`
+ *     + If you want to use deeper validation use `ValidateNames<Valid>`
  */
-export type PreClassName<Valid extends string = string, Single extends string = Valid> = Single | Partial<Record<Valid, any>> | Array<Valid> | Set<Valid>;
-//
-// <-- Let's not allow deep anymore, it also messes with arrays and the <Single>. So dropping the recursion: | Array<PreClassName<Valid, Single>> | Set<PreClassName<Valid, Single>>;
+export type ClassNameInput<Valid extends string = string, Nulls = FalseLike> = Valid | Nulls | Partial<Record<Valid, any>> | Iterable<Valid | Nulls>;
 
 
 // - Split helpers - //
@@ -88,7 +88,7 @@ export type NameValidator<Valid extends any, Input> =
  * 
  * ```
  */
-export type ValidateNames<Valid extends string, Nulls extends any = undefined | null | false | 0 | ""> = <
+export type ValidateNames<Valid extends string, Nulls = FalseLike> = <
     T1 extends NameValidator<Valid | Nulls, T1>,
     T2 extends NameValidator<Valid | Nulls, T2>,
     T3 extends NameValidator<Valid | Nulls, T3>,
@@ -100,4 +100,17 @@ export type ValidateNames<Valid extends string, Nulls extends any = undefined | 
     T9 extends NameValidator<Valid | Nulls, T9>,
     T10 extends NameValidator<Valid | Nulls, T10>,
     Tn extends NameValidator<Valid, Tn>
->(t1?: T1, t2?: T2, t3?: T3, t4?: T4, t5?: T5, t6?: T6, t7?: T7, t8?: T8, t9?: T9, t10?: T10, ...tn: Tn[]) => string;
+>(
+    // Let's also provide suggestions with ClassNameInput.
+    t1?: T1 | ClassNameInput<Valid, Nulls>,
+    t2?: T2 | ClassNameInput<Valid, Nulls>,
+    t3?: T3 | ClassNameInput<Valid, Nulls>,
+    t4?: T4 | ClassNameInput<Valid, Nulls>,
+    t5?: T5 | ClassNameInput<Valid, Nulls>,
+    t6?: T6 | ClassNameInput<Valid, Nulls>,
+    t7?: T7 | ClassNameInput<Valid, Nulls>,
+    t8?: T8 | ClassNameInput<Valid, Nulls>,
+    t9?: T9 | ClassNameInput<Valid, Nulls>,
+    t10?: T10 | ClassNameInput<Valid, Nulls>,
+    ...tn: Tn[]
+) => string;

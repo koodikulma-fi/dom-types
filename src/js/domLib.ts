@@ -2,25 +2,31 @@
 // - Imports - //
 
 // Typing.
-import { CSSProperties, PreClassName } from "../ts";
+import { CSSProperties, FalseLike, ClassNameInput } from "../ts";
 
 
 // - String - //
 
 // Thanks to: https://stackoverflow.com/questions/24758284/how-to-change-camelcase-to-slug-case-or-kabob-case-via-regex-in-javascript
 /**
- * - With "-" as replaceBy, functions like this: "testProp" => "test-prop", and "TestProp" => "-test-prop".
- * - This behaviour mirrors how element.dataset[prop] = value works. For example: `data.TestProp = true`   =>   `<div data--test-prop="true" />`
+ * - With "-" (default) as replaceBy, functions like this:
+ *      * "testProp" => "test-prop"
+ *      * "TestProp" => "-test-prop"
+ *      * "TEST" => "-t-e-s-t"
+ * - This behaviour mirrors how element.dataset[prop] = value works. For example: `dataset.TestProp = true`  =>  `<div data--test-prop="true" />`
  */
-export function decapitalizeString(str: string, replaceBy: string = ""): string {
+export function decapitalizeString(str: string, replaceBy: string = "-"): string {
     return str.replace(/([A-Z])/g, replaceBy + "$1").toLowerCase();
 }
 /**
- * - With "-" as splitter, functions like this: "test-prop" => "testProp", and "-test-prop" => "TestProp".
- * - This behaviour mirrors how element.dataset[prop] = value works. For example: `data.TestProp = true`   =>   `<div data--test-prop="true" />`
+ * - With "-" (default) as splitter, functions like this:
+ *      * "test-prop" => "testProp"
+ *      * "-test-prop" => "TestProp"
+ *      * "--test---prop" => "TestProp"
+ * - This behaviour mirrors how element.dataset[prop] = value works. For example: `<div data--test-prop="true" />`  =>  `dataset.TestProp` // true
  */
-export function recapitalizeString(str: string, splitter: string = ""): string {
-    return str.split(splitter).map((s, i) => i ? s[0].toUpperCase() + s.slice(1) : s).join("");
+export function recapitalizeString(str: string, splitter: string = "-"): string {
+    return str.split(splitter).map((s, i) => s ? i ? s[0].toUpperCase() + s.slice(1) : s : "").join("");
 }
 
 
@@ -54,71 +60,97 @@ export function parseDOMStyle(cssText: string, nullIfEmpty: boolean = false): CS
 
 /** Returns a string to be used as class name (with no duplicates and optional nested TypeScript verification).
  * - Each item in the classNames can be:
- *     1. ValidName (single className string),
- *     2. Array<ValidName>,
- *     3. Record<ValidName, any>.
- *     + If you want to use the validation only for Arrays and Records but not Strings, add 2nd parameter `string` to the type: `classNames<ValidName, string>`
- * - Unfortunately, the name validation inputted here only works for Array and Record types, and single strings.
+ *      1. Single string: `Valid | FalseLike`
+ *      2. Array or set: `Array<Valid | FalseLike> | Set<Valid | FalseLike>`
+ *      3. Dictionary: `Record<Valid, any>`
  * - To use concatenated class name strings (eg. "bold italic"), you should:
- *     1. Declare a validator by: `const classNames: ValidateNames<ValidName> = classNames;`
- *     2. Then use it like this: `const okName = classNames("bold italic", ["bold"], {"italic": false, "bold": true})`;
+ *      1. Declare a validator by: `const classNames: ValidateNames<ValidName> = classNames;`
+ *      2. Then use it like this: `const okName = classNames("bold italic", ["bold"], {"italic": false, "bold": true})`;
  * 
  * ```
- * 
- * // - Basic JS usage - //
- * 
- * // Simple addition with duplication prevention and cutting false-like ("", 0, false, null, undefined).
- * classNames("a", "b", 0, undefined, [false, "b", "c"]); // "a b c"
- * // With long strings, duplicates can happen within - simply checks the new ones to be added.
- * classNames("a b", "b"); // "a b b"
- * // Simulate some validation.
- * classNames("a", 1 && "b", ["b", 0 && "c"], { "d": true, "e": null }); // "a b d"
- * 
- * 
- * // - Simple usage with typing - //
- * 
- * // Let's say only "a" and "b" are valid.
- * type Names = "a" | "b";
- * 
- * // Just try "a" and "b" separately.
- * classNames<Names>("a", "b", ["b", "a"]); // "a b"
- * classNames<Names>("a", "a b", ["a b"]); // This fails for "a b" since not valid.
- * // Let's allow anything as simple strings, so we can do "a b".
- * classNames<Names, string>("a", "a b", ["a b"]); // "a a b"
- * // We could use this pattern, if only has like 2 or 3 names. But not recommended.
- * classNames<Names, Names | `${Names} ${Names}`>("a", "a b"); // "a b"
- * 
- * 
- * // - For full validation use ValidateNames type - //
- * 
- * // Prepare.
- * type Names = "a" | "b";
- * const validate = classNames as ValidateNames<Names>;
- * 
- * // Do tests.
- * // .. These should not produce errors in typing.
- * validate(["a"]);
- * validate(["a", "b", ""]);
- * validate(["a", "b", "a b", "b a"]);
- * validate(["a", false, undefined, "b"]);
- * validate(["a", false, undefined, "b"] as const);
- * validate({"a": true, "b a": false});
- * validate({"a": true, "b a": false} as const);
- * validate("a", "a b", false, ["a"], ["b a", ""], undefined, {"a": true, "b a": false});
- * // .. These should fail each in typing, since "FAIL" is not part of ValidNames.
- * validate("FAIL");
- * validate(["FAIL"]);
- * validate({"FAIL": false});
- * validate("a", "a b", undefined, "FAIL", ["a", false]);
- * validate("a", "a b", undefined, ["a", "FAIL", false]);
- * validate(["a", "b", "a b", "FAIL", false]);
- * validate("a", "a b", false, ["a"], ["b a", ""], undefined, {"a": true, "b a": false, "FAIL": true});
- * validate("a", "FAIL", "a b", false, ["a"], ["b a", ""], undefined, {"a": true, "b a": false});
- * validate("a", "a b", false, ["a", "FAIL"], ["b a", ""], undefined, {"a": true, "b a": false});
- * 
- * ```
+
+// - Basic JS usage - //
+
+// Numeric and false-like are cut off ("", false, null, undefined).
+classNames("a", "b", 0, undefined, [false, "c"], { d: true }); // "a b c d"
+// Each string is splitted by " " and collected to a record, so duplicates are dropped easily.
+classNames("a b", "b", "b b a a", ["b"], { a: true }); // "a b"
+// Simulate some validation.
+classNames("a", 1 && "b", ["b", 0 && "c"], { "d": true, "e": null }); // "a b d"
+// If you input numbers other than 0, they are type guarded - guard stops at first fail.
+classNames(0, 1, -1); // "", though note that 1 nor -1 won't be allowed by TS.
+
+
+// - Simple usage with typing - //
+
+// Let's define our valid names.
+type Names = "a" | "b";
+
+// Just try "a" and "b" separately.
+classNames<Names>("a", "b", ["b", "a"], { a: true }); // "a b"
+classNames<Names>("a", "b", ["b", "a"], { a: true }, "c"); // Type guards against "c"
+classNames<Names>("a", "a b", "b", ["a b"]); // Type guards against "a b".
+// Let's allow any string, but still use suggestions.
+classNames<Names | string & {}>("a", "a b", ["a b"], "c"); // "a b c", won't suggest "c" but allows it.
+// We could also use this pattern for some very specific cases - though, get type heavy quickly.
+classNames<Names | `${Names} ${Names}`>("a", "a b", ["a b"]); // "a b", would not allow "a b b"
+
+
+// - For full concatenated validation use ValidateNames type - //
+
+// Prepare.
+const validNames = classNames as ValidateNames<Names>;
+
+// Do tests. All below output "a b".
+// .. These should not produce errors in typing.
+validNames(["a"], { b: true });
+validNames(["a", "b", ""]);
+validNames(["a", "b", "a b", "b a"]);
+validNames(["a", false, undefined, "b"]);
+validNames(["a", false, undefined, "b"] as const);
+validNames({"a": true, "b a": false});
+validNames({"a": true, "b a": false} as const);
+validNames("a", "a b", false, ["a"], ["b a", ""], undefined, { "a": true, "b a": false });
+// .. These should fail each in typing, since "FAIL" is not part of ValidNames.
+validNames("FAIL");
+validNames(["FAIL"]);
+validNames({"FAIL": false});
+validNames("a", "a b", undefined, "FAIL", ["a", false]);
+validNames("a", "a b", undefined, ["a", "FAIL", false]);
+validNames(["a", "b", "a b", "FAIL", false]);
+validNames("a", "a b", false, ["a"], ["b a", ""], undefined, {"a": true, "FAIL": true, "b a": false});
+validNames("a", "FAIL", "a b", false, ["a"], ["b a", ""], undefined, {"a": true, "b a": false});
+validNames("a", "a b", false, ["a", "FAIL"], ["b a", ""], undefined, {"a": true, "b a": false});
+
+```
  */
-export function classNames<ValidNames extends string = string, SingleName extends string = ValidNames>(...classNames: Array<PreClassName<ValidNames, SingleName> | "" | false | 0 | null | undefined>): string {
+export function classNames<
+    // Type argument.
+    ValidNames extends string = string,
+    // Local variable - let's allow 20 name args.
+    Inputs extends ClassNameInput<string>[] = [
+        ClassNameInput<ValidNames>?,
+        ClassNameInput<ValidNames>?,
+        ClassNameInput<ValidNames>?,
+        ClassNameInput<ValidNames>?,
+        ClassNameInput<ValidNames>?,
+        ClassNameInput<ValidNames>?,
+        ClassNameInput<ValidNames>?,
+        ClassNameInput<ValidNames>?,
+        ClassNameInput<ValidNames>?,
+        ClassNameInput<ValidNames>?,
+        ClassNameInput<ValidNames>?,
+        ClassNameInput<ValidNames>?,
+        ClassNameInput<ValidNames>?,
+        ClassNameInput<ValidNames>?,
+        ClassNameInput<ValidNames>?,
+        ClassNameInput<ValidNames>?,
+        ClassNameInput<ValidNames>?,
+        ClassNameInput<ValidNames>?,
+        ClassNameInput<ValidNames>?,
+        ClassNameInput<ValidNames>?,
+    ]
+>(...classNames: Inputs): string {
     // Collect all to a dictionary.
     const record: Record<string, true> = {};
     for (const name of classNames)
@@ -134,7 +166,7 @@ export function classNames<ValidNames extends string = string, SingleName extend
  *      2. Iterable of string names, or an iterable of this type itself (recursively).
  *      3. Record where names are keys, values tells whether to include or not.
  */
-export function collectNamesTo(names: PreClassName, record: Record<string, true>, stringSplitter: string = ""): void {
+export function collectNamesTo(names: Exclude<ClassNameInput, FalseLike>, record: Record<string, true>, stringSplitter: string = ""): void {
     // Note, this assumes names is not empty (especially not null or "").
     switch(typeof names) {
         // String, split by empty spaces.
@@ -261,136 +293,3 @@ export function equalSubDictionaries<Prop extends string>(a: Partial<Record<Prop
     // Are equal - neither had it, or both had it and were equal for shallow comparison.
     return true;
 }
-
-
-// - DOM - //
-
-/** Creates a new HTML or SVG node - the tag is assumed to be in lowercase, only used to detect for "svg", and otherwise fed to the createElement or createElementNS.
- * - Does not insert it the new node into parent, but only uses the parent to help determine whether should be SVG or HTML element.
- * - The namespaceURI defaults to: "http://www.w3.org/2000/svg".
- */
-export function createDOMElement(tag: string, checkByParentNode?: Node | null | undefined, namespaceURI?: string) {
-    return tag === "svg" || checkByParentNode && checkByParentNode["ownerSVGElement"] !== undefined ?
-        document.createElementNS(namespaceURI || "http://www.w3.org/2000/svg", tag) :
-        document.createElement(tag);
-}
-
-/** Check if a node is SVG (using ownerSVGElement property on the SVGElement, not present for HTMLElement or basic Node). */
-export function isNodeSVG(node: Node | null | undefined): boolean {
-    return node && node["ownerSVGElement"] !== undefined || false;
-}
-
-
-// - - - - - - - - - - - - - - - - - //
-// - - - - - - - - - - - - - - - - - //
-// - - Old alternatives (below)  - - //
-// - - - - - - - - - - - - - - - - - //
-// - - - - - - - - - - - - - - - - - //
-
-
-// // - Imports - //
-//
-// // Typing.
-// import { CSSProperties, PreClassName } from "../ts";
-//
-//
-// // - Local constants - //
-//
-// const svgTags = {
-//     a: "maybe", // It's almost like in HTML, but has that "xlink:href".
-//     animate: true,
-//     animateMotion: true,
-//     animateTransform: true,
-//     circle: true,
-//     clipPath: true,
-//     defs: true,
-//     desc: true,
-//     ellipse: true,
-//     feBlend: true,
-//     feColorMatrix: true,
-//     feComponentTransfer: true,
-//     feComposite: true,
-//     feConvolveMatrix: true,
-//     feDiffuseLighting: true,
-//     feDisplacementMap: true,
-//     feDistantLight: true,
-//     feDropShadow: true,
-//     feFlood: true,
-//     feFuncA: true,
-//     feFuncB: true,
-//     feFuncG: true,
-//     feFuncR: true,
-//     feGaussianBlur: true,
-//     feImage: true,
-//     feMergeNode: true,
-//     feMorphology: true,
-//     feOffset: true,
-//     fePointLight: true,
-//     feSpecularLighting: true,
-//     feSpotLight: true,
-//     feTile: true,
-//     feTurbulunece: true,
-//     filter: true,
-//     foreignObject: true,
-//     g: true,
-//     image: true,
-//     line: true,
-//     linearGradient: true,
-//     marker: true,
-//     mask: true,
-//     metadata: true,
-//     mpath: true,
-//     path: true,
-//     pattern: true,
-//     polygon: true,
-//     polyline: true,
-//     radialGradient: true,
-//     rect: true,
-//     script: true,
-//     set: true,
-//     stop: true,
-//     style: true,
-//     svg: true,
-//     switch: true,
-//     symbol: true,
-//     text: true,
-//     textPath: true,
-//     title: true,
-//     tspan: true,
-//     use: true,
-//     view: true,
-// } as const;
-//
-//
-// // - Helpers - //
-//
-// /** Creates a new HTML or SVG node - the tag should be in lowercase.
-//  * - Does not insert it the new node into parent, but only uses the parent to help determine whether should be SVG or HTML element.
-//  * - The SVGNamespaceURI defaults to: "http://www.w3.org/2000/svg".
-//  */
-// export function createElement(tag: string, checkByParentNode?: Node | null | undefined, SVGNamespaceURI?: string) {
-//     return tag === "svg" || checkByParentNode && checkByParentNode["ownerSVGElement"] !== undefined ?
-//         document.createElementNS(SVGNamespaceURI || "http://www.w3.org/2000/svg", tag) :
-//         document.createElement(tag);
-// }
-//
-// /** Determine by tag and/or parentNode, whether should create an SVG or HTML element. Checks the explicitly always SVG tags, or otherwise parentNode's ownerSVGElement. */
-// export function shouldBeSVG(kidTag: string, parentNode?: Node | null | undefined): boolean {
-//     return svgTags[kidTag] === true || parentNode && parentNode["ownerSVGElement"] !== undefined || false;
-//     // return kidTag === "svg" || parentNode && parentNode["ownerSVGElement"] !== undefined || false;
-// }
-//
-// /** Check if a node is SVG. */
-// export function isNodeSVG(node: Node | null | undefined): boolean {
-//     return node && node["ownerSVGElement"] !== undefined || false;
-// }
-//
-// /** The tag should be in lowercase. In case for "a" element, the answer depends on the given defaultAnswer, as it can reside on either side. */
-// export function isTagSVG(tag: string, defaultAnswer: boolean = false): boolean {
-//     return defaultAnswer ? !!svgTags[tag] : svgTags[tag] === true;
-// }
-//
-// /** Check if is running in browser or not. Checks by document object. */
-// export function isInBrowser(): boolean {
-//     return document && typeof document === "object" || false;
-// }

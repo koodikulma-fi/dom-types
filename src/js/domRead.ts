@@ -4,48 +4,14 @@
 // Typing.
 import { DOMCleanProps, DOMTags } from "../ts";
 // Reading.
-import { parseDOMStyle, decapitalizeString, recapitalizeString } from "./domLib";
+import { decapitalizeString } from "./domLib";
 // Constants.
 import { domListenerProps, domSkipAttributes } from "./domConstants";
+// Helpers.
+import { readDOMProps } from "./domProps";
 
 
-// - Reading from DOM and as string (skipping listeners) - //
-
-/** Read the domProps from a node. Does not read listeners, but returns: `{ className?, style?, data?, attributes? }`. */
-export function readFromDOM(node: HTMLElement | SVGElement | Node): DOMCleanProps {
-    // Prepare.
-    const domProps: DOMCleanProps = {};
-    if (!(node instanceof Element))
-        return domProps;
-    // Read from attributes.
-    for (const attr of node.getAttributeNames()) {
-        switch(attr) {
-            case "style": {
-                const style = parseDOMStyle((node as HTMLElement | SVGElement).style.cssText, true);
-                if (style)
-                    domProps.style = style;
-                break;
-            }
-            case "class":
-                domProps.className = node.className;
-                break;
-            default: {
-                // Data based.
-                if (attr.startsWith("data-")) {
-                    domProps.data = domProps.data || {};
-                    domProps.data[recapitalizeString(attr.slice(5))] = node.getAttribute(attr);
-                }
-                // Others are just attributes, we don't get listeners by getAttributeNames.
-                else {
-                    domProps.attributes = domProps.attributes || {};
-                    domProps.attributes[attr] = node.getAttribute(attr) ?? undefined;
-                }
-            }
-        }
-    }
-    // Return collected.
-    return domProps;
-}
+// - Reading as a DOM string (skipping listeners) - //
 
 /** Helper to write a DOM string for a single tag.
  * - To write a DOM string for a tree of infos, handle the tree externally with recursion and call this with childrenContent for each.
@@ -64,17 +30,18 @@ export function readDOMString(tag: string, domProps?: DOMCleanProps | null, chil
     // No tag.
     if (!tag) {
         // From element.
-        if (readFromNode instanceof Element)
+        if (readFromNode && readFromNode instanceof Element)
             tag = readFromNode.tagName.toLowerCase() as DOMTags || "";
         // If has no tag at this point, we stop and return the childrenContent and/or our textContent from the simple node.
         if (!tag)
+            // Let's merge both contents. In practice, there should only be either.
             return (readFromNode && readFromNode.textContent || "") + (childrenContent === true ? "" : childrenContent || "");
     }
 
     // Read from node.
     if (readFromNode) {
         // Read props from element.
-        const { className, style, data, attributes } = readFromDOM(readFromNode);
+        const { className, style, data, attributes } = readDOMProps(readFromNode);
         // Merge the props together - for conflicts use higher preference for what was just read from dom.
         if (className)
             domProps.className = domProps.className ? domProps.className + " " + className : className;
@@ -113,7 +80,7 @@ export function readDOMString(tag: string, domProps?: DOMCleanProps | null, chil
     // .. Data.
     if (data) {
         for (const prop in data)
-            dom += ' data-' + decapitalizeString(prop, "-") + '="' + data[prop].toString() + '"';
+            dom += ' data-' + decapitalizeString(prop) + '="' + data[prop].toString() + '"';
     }
     // .. Other attributes - skipping listeners and special.
     if (attributes) {
