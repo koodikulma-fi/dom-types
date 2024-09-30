@@ -2,6 +2,7 @@
 // - DOM listeners - //
 
 export type GlobalEventHandler = EventListener;
+/** All listener attributes (matching GlobalEventHandlers + couple more) with native keys referring. Values are event handler types. */
 export interface GlobalListeners_native extends GlobalEventHandlers {
     onactivate: GlobalEventHandler;
     onbegin: GlobalEventHandler;
@@ -14,7 +15,7 @@ export interface GlobalListeners_native extends GlobalEventHandlers {
     onunload: GlobalEventHandler;
 }
 
-/** All listener attributes (matching GlobalEventHandlers) with camelCase keys referring to the lowercase originals in type. */
+/** All listener attributes (matching GlobalEventHandlers + couple more) with camelCase keys. Values are event handler types. */
 export interface GlobalListeners {
     onAbort: GlobalEventHandlers["onabort"];
     onActivate: GlobalEventHandler;

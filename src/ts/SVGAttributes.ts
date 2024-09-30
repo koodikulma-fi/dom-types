@@ -34,7 +34,7 @@ export type SVGAttributesAny = Partial<SVGOtherAttributes & SVGCoreAttributes & 
 export type SVGAttributesAny_native = Partial<SVGOtherAttributes_native & SVGCoreAttributes_native & GlobalListeners_native & ARIAAttributes_native>;
 
 
-// - SVG Generic attributes - //
+// - SVG core attributes - //
 
 interface SVGCoreAttributes extends DataAttributes {
     "id": string | number;
@@ -112,7 +112,7 @@ interface AnimationAdditionAttributes {
 }
 
 
-// - SVG Other attributes - //
+// - SVG presentation attributes - //
 
 /** Note: All SVG presentation attributes can be used as CSS properties. */
 interface SVGPresentationAttributes extends Pick<SVGOtherAttributes_native, 
@@ -179,9 +179,9 @@ interface SVGPresentationAttributes extends Pick<SVGOtherAttributes_native,
 > {}
 
 
-// - SVG tag specific attributes - //
+// - SVG common attributes (tag specific) - //
 
-/** All tag specific SVG other attributes in camelCase. */
+/** All attributes that are specific to tags in camelCase - excluding SVGCoreAttributes. */
 interface SVGOtherAttributes extends Omit<SVGOtherAttributes_native,
     | "accent-height"
     | "alignment-baseline"
@@ -333,7 +333,7 @@ interface SVGOtherAttributes extends Omit<SVGOtherAttributes_native,
     "xlinkTitle": SVGOtherAttributes_native["xlink:title"];
     "xlinkType": SVGOtherAttributes_native["xlink:type"];
 }
-/** All attributes that are specific to tags - so excluding SVGCoreAttributes. */
+/** All attributes that are specific to tags in native case - excluding SVGCoreAttributes_native. */
 interface SVGOtherAttributes_native {
     "accent-height": string | number;
     "alignment-baseline": "auto" | "baseline" | "before-edge" | "text-before-edge" | "middle" | "central" | "after-edge" | "text-after-edge" | "ideographic" | "alphabetic" | "hanging" | "mathematical" | "inherit" | OrString;
@@ -576,10 +576,9 @@ interface SVGOtherAttributes_native {
 }
 
 
-// - By tag - //
+// - SVG attributes by tag name - //
 
-// Manual additions.
-/** By tags with attributes in camelCase. Might allow some more than should. */
+/** SVG attributes by tags in camelCase. Might allow some more than should. */
 interface SVGNativeAttributesBy {
     a: Pick<HTMLAttributes<"a">, "download" | "href" | "hrefLang" | "ping" | "referrerPolicy" | "rel" | "target"> & Pick<SVGOtherAttributes, "type" | "xlinkHref">;
     animate: SVGAnimationAttributes;
@@ -648,7 +647,7 @@ interface SVGNativeAttributesBy {
     use: Pick<SVGOtherAttributes, "href" | "xlinkHref" | "x" | "y" | "width" | "height">;
     view: {};
 }
-/** By tags with attributes in native case. Might allow some more than should. */
+/** SVG attributes by tags in native case. Might allow some more than should. */
 interface SVGNativeAttributesBy_native {
     a: Pick<HTMLAttributes_native<"a">, "download" | "href" | "hreflang" | "ping" | "referrerpolicy" | "rel" | "target"> & Pick<SVGOtherAttributes_native, "type" | "xlink:href">;
     animate: SVGAnimationAttributes;

@@ -100,6 +100,7 @@ interface CSSProperties extends Partial<Omit<CSSStyleDeclaration, GetMethodKeys<
 type CSSNumericPropertyNames = "borderWidth" | "borderBottomWidth" | "borderLeftWidth" | "borderRightWidth" | "borderTopWidth" | "bottom" | "columnGap" | "flexGrow" | "flexShrink" | "fontWeight" | "gap" | "gridColumnEnd" | "gridColumnGap" | "gridColumnStart" | "gridRowEnd" | "gridRowGap" | "gridRowStart" | "height" | "inset" | "left" | "margin" | "marginBottom" | "marginLeft" | "marginRight" | "marginTop" | "maxWidth" | "maxHeight" | "minWidth" | "minHeight" | "offsetDistance" | "opacity" | "order" | "outlineWidth" | "padding" | "paddingTop" | "paddingBottom" | "paddingLeft" | "paddingRight" | "right" | "rowGap" | "scrollMargin" | "scrollMarginBlock" | "scrollMarginBlockEnd" | "scrollMarginBlockStart" | "scrollMarginBottom" | "scrollMarginInline" | "scrollMarginInlineEnd" | "scrollMarginInlineStart" | "scrollMarginLeft" | "scrollMarginRight" | "scrollMarginTop" | "scrollPadding" | "scrollPaddingBlock" | "scrollPaddingBlockEnd" | "scrollPaddingBlockStart" | "scrollPaddingBottom" | "scrollPaddingInline" | "scrollPaddingInlineEnd" | "scrollPaddingInlineStart" | "scrollPaddingLeft" | "scrollPaddingRight" | "scrollPaddingTop" | "stopOpacity" | "strokeWidth" | "strokeOpacity" | "tabIndex" | "tabSize" | "top" | "width" | "zIndex";
 
 type GlobalEventHandler = EventListener;
+/** All listener attributes (matching GlobalEventHandlers + couple more) with native keys referring. Values are event handler types. */
 interface GlobalListeners_native extends GlobalEventHandlers {
     onactivate: GlobalEventHandler;
     onbegin: GlobalEventHandler;
@@ -111,7 +112,7 @@ interface GlobalListeners_native extends GlobalEventHandlers {
     onshow: GlobalEventHandler;
     onunload: GlobalEventHandler;
 }
-/** All listener attributes (matching GlobalEventHandlers) with camelCase keys referring to the lowercase originals in type. */
+/** All listener attributes (matching GlobalEventHandlers + couple more) with camelCase keys. Values are event handler types. */
 interface GlobalListeners {
     onAbort: GlobalEventHandlers["onabort"];
     onActivate: GlobalEventHandler;
@@ -380,6 +381,7 @@ interface HTMLGlobalAttributes_native extends Partial<DataAttributes> {
     virtualkeyboardpolicy: "auto" | "manual" | OrString;
     writingsuggestions: BoolOrStr;
 }
+/** All attributes that are specific to tags in native case - excluding HTMLGlobalAttributes. */
 interface HTMLOtherAttributes extends Omit<HTMLOtherAttributes_native, "accept-charset" | "autocomplete" | "bgcolor" | "colspan" | "crossorigin" | "datetime" | "dirname" | "enctype" | "enterkeyhint" | "formaction" | "formenctype" | "formmethod" | "formnovalidate" | "formtarget" | "hreflang" | "http-equiv" | "ismap" | "maxlength" | "minlength" | "novalidate" | "playsinline" | "readonly" | "referrerpolicy" | "rowspan" | "srcdoc" | "srclang" | "srcset" | "usemap"> {
     "acceptCharset": HTMLOtherAttributes_native["accept-charset"];
     "autoComplete": HTMLOtherAttributes_native["autocomplete"];
@@ -410,6 +412,7 @@ interface HTMLOtherAttributes extends Omit<HTMLOtherAttributes_native, "accept-c
     "srcSet": HTMLOtherAttributes_native["srcset"];
     "useMap": HTMLOtherAttributes_native["usemap"];
 }
+/** All attributes that are specific to tags in native case - excluding HTMLGlobalAttributes_native. */
 interface HTMLOtherAttributes_native {
     "accept": string;
     "accept-charset": string;
@@ -514,6 +517,7 @@ interface HTMLOtherAttributes_native {
     "width": string | number;
     "wrap": "hard" | "soft" | "off" | OrString;
 }
+/** HTML attributes by tags in camelCase. */
 interface HTMLNativeAttributesBy {
     a: Pick<HTMLOtherAttributes, "download" | "href" | "hrefLang" | "media" | "ping" | "referrerPolicy" | "rel" | "shape" | "target" | "type">;
     abbr: {};
@@ -649,6 +653,7 @@ interface HTMLNativeAttributesBy {
     wbr: {};
     xmp: {};
 }
+/** HTML attributes by tags in native case. */
 interface HTMLNativeAttributesBy_native {
     a: Pick<HTMLOtherAttributes_native, "download" | "href" | "hreflang" | "media" | "ping" | "referrerpolicy" | "rel" | "shape" | "target">;
     abbr: {};
@@ -862,7 +867,7 @@ interface AnimationAdditionAttributes {
 /** Note: All SVG presentation attributes can be used as CSS properties. */
 interface SVGPresentationAttributes extends Pick<SVGOtherAttributes_native, "alignment-baseline" | "baseline-shift" | "clip" | "clip-path" | "clip-rule" | "color" | "color-interpolation" | "color-interpolation-filters" | "color-rendering" | "cursor" | "d" | "direction" | "display" | "dominant-baseline" | "fill" | "fill-opacity" | "fill-rule" | "filter" | "flood-color" | "flood-opacity" | "font-family" | "font-size" | "font-size-adjust" | "font-stretch" | "font-style" | "font-variant" | "font-weight" | "glyph-orientation-horizontal" | "glyph-orientation-vertical" | "image-rendering" | "letter-spacing" | "letter-spacing" | "marker-end" | "marker-mid" | "marker-start" | "marker-start" | "opacity" | "overflow" | "pointer-events" | "shape-rendering" | "stop-color" | "stop-color" | "stroke" | "stroke-dasharray" | "stroke-dashoffset" | "stroke-linecap" | "stroke-linejoin" | "stroke-miterlimit" | "stroke-opacity" | "stroke-width" | "text-anchor" | "text-decoration" | "text-rendering" | "transform" | "transform-origin" | "unicode-bidi" | "vector-effect" | "visibility" | "word-spacing" | "writing-mode"> {
 }
-/** All tag specific SVG other attributes in camelCase. */
+/** All attributes that are specific to tags in camelCase - excluding SVGCoreAttributes. */
 interface SVGOtherAttributes extends Omit<SVGOtherAttributes_native, "accent-height" | "alignment-baseline" | "allow-reorder" | "arabic-form" | "baseline-shift" | "color-interpolation" | "color-interpolation-filters" | "color-rendering" | "crossorigin" | "dominant-baseline" | "fill-opacity" | "fill-rule" | "flood-color" | "flood-opacity" | "font-family" | "font-size" | "font-size-adjust" | "font-style" | "font-variant" | "font-weight" | "glyph-name" | "glyph-orientation-horizontal" | "glyph-orientation-vertical" | "horiz-adv-x" | "horiz-origin-x" | "horiz-origin-y" | "image-rendering" | "letter-spacing" | "lighting-color" | "marker-end" | "marker-mid" | "marker-start" | "overline-position" | "overline-thickness" | "paint-order" | "pointer-events" | "shape-rendering" | "stop-color" | "stop-opacity" | "stroke-dasharray" | "stroke-dashoffset" | "stroke-linecap" | "stroke-linejoin" | "stroke-miterlimit" | "stroke-opacity" | "stroke-width" | "text-anchor" | "text-decoration" | "text-rendering" | "transform-origin" | "underline-position" | "underline-thickness" | "unicode-bidi" | "unicode-range" | "units-per-em" | "v-alphabetic" | "v-hanging" | "v-ideographic" | "v-mathematical" | "vector-effect" | "vert-adv-y" | "vert-origin-x" | "vert-origin-y" | "word-spacing" | "writing-mode" | "xlink:actuate" | "xlink:arcrole" | "xlink:href" | "xlink:role" | "xlink:show" | "xlink:title" | "xlink:type"> {
     "accentHeight": SVGOtherAttributes_native["accent-height"];
     "alignmentBaseline": SVGOtherAttributes_native["alignment-baseline"];
@@ -941,7 +946,7 @@ interface SVGOtherAttributes extends Omit<SVGOtherAttributes_native, "accent-hei
     "xlinkTitle": SVGOtherAttributes_native["xlink:title"];
     "xlinkType": SVGOtherAttributes_native["xlink:type"];
 }
-/** All attributes that are specific to tags - so excluding SVGCoreAttributes. */
+/** All attributes that are specific to tags in native case - excluding SVGCoreAttributes_native. */
 interface SVGOtherAttributes_native {
     "accent-height": string | number;
     "alignment-baseline": "auto" | "baseline" | "before-edge" | "text-before-edge" | "middle" | "central" | "after-edge" | "text-after-edge" | "ideographic" | "alphabetic" | "hanging" | "mathematical" | "inherit" | OrString;
@@ -1176,7 +1181,7 @@ interface SVGOtherAttributes_native {
     "z": string | number;
     "zoomAndPan": "disable" | "magnify" | OrString;
 }
-/** By tags with attributes in camelCase. Might allow some more than should. */
+/** SVG attributes by tags in camelCase. Might allow some more than should. */
 interface SVGNativeAttributesBy {
     a: Pick<HTMLAttributes<"a">, "download" | "href" | "hrefLang" | "ping" | "referrerPolicy" | "rel" | "target"> & Pick<SVGOtherAttributes, "type" | "xlinkHref">;
     animate: SVGAnimationAttributes;
@@ -1245,7 +1250,7 @@ interface SVGNativeAttributesBy {
     use: Pick<SVGOtherAttributes, "href" | "xlinkHref" | "x" | "y" | "width" | "height">;
     view: {};
 }
-/** By tags with attributes in native case. Might allow some more than should. */
+/** SVG attributes by tags in native case. Might allow some more than should. */
 interface SVGNativeAttributesBy_native {
     a: Pick<HTMLAttributes_native<"a">, "download" | "href" | "hreflang" | "ping" | "referrerpolicy" | "rel" | "target"> & Pick<SVGOtherAttributes_native, "type" | "xlink:href">;
     animate: SVGAnimationAttributes;
@@ -1558,4 +1563,4 @@ declare function applyDOMProps(domElement: HTMLElement | SVGElement | Element | 
  */
 declare function readDOMString(tag: string, domProps?: DOMCleanProps | null, childrenContent?: string | null | boolean, readFromNode?: Node | null): string;
 
-export { CSSBlendMode, CSSColorNames, CSSNumericPropertyNames, CSSProperties, ClassNameInput, DOMAttributes, DOMAttributesAny, DOMAttributesAny_native, DOMAttributesBy, DOMAttributesBy_native, DOMAttributes_native, DOMCleanProps, DOMDiffProps, DOMElement, DOMTags, DOMUncleanProps, DataAttributes, FalseLike, GlobalEventHandler, GlobalListeners, GlobalListeners_native, HTMLAttributes, HTMLAttributesAny, HTMLAttributesAny_native, HTMLAttributes_native, HTMLGlobalAttributes, HTMLGlobalAttributes_native, HTMLTags, NameValidator, SVGAttributes, SVGAttributesAny, SVGAttributesAny_native, SVGAttributes_native, SVGTags, Split, SplitArr, ValidateNames, applyDOMProps, classNames, cleanDOMProps, collectNamesTo, createDOMElement, decapitalizeString, domListenerProps, domRenamedAttributes, domSkipAttributes, equalDOMProps, equalSubDictionaries, getClassNameDiffs, getDictionaryDiffs, isNodeSVG, parseDOMStyle, readDOMProps, readDOMString, recapitalizeString };
+export { CSSBlendMode, CSSColorNames, CSSNumericPropertyNames, CSSProperties, ClassNameInput, DOMAttributes, DOMAttributesAny, DOMAttributesAny_native, DOMAttributesBy, DOMAttributesBy_native, DOMAttributes_native, DOMCleanProps, DOMDiffProps, DOMElement, DOMTags, DOMUncleanProps, FalseLike, GlobalEventHandler, GlobalListeners, GlobalListeners_native, HTMLAttributes, HTMLAttributesAny, HTMLAttributesAny_native, HTMLAttributes_native, HTMLGlobalAttributes, HTMLGlobalAttributes_native, HTMLTags, NameValidator, SVGAttributes, SVGAttributesAny, SVGAttributesAny_native, SVGAttributes_native, SVGTags, Split, SplitArr, ValidateNames, applyDOMProps, classNames, cleanDOMProps, collectNamesTo, createDOMElement, decapitalizeString, domListenerProps, domRenamedAttributes, domSkipAttributes, equalDOMProps, equalSubDictionaries, getClassNameDiffs, getDictionaryDiffs, isNodeSVG, parseDOMStyle, readDOMProps, readDOMString, recapitalizeString };

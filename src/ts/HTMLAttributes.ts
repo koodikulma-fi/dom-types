@@ -32,7 +32,7 @@ export type HTMLAttributesAny = Partial<HTMLOtherAttributes & HTMLGlobalAttribut
 export type HTMLAttributesAny_native = Partial<HTMLOtherAttributes_native & HTMLGlobalAttributes_native & GlobalListeners_native & ARIAAttributes_native>;
 
 
-// - DOM common attributes - //
+// - HTML global attributes - //
 
 // Global.
 export interface HTMLGlobalAttributes extends Partial<DataAttributes>, Omit<HTMLGlobalAttributes_native,
@@ -109,8 +109,9 @@ export interface HTMLGlobalAttributes_native extends Partial<DataAttributes> {
 }
 
 
-// - DOM attributes used by some tags only - camelCase - //
+// - HTML common attributes (tag specific) - //
 
+/** All attributes that are specific to tags in native case - excluding HTMLGlobalAttributes. */
 interface HTMLOtherAttributes extends Omit<HTMLOtherAttributes_native,
     | "accept-charset"
     | "autocomplete"
@@ -172,10 +173,7 @@ interface HTMLOtherAttributes extends Omit<HTMLOtherAttributes_native,
     "srcSet": HTMLOtherAttributes_native["srcset"];
     "useMap": HTMLOtherAttributes_native["usemap"];
 }
-
-
-// - DOM attributes used by some tags only - lowercase - //
-
+/** All attributes that are specific to tags in native case - excluding HTMLGlobalAttributes_native. */
 interface HTMLOtherAttributes_native {
     "accept": string;
     "accept-charset": string;
@@ -285,8 +283,9 @@ interface HTMLOtherAttributes_native {
 }
 
 
-// - DOM attributes by tag name - camelCase - //
+// - HTML attributes by tag name - //
 
+/** HTML attributes by tags in camelCase. */
 interface HTMLNativeAttributesBy {
     a: Pick<HTMLOtherAttributes, "download" | "href" | "hrefLang" | "media" | "ping" | "referrerPolicy" | "rel" | "shape" | "target" | "type">;
     abbr: {};
@@ -470,9 +469,7 @@ interface HTMLNativeAttributesBy {
     xmp: {};
 };
 
-
-// - DOM attributes by tag name - lowercase - //
-
+/** HTML attributes by tags in native case. */
 interface HTMLNativeAttributesBy_native {
     a: Pick<HTMLOtherAttributes_native, "download" | "href" | "hreflang" | "media" | "ping" | "referrerpolicy" | "rel" | "shape" | "target">;
     abbr: {};
@@ -655,10 +652,3 @@ interface HTMLNativeAttributesBy_native {
     wbr: {};
     xmp: {};
 };
-export {
-    // - HTML related typing - //
-    // Tags and element.
-    /** All known HTML tag names. */
-    DataAttributes
-};
-
