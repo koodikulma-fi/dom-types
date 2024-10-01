@@ -17,15 +17,16 @@ There are 2 kinds of tools available.
 
 Tag based (and tagless) SVG and HTML attributes separately and combined (as DOM).
 - Provided in native naming as well as in camelCase.
-    * For example: "onclick" vs. "onClick", or "http-equiv" vs. "httpEquiv" and so on.
-- The typing provides attribute based suggestions (for most cases), while still always allowing any string value.
-    * For some attributes, the value can also be a boolean, number or sometimes a string or number array.
+    * For example: `"onclick"` vs. `"onClick"`, or `"http-equiv"` vs. `"httpEquiv"` and so on.
+- The typing provides attribute based suggestions (for most cases), while still always allowing any `string` value.
+    * For some attributes, the value can also be a `boolean`, `number` or sometimes `string[]` or `number[]`.
     * Later updates can include more attribute based suggestions, refines and comments.
-- Finally, declaring CSS properties (attribute "style").
-    * Uses camelCase typing as it works natively with `el.style[styleProp] = val`. For example: `{ "backgroundColor": "#000" }`
-    * Some values can be use `number` in addition to `string` reflecting what the major browsers support.
+- Finally, declaring CSS properties (attribute `"style"`).
+    * The type uses camelCase as it works natively with `el.style[styleProp] = val`.
+        - For example: `{ "backgroundColor": "#000" }`
+    * All values are `string`, though some also support `number` reflecting what the major browsers support.
         - For example: `{ width: 50 }` -> `el.style.width = 50` -> `50` = `50px`.
-    * Currently (at v1.0.0) there's no suggestions for values (except for "position"), but more coming later.
+    * Currently (at v1.0.0) there's no suggestions for values (except for `"position"`), but more coming later.
 
 ### [2. JS TOOLS](#2-js-tools-doc)
 
@@ -62,8 +63,9 @@ Core methods behind the scenes:
 
 ---
 
-### 1.1 HTML-, SVG- & DOMAttributes
+### 1.1 Attributes for HTML and SVG
 
+- There are 3 similar collections: HTML, SVG and DOM (combining HTML & SVG).
 - The collections follow similar typing and naming to each other. For example:
     * `HTMLAttributes<Tag extends string, Fallback = HTMLAttributesAny>`: Only HTML attributes.
     * `SVGAttributes<Tag extends string, Fallback = HTMLAttributesAny>`: Only SVG attributes.
@@ -143,9 +145,22 @@ type MyCircleTests_native = [
     MyCircle_native["aria-brailleroledescription"], // string | null | undefined
 ];
 
+// DOMAttributes.
+type MyPath = DOMAttributes<"path" | "group">; // Same as `SVGAttributes<"path" | "group">`
+type MyAny = DOMAttributesAny; // Same as `HTMLAttributesAny & SVGAttributesAny`
+
 
 ```
 
+---
+
+### 1.2. Global listeners
+
+---
+
+### 1.3. Aria attributes
+
+---
 
 ## 2. JS TOOLS (doc)
 
