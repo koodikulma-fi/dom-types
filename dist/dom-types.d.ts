@@ -215,13 +215,13 @@ interface GlobalListeners {
 }
 
 /** Collected from https://www.w3.org/TR/wai-aria-1.1/#role_definitions */
-type AriaRole = "alert" | "alertdialog" | "application" | "article" | "banner" | "button" | "cell" | "checkbox" | "columnheader" | "combobox" | "command" | "complementary" | "composite" | "contentinfo" | "definition" | "dialog" | "directory" | "document" | "feed" | "figure" | "form" | "grid" | "gridcell" | "group" | "heading" | "img" | "input" | "landmark" | "link" | "list" | "listbox" | "listitem" | "log" | "main" | "marquee" | "math" | "menu" | "menubar" | "menuitem" | "menuitemcheckbox" | "menuitemradio" | "navigation" | "none" | "note" | "option" | "presentation" | "progressbar" | "radio" | "radiogroup" | "range" | "region" | "roletype" | "row" | "rowgroup" | "rowheader" | "scrollbar" | "search" | "searchbox" | "section" | "sectionhead" | "select" | "separator" | "slider" | "spinbutton" | "status" | "structure" | "switch" | "tab" | "table" | "tablist" | "tabpanel" | "term" | "textbox" | "timer" | "toolbar" | "tooltip" | "tree" | "treegrid" | "treeitem" | "widget" | "window" | OrString;
+type ARIARole = "alert" | "alertdialog" | "application" | "article" | "banner" | "button" | "cell" | "checkbox" | "columnheader" | "combobox" | "command" | "complementary" | "composite" | "contentinfo" | "definition" | "dialog" | "directory" | "document" | "feed" | "figure" | "form" | "grid" | "gridcell" | "group" | "heading" | "img" | "input" | "landmark" | "link" | "list" | "listbox" | "listitem" | "log" | "main" | "marquee" | "math" | "menu" | "menubar" | "menuitem" | "menuitemcheckbox" | "menuitemradio" | "navigation" | "none" | "note" | "option" | "presentation" | "progressbar" | "radio" | "radiogroup" | "range" | "region" | "roletype" | "row" | "rowgroup" | "rowheader" | "scrollbar" | "search" | "searchbox" | "section" | "sectionhead" | "select" | "separator" | "slider" | "spinbutton" | "status" | "structure" | "switch" | "tab" | "table" | "tablist" | "tabpanel" | "term" | "textbox" | "timer" | "toolbar" | "tooltip" | "tree" | "treegrid" | "treeitem" | "widget" | "window";
 interface ARIAAttributes extends ARIAMixin {
 }
 /** Matches somewhere around 95% with ARIAMixin values - this has a couple of more keys. See [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes) */
 interface ARIAAttributes_native {
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles) */
-    "role": AriaRole;
+    "role": ARIARole | OrString;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-activedescendant) */
     "aria-activedescendant": string;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-atomic) */
@@ -336,6 +336,14 @@ type HTMLAttributes_native<Tag extends string, Fallback = HTMLAttributesAny> = [
 type HTMLAttributesAny = Partial<HTMLOtherAttributes & HTMLGlobalAttributes & GlobalListeners & ARIAAttributes>;
 /** The all possible attributes that HTML elements can have - in native case. */
 type HTMLAttributesAny_native = Partial<HTMLOtherAttributes_native & HTMLGlobalAttributes_native & GlobalListeners_native & ARIAAttributes_native>;
+/** Dictionary of HTML attributes by tag in camelCase. */
+type HTMLAttributesBy = {
+    [Tag in HTMLTags]: HTMLAttributes<Tag>;
+};
+/** Dictionary of HTML attributes by tag in native case. */
+type HTMLAttributesBy_native = {
+    [Tag in HTMLTags]: HTMLAttributes_native<Tag>;
+};
 interface HTMLGlobalAttributes extends Partial<DataAttributes>, Omit<HTMLGlobalAttributes_native, "autocapitalize" | "autofocus" | "contenteditable" | "enterkeyhint" | "exportparts" | "inputmode" | "itemid" | "itemprop" | "itemref" | "itemscope" | "itemtype" | "popover" | "spellcheck" | "tabindex" | "virtualkeyboardpolicy" | "writingsuggestions"> {
     autoCapitalize: "none" | "off" | "sentences" | "on" | "words" | "characters" | OrString;
     autoFocus: boolean | null;
@@ -380,7 +388,7 @@ interface HTMLGlobalAttributes_native extends Partial<DataAttributes> {
     nonce: string;
     part: string;
     popover: string;
-    role: AriaRole;
+    role: ARIARole | OrString;
     slot: string;
     spellcheck: BoolOrStr;
     style: string | CSSProperties;
@@ -502,7 +510,7 @@ interface HTMLOtherAttributes_native {
     "rel": "alternate" | "author" | "bookmark" | "canonical" | "dns-prefetch" | "external" | "expect" | "help" | "icon" | "license" | "manifest" | "me" | "modulepreload" | "next" | "nofollow" | "noopener" | "noreferrer" | "opener" | "pingback" | "preconnect" | "prefetch" | "preload" | "prerender" | "prey" | "privacy-policy" | "search" | "stylesheet" | "tag" | "terms-of-service" | OrString;
     "required": BoolOrStr;
     "reversed": BoolOrStr;
-    "role": AriaRole;
+    "role": ARIARole | OrString;
     "rows": string | number;
     "rowspan": string | number;
     "sandbox": "allow-downloads" | "allow-forms" | "allow-modals" | "allow-orientation-lock" | "allow-pointer-lock" | "allow-popups" | "allow-popups-to-escape-sandbox" | "allow-presentation" | "allow-same-origin" | "allow-scripts" | "allow-storage-access-by-user-activation" | "allow-top-navigation" | "allow-top-navigation-by-user-activation" | "allow-top-navigation-to-custom-protocols" | OrString;
@@ -802,14 +810,22 @@ interface HTMLNativeAttributesBy_native {
 /** All known SVG tag names. */
 type SVGTags = keyof SVGNativeAttributesBy;
 /** SVG element attributes by tag name with camelCase listener and aria attributes. */
-type SVGAttributes<Tag extends string, Fallback = SVGAttributesAny> = [Tag] extends [SVGTags] ? Partial<SVGNativeAttributesBy[Tag] & SVGCoreAttributes & GlobalListeners & ARIAAttributes> : Fallback;
+type SVGAttributes<Tag extends string, Fallback = SVGAttributesAny> = [Tag] extends [SVGTags] ? Partial<SVGNativeAttributesBy[Tag] & SVGGlobalAttributes & GlobalListeners & ARIAAttributes> : Fallback;
 /** SVG element attributes by tag name with lowercase listener and aria attributes. */
-type SVGAttributes_native<Tag extends string, Fallback = SVGAttributesAny_native> = [Tag] extends [SVGTags] ? Partial<SVGNativeAttributesBy_native[Tag] & SVGCoreAttributes_native & GlobalListeners_native & ARIAAttributes_native> : Fallback;
+type SVGAttributes_native<Tag extends string, Fallback = SVGAttributesAny_native> = [Tag] extends [SVGTags] ? Partial<SVGNativeAttributesBy_native[Tag] & SVGGlobalAttributes_native & GlobalListeners_native & ARIAAttributes_native> : Fallback;
 /** The all possible attributes that SVG elements can have - in camelCase. */
-type SVGAttributesAny = Partial<SVGOtherAttributes & SVGCoreAttributes & GlobalListeners & ARIAAttributes>;
+type SVGAttributesAny = Partial<SVGOtherAttributes & SVGGlobalAttributes & GlobalListeners & ARIAAttributes>;
 /** The all possible attributes that SVG elements can have - in native case. */
-type SVGAttributesAny_native = Partial<SVGOtherAttributes_native & SVGCoreAttributes_native & GlobalListeners_native & ARIAAttributes_native>;
-interface SVGCoreAttributes extends DataAttributes {
+type SVGAttributesAny_native = Partial<SVGOtherAttributes_native & SVGGlobalAttributes_native & GlobalListeners_native & ARIAAttributes_native>;
+/** Dictionary of SVG attributes by tag in camelCase. */
+type SVGAttributesBy = {
+    [Tag in SVGTags]: SVGAttributes<Tag>;
+};
+/** Dictionary of SVG attributes by tag in native case. */
+type SVGAttributesBy_native = {
+    [Tag in SVGTags]: SVGAttributes_native<Tag>;
+};
+interface SVGGlobalAttributes extends DataAttributes {
     "id": string | number;
     "class": string;
     /** Alias for "class". */
@@ -828,7 +844,7 @@ interface SVGCoreAttributes extends DataAttributes {
     /** Translates to "xmlns:xlink". */
     "xmlnsXlink": string;
 }
-interface SVGCoreAttributes_native extends DataAttributes {
+interface SVGGlobalAttributes_native extends DataAttributes {
     "id": string | number;
     "class": string;
     "lang": string;
@@ -879,7 +895,7 @@ interface SVGPresentationAttributes extends Pick<SVGOtherAttributes, "alignmentB
 /** Note: All SVG presentation attributes in lower case. They can also be used as CSS properties. */
 interface SVGPresentationAttributes_native extends Pick<SVGOtherAttributes_native, "alignment-baseline" | "baseline-shift" | "clip" | "clip-path" | "clip-rule" | "color" | "color-interpolation" | "color-interpolation-filters" | "color-rendering" | "cursor" | "d" | "direction" | "display" | "dominant-baseline" | "fill" | "fill-opacity" | "fill-rule" | "filter" | "flood-color" | "flood-opacity" | "font-family" | "font-size" | "font-size-adjust" | "font-stretch" | "font-style" | "font-variant" | "font-weight" | "glyph-orientation-horizontal" | "glyph-orientation-vertical" | "image-rendering" | "letter-spacing" | "letter-spacing" | "marker-end" | "marker-mid" | "marker-start" | "opacity" | "overflow" | "pointer-events" | "shape-rendering" | "stop-color" | "stop-color" | "stroke" | "stroke-dasharray" | "stroke-dashoffset" | "stroke-linecap" | "stroke-linejoin" | "stroke-miterlimit" | "stroke-opacity" | "stroke-width" | "text-anchor" | "text-decoration" | "text-rendering" | "transform" | "transform-origin" | "unicode-bidi" | "vector-effect" | "visibility" | "word-spacing" | "writing-mode"> {
 }
-/** All attributes that are specific to tags in camelCase - excluding SVGCoreAttributes. */
+/** All attributes that are specific to tags in camelCase - excluding SVGGlobalAttributes. */
 interface SVGOtherAttributes extends Omit<SVGOtherAttributes_native, "accent-height" | "alignment-baseline" | "allow-reorder" | "arabic-form" | "baseline-shift" | "color-interpolation" | "color-interpolation-filters" | "color-rendering" | "crossorigin" | "dominant-baseline" | "fill-opacity" | "fill-rule" | "flood-color" | "flood-opacity" | "font-family" | "font-size" | "font-size-adjust" | "font-style" | "font-variant" | "font-weight" | "glyph-name" | "glyph-orientation-horizontal" | "glyph-orientation-vertical" | "horiz-adv-x" | "horiz-origin-x" | "horiz-origin-y" | "image-rendering" | "letter-spacing" | "lighting-color" | "marker-end" | "marker-mid" | "marker-start" | "overline-position" | "overline-thickness" | "paint-order" | "pointer-events" | "shape-rendering" | "stop-color" | "stop-opacity" | "stroke-dasharray" | "stroke-dashoffset" | "stroke-linecap" | "stroke-linejoin" | "stroke-miterlimit" | "stroke-opacity" | "stroke-width" | "text-anchor" | "text-decoration" | "text-rendering" | "transform-origin" | "underline-position" | "underline-thickness" | "unicode-bidi" | "unicode-range" | "units-per-em" | "v-alphabetic" | "v-hanging" | "v-ideographic" | "v-mathematical" | "vector-effect" | "vert-adv-y" | "vert-origin-x" | "vert-origin-y" | "word-spacing" | "writing-mode" | "xlink:actuate" | "xlink:arcrole" | "xlink:href" | "xlink:role" | "xlink:show" | "xlink:title" | "xlink:type"> {
     "accentHeight": SVGOtherAttributes_native["accent-height"];
     "alignmentBaseline": SVGOtherAttributes_native["alignment-baseline"];
@@ -958,7 +974,7 @@ interface SVGOtherAttributes extends Omit<SVGOtherAttributes_native, "accent-hei
     "xlinkTitle": SVGOtherAttributes_native["xlink:title"];
     "xlinkType": SVGOtherAttributes_native["xlink:type"];
 }
-/** All attributes that are specific to tags in native case - excluding SVGCoreAttributes_native. */
+/** All attributes that are specific to tags in native case - excluding SVGGlobalAttributes_native. */
 interface SVGOtherAttributes_native {
     "accent-height": string | number;
     "alignment-baseline": "auto" | "baseline" | "before-edge" | "text-before-edge" | "middle" | "central" | "after-edge" | "text-after-edge" | "ideographic" | "alphabetic" | "hanging" | "mathematical" | "inherit" | OrString;
@@ -1340,6 +1356,10 @@ type DOMTags = HTMLTags | SVGTags;
 type DOMAttributes<Tag extends string, Fallback = DOMAttributesAny> = [Tag] extends [HTMLTags] ? [Tag] extends [SVGTags] ? HTMLAttributes<Tag> & SVGAttributes<Tag> : HTMLAttributes<Tag> : [Tag] extends [SVGTags] ? SVGAttributes<Tag> : Fallback;
 /** Get DOM attributes by tag in native case. In case fits both (like "a" tag) then gives both. Otherwise either or Fallback if not found (defaults to DOMAttributesAny). */
 type DOMAttributes_native<Tag extends string, Fallback = DOMAttributesAny_native> = [Tag] extends [HTMLTags] ? [Tag] extends [SVGTags] ? SVGAttributes_native<Tag> & HTMLAttributes_native<Tag> : HTMLAttributes_native<Tag> : [Tag] extends [SVGTags] ? SVGAttributes_native<Tag> : Fallback;
+/** All the possible attributes that DOM elements (HTML or SVG) can have - in camelCase. */
+type DOMAttributesAny = HTMLAttributesAny & SVGAttributesAny;
+/** All the possible attributes that DOM elements (HTML or SVG) can have - in native case. */
+type DOMAttributesAny_native = HTMLAttributesAny_native & SVGAttributesAny_native;
 /** Dictionary of DOM attributes by tag in camelCase. */
 type DOMAttributesBy = {
     [Tag in DOMTags]: DOMAttributes<Tag>;
@@ -1348,10 +1368,6 @@ type DOMAttributesBy = {
 type DOMAttributesBy_native = {
     [Tag in DOMTags]: DOMAttributes_native<Tag>;
 };
-/** All the possible attributes that DOM elements (HTML or SVG) can have - in camelCase. */
-type DOMAttributesAny = HTMLAttributesAny & SVGAttributesAny;
-/** All the possible attributes that DOM elements (HTML or SVG) can have - in native case. */
-type DOMAttributesAny_native = HTMLAttributesAny_native & SVGAttributesAny_native;
 
 /** The type for unclean DOM props - before processing them to the main categories by functionality: `{ style, className, data, attributes, listeners }`. */
 interface DOMUncleanProps extends Record<string, any> {
@@ -1694,4 +1710,4 @@ declare function applyDOMProps(domElement: HTMLElement | SVGElement | Element | 
  */
 declare function readDOMString(tag: string, domProps?: DOMCleanProps | null, childrenContent?: string | null | boolean, readFromNode?: Node | null, skipAttrs?: Record<string, any>): string;
 
-export { BoolOrStr, CSSBlendMode, CSSColorNames, CSSNumericPropertyNames, CSSProperties, ClassNameInput, DOMAttributes, DOMAttributesAny, DOMAttributesAny_native, DOMAttributesBy, DOMAttributesBy_native, DOMAttributes_native, DOMCleanProps, DOMDiffProps, DOMElement, DOMTags, DOMUncleanProps, DataAttributes, FalseLike, GetMethodKeys, GlobalEventHandler, GlobalListeners, GlobalListeners_native, HTMLAttributes, HTMLAttributesAny, HTMLAttributesAny_native, HTMLAttributes_native, HTMLGlobalAttributes, HTMLGlobalAttributes_native, HTMLTags, InheritInitial, InheritInitialRevUnset, IsReadOnlyKey, IterableValues, NameValidator, OrString, SVGAttributes, SVGAttributesAny, SVGAttributesAny_native, SVGAttributes_native, SVGTags, Split, SplitArr, ValidateNames, applyDOMProps, camelCaseStr, classNames, cleanDOMProps, cleanNames, collectKeysTo, createDOMElement, domListenerProps, domRenamedAttributes, domSkipAttributes, equalDOMProps, equalSubDictionaries, getDictionaryDiffs, getNameDiffs, isNodeSVG, lowerCaseStr, parseDOMStyle, readDOMProps, readDOMString };
+export { BoolOrStr, CSSBlendMode, CSSColorNames, CSSNumericPropertyNames, CSSProperties, ClassNameInput, DOMAttributes, DOMAttributesAny, DOMAttributesAny_native, DOMAttributesBy, DOMAttributesBy_native, DOMAttributes_native, DOMCleanProps, DOMDiffProps, DOMElement, DOMTags, DOMUncleanProps, DataAttributes, FalseLike, GetMethodKeys, GlobalEventHandler, GlobalListeners, GlobalListeners_native, HTMLAttributes, HTMLAttributesAny, HTMLAttributesAny_native, HTMLAttributesBy, HTMLAttributesBy_native, HTMLAttributes_native, HTMLGlobalAttributes, HTMLGlobalAttributes_native, HTMLTags, InheritInitial, InheritInitialRevUnset, IsReadOnlyKey, IterableValues, NameValidator, OrString, SVGAttributes, SVGAttributesAny, SVGAttributesAny_native, SVGAttributesBy, SVGAttributesBy_native, SVGAttributes_native, SVGGlobalAttributes, SVGGlobalAttributes_native, SVGTags, Split, SplitArr, ValidateNames, applyDOMProps, camelCaseStr, classNames, cleanDOMProps, cleanNames, collectKeysTo, createDOMElement, domListenerProps, domRenamedAttributes, domSkipAttributes, equalDOMProps, equalSubDictionaries, getDictionaryDiffs, getNameDiffs, isNodeSVG, lowerCaseStr, parseDOMStyle, readDOMProps, readDOMString };

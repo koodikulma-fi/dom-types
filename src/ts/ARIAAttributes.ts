@@ -7,7 +7,7 @@ import { BoolOrStr, OrString } from "./common";
 // - Basic attributes - //
 
 /** Collected from https://www.w3.org/TR/wai-aria-1.1/#role_definitions */
-export type AriaRole =
+export type ARIARole =
     | "alert"
     | "alertdialog"
     | "application"
@@ -89,14 +89,14 @@ export type AriaRole =
     | "treeitem"
     | "widget"
     | "window"
-    | OrString;
+    ; // | OrString;
 
 export interface ARIAAttributes extends ARIAMixin {}
 
 /** Matches somewhere around 95% with ARIAMixin values - this has a couple of more keys. See [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes) */
 export interface ARIAAttributes_native {
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles) */
-    "role": AriaRole;
+    "role": ARIARole | OrString;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-activedescendant) */
     "aria-activedescendant": string;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-atomic) */

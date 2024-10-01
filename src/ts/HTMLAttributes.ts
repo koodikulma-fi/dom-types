@@ -5,7 +5,7 @@
 import { BoolOrStr, DataAttributes, OrString } from "./common";
 import { GlobalListeners, GlobalListeners_native } from "./GlobalListeners";
 import { CSSProperties } from "./CSSProperties";
-import { ARIAAttributes, ARIAAttributes_native, AriaRole } from "./ARIAAttributes";
+import { ARIAAttributes, ARIAAttributes_native, ARIARole } from "./ARIAAttributes";
 
 
 // - Info source (at around Q3 2024) - //
@@ -19,7 +19,7 @@ import { ARIAAttributes, ARIAAttributes_native, AriaRole } from "./ARIAAttribute
 /** All known HTML tag names. */
 export type HTMLTags = keyof HTMLNativeAttributesBy;
 
-// Attributes.
+// Attributes with tag arg.
 /** HTML element attributes by tag name with camelCase listener and aria attributes. */
 export type HTMLAttributes<Tag extends string, Fallback = HTMLAttributesAny> = [Tag] extends [HTMLTags] ? Partial<HTMLNativeAttributesBy[Tag] & HTMLGlobalAttributes & GlobalListeners & ARIAAttributes> : Fallback;
 /** HTML element attributes by tag name with lowercase listener and aria attributes. */
@@ -30,6 +30,12 @@ export type HTMLAttributes_native<Tag extends string, Fallback = HTMLAttributesA
 export type HTMLAttributesAny = Partial<HTMLOtherAttributes & HTMLGlobalAttributes & GlobalListeners & ARIAAttributes>;
 /** The all possible attributes that HTML elements can have - in native case. */
 export type HTMLAttributesAny_native = Partial<HTMLOtherAttributes_native & HTMLGlobalAttributes_native & GlobalListeners_native & ARIAAttributes_native>;
+
+// Attributes dictionary.
+/** Dictionary of HTML attributes by tag in camelCase. */
+export type HTMLAttributesBy = { [Tag in HTMLTags]: HTMLAttributes<Tag>; };
+/** Dictionary of HTML attributes by tag in native case. */
+export type HTMLAttributesBy_native = { [Tag in HTMLTags]: HTMLAttributes_native<Tag>; };
 
 
 // - HTML global attributes - //
@@ -97,7 +103,7 @@ export interface HTMLGlobalAttributes_native extends Partial<DataAttributes> {
     nonce: string;
     part: string;
     popover: string;
-    role: AriaRole;
+    role: ARIARole | OrString;
     slot: string;
     spellcheck: BoolOrStr;
     style: string | CSSProperties;
@@ -257,7 +263,7 @@ interface HTMLOtherAttributes_native {
     "rel": "alternate" | "author" | "bookmark" | "canonical" | "dns-prefetch" | "external" | "expect" | "help" | "icon" | "license" | "manifest" | "me" | "modulepreload" | "next" | "nofollow" | "noopener" | "noreferrer" | "opener" | "pingback" | "preconnect" | "prefetch" | "preload" | "prerender" | "prey" | "privacy-policy" | "search" | "stylesheet" | "tag" | "terms-of-service" | OrString;
     "required": BoolOrStr;
     "reversed": BoolOrStr;
-    "role": AriaRole;
+    "role": ARIARole | OrString;
     "rows": string | number;
     "rowspan": string | number;
     "sandbox": "allow-downloads" | "allow-forms" | "allow-modals" | "allow-orientation-lock" | "allow-pointer-lock" | "allow-popups" | "allow-popups-to-escape-sandbox" | "allow-presentation" | "allow-same-origin" | "allow-scripts" | "allow-storage-access-by-user-activation" | "allow-top-navigation" | "allow-top-navigation-by-user-activation" | "allow-top-navigation-to-custom-protocols" | OrString;

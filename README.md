@@ -15,18 +15,11 @@ There are 2 kinds of tools available.
 
 ### [1. TS DECLARATIONS](#1-ts-declarations-doc)
 
-Tag based (and tagless) SVG and HTML attributes separately and combined (as DOM).
-- Provided in native naming as well as in camelCase.
-    * For example: `"onclick"` vs. `"onClick"`, or `"http-equiv"` vs. `"httpEquiv"` and so on.
-- The typing provides attribute based suggestions (for most cases), while still always allowing any `string` value.
-    * For some attributes, the value can also be a `boolean`, `number` or sometimes `string[]` or `number[]`.
-    * Later updates can include more attribute based suggestions, refines and comments.
-- Finally, declaring CSS properties (attribute `"style"`).
-    * The type uses camelCase as it works natively with `el.style[styleProp] = val`.
-        - For example: `{ "backgroundColor": "#000" }`
-    * All values are `string`, though some also support `number` reflecting what the major browsers support.
-        - For example: `{ width: 50 }` -> `el.style.width = 50` -> `50` = `50px`.
-    * Currently (at v1.0.0) there's no suggestions for values (except for `"position"`), but more coming later.
+Declarations for common attributes:
+- Tag based (and tagless) SVG and HTML attributes separately and combined (as DOM) in native and camelCase naming.
+    * The attributes include global listeners and ARIA attributes.
+- CSS properties as an interface with camelCase keys. For example: `{ "backgroundColor": "#000" }`
+    * Some properties support numeric values, eg. `{ width: 50, opacity: .5 }` reflecting how major browsers work.
 
 ### [2. JS TOOLS](#2-js-tools-doc)
 
@@ -63,18 +56,23 @@ Core methods behind the scenes:
 
 ---
 
-### 1.1 Attributes for HTML and SVG
+### 1.1. Attribute declarations
 
 - There are 3 similar collections: HTML, SVG and DOM (combining HTML & SVG).
 - The collections follow similar typing and naming to each other. For example:
     * `HTMLAttributes<Tag extends string, Fallback = HTMLAttributesAny>`: Only HTML attributes.
     * `SVGAttributes<Tag extends string, Fallback = HTMLAttributesAny>`: Only SVG attributes.
     * `DOMAttributes<Tag extends string, Fallback = HTMLAttributesAny>`: Combines HTML & SVG.
-- If you don't want to define the tag use `HTMLAttributesAny`, `SVGAttributesAny`, or `DOMAttributesAny`.
-    * The type given supports all possible combinations - as if had all the tags.
-- For each above there's also the native case variants:
-    * `HTMLAttributes_native`, `SVGAttributes_native` and `DOMAttributes_native`.
-    * `HTMLAttributesAny_native`, `SVGAttributesAny_native` and `DOMAttributesAny_native`.
+- The available forms are the following, shown with DOM prefix here:
+    * `DOMAttributesAny`: All possible attributes regardless of tag. Because DOM, then all for HTML and SVG.
+    * `DOMAttributes<Tag extends string, Fallback = DOMAttributesAny>`: Tag based attributes.
+    * `DOMAttributesBy: Record<DOMTag, DOMAttributes[DOMTag]>`: Tag based attributes as a dictionary.
+- In addition, the same ones are available in native case using `_native` suffix. For example:
+    * `DOMAttributesAny_native`: All possible attributes (for any tag) in native case.
+    * `HTMLAttributes_native<Tag extends string, Fallback = HTMLAttributesAny>`: HTML tag based in native case.
+    * `SVGAttributesBy_native: Record<SVGTag, SVGAttributes[SVGTag]>`: SVG attributes dictionary in native case.
+
+#### 1.1.1 HTML examples
 
 ```typescript
 
@@ -82,31 +80,31 @@ Core methods behind the scenes:
 type MyDiv = HTMLAttributes<"div">;
 type MyDivTests = [
     // Correct.
-    MyDiv["onClick"], // ((this: GlobalEventHandlers, ev: MouseEvent) => any) | null | undefined
-    MyDiv["style"], // string | CSSProperties | undefined
-    MyDiv["class"], // string | undefined
+    MyDiv["onClick"],   // ((this: GlobalEventHandlers, ev: MouseEvent) => any) | null | undefined
+    MyDiv["style"],     // string | CSSProperties | undefined
+    MyDiv["class"],     // string | undefined
     MyDiv["className"], // string | undefined
     // Failures.
-    MyDiv["onclick"], // Type guard says it doesn't exist - as intended.
-    MyDiv["disabled"], // Type guard says it doesn't exist - as intended.
+    MyDiv["onclick"],   // Type guard says it doesn't exist - as intended.
+    MyDiv["disabled"],  // Type guard says it doesn't exist - as intended.
 ];
 
 // HTMLAttributes for any element in camelCase.
 type MyAny = HTMLAttributesAny;
 type MyAnyTests = [
     // Correct.
-    MyInput["disabled"], // BoolOrStr | undefined  =  "true" | "false" | boolean | string & {} | undefined
+    MyInput["disabled"],    // BoolOrStr | undefined  =  "true" | "false" | boolean | string & {} | undefined
     // Failures.
-    MyAny["onclick"], // Type guard says it doesn't exist - as intended.
+    MyAny["onclick"],       // Type guard says it doesn't exist - as intended.
 ];
 
 // HTMLAttributes for "input" in camelCase.
-type MyInput = HTMLAttributes<"input">;
+type MyInput = HTMLAttributesBy["input"]; // Let's test the dictionary form.
 type MyInputTests = [
     // Correct.
-    MyInput["onFocus"], // ((this: GlobalEventHandlers, ev: FocusEvent) => any) | null | undefined
-    MyInput["style"], // string | CSSProperties | undefined
-    MyInput["disabled"], // BoolOrStr | undefined  =  "true" | "false" | boolean | string & {} | undefined
+    MyInput["onFocus"],     // ((this: GlobalEventHandlers, ev: FocusEvent) => any) | null | undefined
+    MyInput["style"],       // string | CSSProperties | undefined
+    MyInput["disabled"],    // BoolOrStr | undefined  =  "true" | "false" | boolean | string & {} | undefined
     MyInput["virtualKeyboardPolicy"], // OrString | "auto" | "manual" | undefined
 ];
 
@@ -114,51 +112,131 @@ type MyInputTests = [
 type MyInput_native = HTMLAttributes_native<"input">;
 type MyInputTests_native = [
     // Correct.
-    MyInput_native["onfocus"], // ((this: GlobalEventHandlers, ev: FocusEvent) => any) | null | undefined
-    MyInput_native["class"], // string | undefined
-    MyInput_native["style"], // string | CSSProperties | undefined
+    MyInput_native["onfocus"],  // ((this: GlobalEventHandlers, ev: FocusEvent) => any) | null | undefined
+    MyInput_native["class"],    // string | undefined
+    MyInput_native["style"],    // string | CSSProperties | undefined
     MyInput_native["disabled"], // BoolOrStr | undefined  =  "true" | "false" | boolean | string & {} | undefined
     MyInput_native["virtualkeyboardpolicy"], // OrString | "auto" | "manual" | undefined
     // Failures.
     MyInput_native["className"], // string | undefined
 ];
 
+```
+
+#### 1.1.2 SVG examples
+
+```typescript
+
 // SVGAttributes for "circle" in camelCase.
 type MyCircle = SVGAttributes<"circle">;
 type MyCircleTests = [
     // Correct.
-    MyCircle["onFocus"], // ((this: GlobalEventHandlers, ev: FocusEvent) => any) | null | undefined
-    MyCircle["style"], // string | CSSProperties | undefined
-    MyCircle["fill"], // CSSColorNames | undefined
+    MyCircle["onFocus"],    // ((this: GlobalEventHandlers, ev: FocusEvent) => any) | null | undefined
+    MyCircle["style"],      // string | CSSProperties | undefined
+    MyCircle["fill"],       // CSSColorNames | undefined
     MyCircle["strokeDashArray"], // CSSColorNames | undefined
     MyCircle["ariaBrailleRoleDescription"], // string | null | undefined
 ];
 
 // SVGAttributes for "circle" in native case.
-type MyCircle_native = SVGAttributes_native<"circle">;
+type MyCircle_native = SVGAttributesBy_native["circle"]; // Let's test the dictionary form.
 type MyCircleTests_native = [
     // Correct.
     MyCircle_native["onfocus"], // ((this: GlobalEventHandlers, ev: FocusEvent) => any) | null | undefined
-    MyCircle_native["style"], // string | CSSProperties | undefined
-    MyCircle_native["fill"], // CSSColorNames | undefined
+    MyCircle_native["style"],   // string | CSSProperties | undefined
+    MyCircle_native["fill"],    // CSSColorNames | undefined
     MyCircle_native["stroke-dasharray"], // CSSColorNames | undefined
     MyCircle_native["aria-brailleroledescription"], // string | null | undefined
 ];
 
-// DOMAttributes.
-type MyPath = DOMAttributes<"path" | "group">; // Same as `SVGAttributes<"path" | "group">`
-type MyAny = DOMAttributesAny; // Same as `HTMLAttributesAny & SVGAttributesAny`
+```
 
+#### 1.1.3 DOM examples and tag unions
+
+- You can also define a union of tags for `DOMAttributes<Tag>` (or HTML or SVG).
+    * However, it's typically not recommended, and just easier to use the Any type variant.
+- In any case, it works except for one caveat specifically for the DOM type:
+    * If you mix different sides the result will just be the intersection of the Any type for both sides.
+    * For example: `DOMAttributes<"div" | "svg">` results in `HTMLAttributesAny & SVGAttributesAny`.
+
+```typescript
+
+// DOMAttributes.
+type MySVGPathOrSVG = DOMAttributes<"path" | "svg">;    // Same as `SVGAttributes<"path" | "svg">`
+type MySVGPathAndSVG = DOMAttributes<"path"> & SVGAttributes<"svg">; // Manual intersection.
+type MySVGPathOrGroup = DOMAttributes<"path" | "group">;// Same as `SVGAttributes<"path" | "group">`
+type MyHTMLDivOrSpan = DOMAttributes<"div" | "span">;   // Same as `HTMLAttributes<"div" | "span">`
+type MyMixHTMLAndSVG = DOMAttributes<"div" | "svg">;    // Same as `HTMLAttributesAny & SVGAttributesAny`
+type MySpecialAnchor = DOMAttributes<"a">;              // Same as `HTMLAttributes<"a"> & SVGAttributes<"a">`
+
+// Test.
+type MyTests = [
+    // SVG presentational attributes.
+    MySVGPathOrSVG["fill"],     // Error - not found since it's a union, not intersection.
+    MySVGPathAndSVG["fill"],    // Found, since it's an intersection.
+    MySVGPathOrGroup["fill"],   // Found, since present in both.
+    // HTML basics.
+    MyHTMLDivOrSpan["tabIndex"], // Found. Actually "div" and "span" have nothing special.
+    MyHTMLDivOrSpan["disabled"], // Error - not found, since "disabled" is for "input", "button" and such.
+    // Mixed outcome.
+    MyMixHTMLAndSVG["strokeDashArray"],  // Anything for HTML or SVG is allowed. Tags won't matter.
+    MyMixHTMLAndSVG["disabled"],         // Like said, all possible allowed.
+    // Special case - tag belonging to both sides.
+    MySpecialAnchor["href"],        // Found, correct.
+    MySpecialAnchor["disabled"],    // Error - not found, correct.
+    MySpecialAnchor["xmlBase"],     // Found, because found on the SVG side attributes.
+];
 
 ```
 
 ---
 
-### 1.2. Global listeners
+### 1.2. Global listeners and ARIA attributes
 
+- The global listeners and ARIA attributes are included in the main declarations, but can be used separately.
+- Accordingly, the global listeners are provided as native and camelCase interfaces:
+    * `GlobalListeners` and `GlobalListeners_native`.
+    * For example: `GlobalListeners["onAbort"]`, or `GlobalListeners_native["onclick"]`.
+- And likewise, the ARIA attributes are provided as native and camelCase interfaces:
+    * `ARIAAttributes` (= global `ARIAMixin`) and `ARIAAttributes_native`.
+    * In addition, there's a string type for `ARIARole`.
+
+```typescript
+
+// Just showcasing.
+type MyTests = [
+    // Correctly found.
+    GlobalListeners["onClick"],
+    GlobalListeners_native["onclick"],
+    ARIAAttributes["ariaAtomic"],
+    ARIAAttributes["ariaValueMin"],
+    ARIAAttributes_native["aria-atomic"],
+    ARIAAttributes_native["aria-valuemin"],
+    // Failures - mismatching cases.
+    GlobalListeners["onclick"],
+    GlobalListeners_native["onClick"],
+    ARIAAttributes["aria-atomic"],
+    ARIAAttributes["aria-valuemin"],
+    ARIAAttributes_native["ariaAtomic"],
+    ARIAAttributes_native["ariaValueMin"],
+];
+
+```
 ---
 
-### 1.3. Aria attributes
+### 1.3. CSS properties
+
+- The CSS properties are available as camelCase dictionary. For example: `{ "backgroundColor": "#000" }`
+    * This is because it works nicely with the Element's style, eg. `el.style["backgroundColor"] = "#000"`.
+    * Actually both forms are supported by browsers through the syle: `el.style["background-color"] = "#000"`.
+* All values are `string` in type, though some also support `number` reflecting what the major browsers support.
+    - For example: `{ width: 50 }` -> `el.style.width = 50` -> `50` = `50px`.
+* Currently (at v1.0.0) there's no suggestions for values (except for `"position"`), but more coming later.
+
+```typescript
+
+
+```
 
 ---
 

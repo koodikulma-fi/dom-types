@@ -21,22 +21,28 @@ import { HTMLAttributes, HTMLAttributes_native } from "./HTMLAttributes";
 /** All known SVG tag names. */
 export type SVGTags = keyof SVGNativeAttributesBy;
 
-// Attributes.
+// Attributes with tag arg.
 /** SVG element attributes by tag name with camelCase listener and aria attributes. */
-export type SVGAttributes<Tag extends string, Fallback = SVGAttributesAny> = [Tag] extends [SVGTags] ? Partial<SVGNativeAttributesBy[Tag] & SVGCoreAttributes & GlobalListeners & ARIAAttributes> : Fallback;
+export type SVGAttributes<Tag extends string, Fallback = SVGAttributesAny> = [Tag] extends [SVGTags] ? Partial<SVGNativeAttributesBy[Tag] & SVGGlobalAttributes & GlobalListeners & ARIAAttributes> : Fallback;
 /** SVG element attributes by tag name with lowercase listener and aria attributes. */
-export type SVGAttributes_native<Tag extends string, Fallback = SVGAttributesAny_native> = [Tag] extends [SVGTags] ? Partial<SVGNativeAttributesBy_native[Tag] & SVGCoreAttributes_native & GlobalListeners_native & ARIAAttributes_native> : Fallback;
+export type SVGAttributes_native<Tag extends string, Fallback = SVGAttributesAny_native> = [Tag] extends [SVGTags] ? Partial<SVGNativeAttributesBy_native[Tag] & SVGGlobalAttributes_native & GlobalListeners_native & ARIAAttributes_native> : Fallback;
 
 // Attributes without tag.
 /** The all possible attributes that SVG elements can have - in camelCase. */
-export type SVGAttributesAny = Partial<SVGOtherAttributes & SVGCoreAttributes & GlobalListeners & ARIAAttributes>;
+export type SVGAttributesAny = Partial<SVGOtherAttributes & SVGGlobalAttributes & GlobalListeners & ARIAAttributes>;
 /** The all possible attributes that SVG elements can have - in native case. */
-export type SVGAttributesAny_native = Partial<SVGOtherAttributes_native & SVGCoreAttributes_native & GlobalListeners_native & ARIAAttributes_native>;
+export type SVGAttributesAny_native = Partial<SVGOtherAttributes_native & SVGGlobalAttributes_native & GlobalListeners_native & ARIAAttributes_native>;
+
+// Attributes dictionary.
+/** Dictionary of SVG attributes by tag in camelCase. */
+export type SVGAttributesBy = { [Tag in SVGTags]: SVGAttributes<Tag>; };
+/** Dictionary of SVG attributes by tag in native case. */
+export type SVGAttributesBy_native = { [Tag in SVGTags]: SVGAttributes_native<Tag>; };
 
 
-// - SVG core attributes - //
+// - SVG core (or global) attributes - //
 
-interface SVGCoreAttributes extends DataAttributes {
+export interface SVGGlobalAttributes extends DataAttributes {
     "id": string | number;
     "class": string;
     /** Alias for "class". */
@@ -55,7 +61,7 @@ interface SVGCoreAttributes extends DataAttributes {
     /** Translates to "xmlns:xlink". */
     "xmlnsXlink": string;
 }
-interface SVGCoreAttributes_native extends DataAttributes {
+export interface SVGGlobalAttributes_native extends DataAttributes {
     "id": string | number;
     "class": string;
     "lang": string;
@@ -243,7 +249,7 @@ interface SVGPresentationAttributes_native extends Pick<SVGOtherAttributes_nativ
 
 // - SVG common attributes (tag specific) - //
 
-/** All attributes that are specific to tags in camelCase - excluding SVGCoreAttributes. */
+/** All attributes that are specific to tags in camelCase - excluding SVGGlobalAttributes. */
 interface SVGOtherAttributes extends Omit<SVGOtherAttributes_native,
     | "accent-height"
     | "alignment-baseline"
@@ -395,7 +401,7 @@ interface SVGOtherAttributes extends Omit<SVGOtherAttributes_native,
     "xlinkTitle": SVGOtherAttributes_native["xlink:title"];
     "xlinkType": SVGOtherAttributes_native["xlink:type"];
 }
-/** All attributes that are specific to tags in native case - excluding SVGCoreAttributes_native. */
+/** All attributes that are specific to tags in native case - excluding SVGGlobalAttributes_native. */
 interface SVGOtherAttributes_native {
     "accent-height": string | number;
     "alignment-baseline": "auto" | "baseline" | "before-edge" | "text-before-edge" | "middle" | "central" | "after-edge" | "text-after-edge" | "ideographic" | "alphabetic" | "hanging" | "mathematical" | "inherit" | OrString;
