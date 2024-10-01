@@ -64,13 +64,13 @@ Core methods behind the scenes:
     * `SVGAttributes<Tag extends string, Fallback = HTMLAttributesAny>`: Only SVG attributes.
     * `DOMAttributes<Tag extends string, Fallback = HTMLAttributesAny>`: Combines HTML & SVG.
 - The available forms are the following, shown with DOM prefix here:
-    * `DOMAttributesAny`: All possible attributes regardless of tag. Because DOM, then all for HTML and SVG.
     * `DOMAttributes<Tag extends string, Fallback = DOMAttributesAny>`: Tag based attributes.
-    * `DOMAttributesBy: Record<DOMTag, DOMAttributes[DOMTag]>`: Tag based attributes as a dictionary.
+    * `DOMAttributesAny`: All possible attributes for any tag. As it's DOM, includes HTML and SVG.
+    * `DOMAttributesBy: Record<Tag, DOMAttributes<Tag>>`: Tag based attributes as a dictionary.
 - In addition, the same ones are available in native case using `_native` suffix. For example:
+    * `HTMLAttributes_native<Tag, Fallback = HTMLAttributesAny>`: HTML tag based in native case.
     * `DOMAttributesAny_native`: All possible attributes (for any tag) in native case.
-    * `HTMLAttributes_native<Tag extends string, Fallback = HTMLAttributesAny>`: HTML tag based in native case.
-    * `SVGAttributesBy_native: Record<SVGTag, SVGAttributes[SVGTag]>`: SVG attributes dictionary in native case.
+    * `SVGAttributesBy_native: Record<Tag, SVGAttributes<Tag>>`: SVG dictionary in native case.
 
 #### 1.1.1 HTML examples
 
@@ -156,7 +156,7 @@ type MyCircleTests_native = [
 - You can also define a union of tags for `DOMAttributes<Tag>` (or HTML or SVG).
     * However, it's typically not recommended, and just easier to use the Any type variant.
 - In any case, it works except for one caveat specifically for the DOM type:
-    * If you mix different sides the result will just be the intersection of the Any type for both sides.
+    * If you mix HTML and SVG the result will just be the intersection of the Any type for both sides.
     * For example: `DOMAttributes<"div" | "svg">` results in `HTMLAttributesAny & SVGAttributesAny`.
 
 ```typescript
