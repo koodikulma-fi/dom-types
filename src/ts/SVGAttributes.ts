@@ -114,8 +114,71 @@ interface AnimationAdditionAttributes {
 
 // - SVG presentation attributes - //
 
-/** Note: All SVG presentation attributes can be used as CSS properties. */
-interface SVGPresentationAttributes extends Pick<SVGOtherAttributes_native, 
+/** Note: All SVG presentation attributes in camel case. They can also be used as CSS properties. */
+interface SVGPresentationAttributes extends Pick<SVGOtherAttributes, 
+    | "alignmentBaseline"
+    | "baselineShift"
+    | "clip"
+    | "clipPath"
+    | "clipRule"
+    | "color"
+    | "colorInterpolation"
+    | "colorInterpolationFilters"
+    | "colorRendering"
+    | "cursor"
+    | "d"
+    | "direction"
+    | "display"
+    | "dominantBaseline"
+    | "fill"
+    | "fillOpacity"
+    | "fillRule"
+    | "filter"
+    | "floodColor"
+    | "floodOpacity"
+    | "fontFamily"
+    | "fontSize"
+    | "fontSizeAdjust"
+    | "fontStretch"
+    | "fontStyle"
+    | "fontVariant"
+    | "fontWeight"
+    | "glyphOrientationHorizontal"
+    | "glyphOrientationVertical"
+    | "imageRendering"
+    | "letterSpacing"
+    | "letterSpacing"
+    | "markerEnd"
+    | "markerMid"
+    | "markerStart"
+    | "opacity"
+    | "overflow"
+    | "pointerEvents"
+    | "shapeRendering"
+    | "stopColor"
+    | "stopColor"
+    | "stroke"
+    | "strokeDashArray"
+    | "strokeDashOffset"
+    | "strokeLineCap"
+    | "strokeLineJoin"
+    | "strokeMiterLimit"
+    | "strokeOpacity"
+    | "strokeWidth"
+    | "textAnchor"
+    | "textDecoration"
+    | "textRendering"
+    | "transform"
+    | "transformOrigin"
+    | "unicodeBidi"
+    | "vectorEffect"
+    | "visibility"
+    | "wordSpacing"
+    | "writingMode"
+> {}
+
+/** Note: All SVG presentation attributes in lower case. They can also be used as CSS properties. */
+interface SVGPresentationAttributes_native extends Pick<SVGOtherAttributes_native, 
     | "alignment-baseline"
     | "baseline-shift"
     | "clip"
@@ -150,7 +213,6 @@ interface SVGPresentationAttributes extends Pick<SVGOtherAttributes_native,
     | "letter-spacing"
     | "marker-end"
     | "marker-mid"
-    | "marker-start"
     | "marker-start"
     | "opacity"
     | "overflow"
@@ -299,11 +361,11 @@ interface SVGOtherAttributes extends Omit<SVGOtherAttributes_native,
     "shapeRendering": SVGOtherAttributes_native["shape-rendering"];
     "stopColor": SVGOtherAttributes_native["stop-color"];
     "stopOpacity": SVGOtherAttributes_native["stop-opacity"];
-    "strokeDasharray": SVGOtherAttributes_native["stroke-dasharray"];
-    "strokeDashoffset": SVGOtherAttributes_native["stroke-dashoffset"];
-    "strokeLinecap": SVGOtherAttributes_native["stroke-linecap"];
-    "strokeLinejoin": SVGOtherAttributes_native["stroke-linejoin"];
-    "strokeMiterlimit": SVGOtherAttributes_native["stroke-miterlimit"];
+    "strokeDashArray": SVGOtherAttributes_native["stroke-dasharray"];
+    "strokeDashOffset": SVGOtherAttributes_native["stroke-dashoffset"];
+    "strokeLineCap": SVGOtherAttributes_native["stroke-linecap"];
+    "strokeLineJoin": SVGOtherAttributes_native["stroke-linejoin"];
+    "strokeMiterLimit": SVGOtherAttributes_native["stroke-miterlimit"];
     "strokeOpacity": SVGOtherAttributes_native["stroke-opacity"];
     "strokeWidth": SVGOtherAttributes_native["stroke-width"];
     "textAnchor": SVGOtherAttributes_native["text-anchor"];
@@ -657,11 +719,11 @@ interface SVGNativeAttributesBy_native {
         rotate: SVGOtherAttributes_native["rotate"];
     } & SVGAnimationAttributes;
     animateTransform: SVGAnimationAttributes;
-    circle: SVGPresentationAttributes & Pick<SVGOtherAttributes_native, "cx" | "cy" | "r" | "pathLength">;
+    circle: SVGPresentationAttributes_native & Pick<SVGOtherAttributes_native, "cx" | "cy" | "r" | "pathLength">;
     clipPath: Pick<SVGOtherAttributes_native, "clipPathUnits">;
     defs: {};
     desc: {};
-    ellipse: SVGPresentationAttributes & Pick<SVGOtherAttributes_native, "cx" | "cy" | "rx" | "ry" | "pathLength">;
+    ellipse: SVGPresentationAttributes_native & Pick<SVGOtherAttributes_native, "cx" | "cy" | "rx" | "ry" | "pathLength">;
     feBlend: Pick<SVGOtherAttributes_native, "in" | "in2" | "mode">;
     feColorMatrix: Pick<SVGOtherAttributes_native, "in" | "type" | "values">;
     feComponentTransfer: Pick<SVGOtherAttributes_native, "in">;
@@ -688,20 +750,20 @@ interface SVGNativeAttributesBy_native {
     feTurbulunece: Pick<SVGOtherAttributes_native, "baseFrequency" | "numOctaves" | "seed" | "stitchTiles" | "type">;
     filter: Pick<SVGOtherAttributes_native, "x" | "y" | "width" | "height" | "filterUnits" | "primitiveUnits" | "xlink:href">;
     foreignObject: Pick<SVGOtherAttributes_native, "height" | "width" | "x" | "y">;
-    g: SVGPresentationAttributes;
-    image: SVGPresentationAttributes & Pick<SVGOtherAttributes_native, "x" | "y" | "width" | "height" | "href" | "xlink:href" | "preserveAspectRatio" | "crossorigin" | "decoding">;
-    line: SVGPresentationAttributes & Pick<SVGOtherAttributes_native, "x1" | "y1" | "x2" | "y2" | "pathLength">;
+    g: SVGPresentationAttributes_native;
+    image: SVGPresentationAttributes_native & Pick<SVGOtherAttributes_native, "x" | "y" | "width" | "height" | "href" | "xlink:href" | "preserveAspectRatio" | "crossorigin" | "decoding">;
+    line: SVGPresentationAttributes_native & Pick<SVGOtherAttributes_native, "x1" | "y1" | "x2" | "y2" | "pathLength">;
     linearGradient: Pick<SVGOtherAttributes_native, "gradientUnits" | "gradientTransform" | "href" | "spreadMethod" | "x1" | "x2" | "xlink:href" | "y1" | "y2">;
     marker: Pick<SVGOtherAttributes_native, "markerHeight" |"markerUnits" | "markerWidth" | "orient" | "preserveAspectRatio" | "refX" | "refY" | "viewBox">;
     mask: Pick<SVGOtherAttributes_native, "height" | "maskContentUnits" | "maskUnits" | "x" | "y" | "width">;
     metadata: {};
     mpath: Pick<SVGOtherAttributes_native, "xlink:href">;
-    path: SVGPresentationAttributes & Pick<SVGOtherAttributes_native, "d" | "pathLength">;
+    path: SVGPresentationAttributes_native & Pick<SVGOtherAttributes_native, "d" | "pathLength">;
     pattern: Pick<SVGOtherAttributes_native, "height" | "href" | "patternContentUnits" | "patternTransform" | "patternUnits" | "preserveAspectRatio" | "viewBox" | "width" | "x" | "xlink:href" | "y">;
-    polygon: SVGPresentationAttributes & Pick<SVGOtherAttributes_native, "points" | "pathLength">;
-    polyline: SVGPresentationAttributes & Pick<SVGOtherAttributes_native, "points" | "pathLength">;
+    polygon: SVGPresentationAttributes_native & Pick<SVGOtherAttributes_native, "points" | "pathLength">;
+    polyline: SVGPresentationAttributes_native & Pick<SVGOtherAttributes_native, "points" | "pathLength">;
     radialGradient: Pick<SVGOtherAttributes_native, "cx" | "cy" | "fr" | "fx" | "fy" | "gradientUnits" | "gradientTransform" | "href" | "r" | "spreadMethod" | "xlink:href">;
-    rect: SVGPresentationAttributes & Pick<SVGOtherAttributes_native, "x" | "y" | "width" | "height" | "rx" | "ry" | "pathLength">;
+    rect: SVGPresentationAttributes_native & Pick<SVGOtherAttributes_native, "x" | "y" | "width" | "height" | "rx" | "ry" | "pathLength">;
     script: Pick<SVGOtherAttributes_native, "crossorigin" | "href" | "type" | "xlink:href">;
     set: Pick<SVGOtherAttributes_native, "to">;
     stop: Pick<SVGOtherAttributes_native, "offset" | "stop-color" | "stop-opacity">;
@@ -709,7 +771,7 @@ interface SVGNativeAttributesBy_native {
     svg: Pick<SVGOtherAttributes_native, "baseProfile" | "height" | "preserveAspectRatio" | "version" | "viewBox" | "width" | "x" | "y">;
     switch: {};
     symbol: Pick<SVGOtherAttributes_native, "height" | "preserveAspectRatio" | "refX" | "refY" | "viewBox" | "width" | "x" | "y">;
-    text: SVGPresentationAttributes & Pick<SVGOtherAttributes_native, "x" | "y" | "dx" | "dy" | "rotate" | "lengthAdjust" | "textLength">;
+    text: SVGPresentationAttributes_native & Pick<SVGOtherAttributes_native, "x" | "y" | "dx" | "dy" | "rotate" | "lengthAdjust" | "textLength">;
     textPath: Pick<SVGOtherAttributes_native, "href" | "lengthAdjust" | "method" | "path" | "side" | "spacing" | "startOffset" | "textLength">;
     title: {};
     tspan: Pick<SVGOtherAttributes_native, "x" | "y" | "dx" | "dy" | "rotate" | "lengthAdjust" | "textLength">;

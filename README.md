@@ -3,7 +3,7 @@
 
 `dom-types` is a light weight library containing typing for HTML & SVG attributes and CSS properties, and a few related JS methods.
 
-The types are provided in native naming as well as camelCase naming, and the related JS methods included.
+The types are provided in native naming as well as camelCase naming, the JS side works for both.
 
 The npm package can be found with: [dom-types](https://www.npmjs.com/package/dom-types). Contribute in GitHub: [koodikulma-fi/dom-types.git](https://github.com/koodikulma-fi/dom-types.git)
 
@@ -13,13 +13,19 @@ The npm package can be found with: [dom-types](https://www.npmjs.com/package/dom
 
 There are 2 kinds of tools available.
 
-### [1. TS TOOLS](#1-ts-tools-doc)
+### [1. TS DECLARATIONS](#1-ts-declarations-doc)
 
-Tag based SVG and HTML attributes.
-- With matching typing, allowing string for any but providing suggestions for many.
-- Provided in native as well as camelCase format. (JS side hss converters.)
-- More allowing string suggestions might be added later, especially for CSS properties.
-
+Tag based (and tagless) SVG and HTML attributes separately and combined (as DOM).
+- Provided in native naming as well as in camelCase.
+    * For example: "onclick" vs. "onClick", or "http-equiv" vs. "httpEquiv" and so on.
+- The typing provides attribute based suggestions (for most cases), while still always allowing any string value.
+    * For some attributes, the value can also be a boolean, number or sometimes a string or number array.
+    * Later updates can include more attribute based suggestions, refines and comments.
+- Finally, declaring CSS properties (attribute "style").
+    * Uses camelCase typing as it works natively with `el.style[styleProp] = val`. For example: `{ "backgroundColor": "#000" }`
+    * Some values can be use `number` in addition to `string` reflecting what the major browsers support.
+        - For example: `{ width: 50 }` -> `el.style.width = 50` -> `50` = `50px`.
+    * Currently (at v1.0.0) there's no suggestions for values (except for "position"), but more coming later.
 
 ### [2. JS TOOLS](#2-js-tools-doc)
 
@@ -52,7 +58,94 @@ Core methods behind the scenes:
 
 ---
 
-## 1. TS TOOLS (doc)
+## 1. TS DECLARATIONS (doc)
+
+---
+
+### 1.1 HTML-, SVG- & DOMAttributes
+
+- The collections follow similar typing and naming to each other. For example:
+    * `HTMLAttributes<Tag extends string, Fallback = HTMLAttributesAny>`: Only HTML attributes.
+    * `SVGAttributes<Tag extends string, Fallback = HTMLAttributesAny>`: Only SVG attributes.
+    * `DOMAttributes<Tag extends string, Fallback = HTMLAttributesAny>`: Combines HTML & SVG.
+- If you don't want to define the tag use `HTMLAttributesAny`, `SVGAttributesAny`, or `DOMAttributesAny`.
+    * The type given supports all possible combinations - as if had all the tags.
+- For each above there's also the native case variants:
+    * `HTMLAttributes_native`, `SVGAttributes_native` and `DOMAttributes_native`.
+    * `HTMLAttributesAny_native`, `SVGAttributesAny_native` and `DOMAttributesAny_native`.
+
+```typescript
+
+// HTMLAttributes for "div" in camelCase.
+type MyDiv = HTMLAttributes<"div">;
+type MyDivTests = [
+    // Correct.
+    MyDiv["onClick"], // ((this: GlobalEventHandlers, ev: MouseEvent) => any) | null | undefined
+    MyDiv["style"], // string | CSSProperties | undefined
+    MyDiv["class"], // string | undefined
+    MyDiv["className"], // string | undefined
+    // Failures.
+    MyDiv["onclick"], // Type guard says it doesn't exist - as intended.
+    MyDiv["disabled"], // Type guard says it doesn't exist - as intended.
+];
+
+// HTMLAttributes for any element in camelCase.
+type MyAny = HTMLAttributesAny;
+type MyAnyTests = [
+    // Correct.
+    MyInput["disabled"], // BoolOrStr | undefined  =  "true" | "false" | boolean | string & {} | undefined
+    // Failures.
+    MyAny["onclick"], // Type guard says it doesn't exist - as intended.
+];
+
+// HTMLAttributes for "input" in camelCase.
+type MyInput = HTMLAttributes<"input">;
+type MyInputTests = [
+    // Correct.
+    MyInput["onFocus"], // ((this: GlobalEventHandlers, ev: FocusEvent) => any) | null | undefined
+    MyInput["style"], // string | CSSProperties | undefined
+    MyInput["disabled"], // BoolOrStr | undefined  =  "true" | "false" | boolean | string & {} | undefined
+    MyInput["virtualKeyboardPolicy"], // OrString | "auto" | "manual" | undefined
+];
+
+// HTMLAttributes for "input" in native case.
+type MyInput_native = HTMLAttributes_native<"input">;
+type MyInputTests_native = [
+    // Correct.
+    MyInput_native["onfocus"], // ((this: GlobalEventHandlers, ev: FocusEvent) => any) | null | undefined
+    MyInput_native["class"], // string | undefined
+    MyInput_native["style"], // string | CSSProperties | undefined
+    MyInput_native["disabled"], // BoolOrStr | undefined  =  "true" | "false" | boolean | string & {} | undefined
+    MyInput_native["virtualkeyboardpolicy"], // OrString | "auto" | "manual" | undefined
+    // Failures.
+    MyInput_native["className"], // string | undefined
+];
+
+// SVGAttributes for "circle" in camelCase.
+type MyCircle = SVGAttributes<"circle">;
+type MyCircleTests = [
+    // Correct.
+    MyCircle["onFocus"], // ((this: GlobalEventHandlers, ev: FocusEvent) => any) | null | undefined
+    MyCircle["style"], // string | CSSProperties | undefined
+    MyCircle["fill"], // CSSColorNames | undefined
+    MyCircle["strokeDashArray"], // CSSColorNames | undefined
+    MyCircle["ariaBrailleRoleDescription"], // string | null | undefined
+];
+
+// SVGAttributes for "circle" in native case.
+type MyCircle_native = SVGAttributes_native<"circle">;
+type MyCircleTests_native = [
+    // Correct.
+    MyCircle_native["onfocus"], // ((this: GlobalEventHandlers, ev: FocusEvent) => any) | null | undefined
+    MyCircle_native["style"], // string | CSSProperties | undefined
+    MyCircle_native["fill"], // CSSColorNames | undefined
+    MyCircle_native["stroke-dasharray"], // CSSColorNames | undefined
+    MyCircle_native["aria-brailleroledescription"], // string | null | undefined
+];
+
+
+```
+
 
 ## 2. JS TOOLS (doc)
 
@@ -334,7 +427,7 @@ isNodeSVG(a_html);  // false
 #### library - method: `classNames(...strLikes)`
 - Simply concats non-false like strings from string, array or dictionary input.
 - Does not remove any duplicates - to do that use `cleanNames` instead.
-- Note. In terms of nested processing (eg. in a component structure), it's recommended to use `classNames` on the parental flow, and `cleanNames` only at the leaf (to keep DOM clean).
+- Note. For optimal nested processing (eg. in a component structure), it's recommended to use `classNames` on the extending layers and `cleanNames` only at the last step.
 
 ```typescript
 

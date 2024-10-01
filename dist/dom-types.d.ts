@@ -873,8 +873,11 @@ interface AnimationAdditionAttributes {
     "additive": "replace" | "sum" | OrString;
     "accumulate": "none" | "sum" | OrString;
 }
-/** Note: All SVG presentation attributes can be used as CSS properties. */
-interface SVGPresentationAttributes extends Pick<SVGOtherAttributes_native, "alignment-baseline" | "baseline-shift" | "clip" | "clip-path" | "clip-rule" | "color" | "color-interpolation" | "color-interpolation-filters" | "color-rendering" | "cursor" | "d" | "direction" | "display" | "dominant-baseline" | "fill" | "fill-opacity" | "fill-rule" | "filter" | "flood-color" | "flood-opacity" | "font-family" | "font-size" | "font-size-adjust" | "font-stretch" | "font-style" | "font-variant" | "font-weight" | "glyph-orientation-horizontal" | "glyph-orientation-vertical" | "image-rendering" | "letter-spacing" | "letter-spacing" | "marker-end" | "marker-mid" | "marker-start" | "marker-start" | "opacity" | "overflow" | "pointer-events" | "shape-rendering" | "stop-color" | "stop-color" | "stroke" | "stroke-dasharray" | "stroke-dashoffset" | "stroke-linecap" | "stroke-linejoin" | "stroke-miterlimit" | "stroke-opacity" | "stroke-width" | "text-anchor" | "text-decoration" | "text-rendering" | "transform" | "transform-origin" | "unicode-bidi" | "vector-effect" | "visibility" | "word-spacing" | "writing-mode"> {
+/** Note: All SVG presentation attributes in camel case. They can also be used as CSS properties. */
+interface SVGPresentationAttributes extends Pick<SVGOtherAttributes, "alignmentBaseline" | "baselineShift" | "clip" | "clipPath" | "clipRule" | "color" | "colorInterpolation" | "colorInterpolationFilters" | "colorRendering" | "cursor" | "d" | "direction" | "display" | "dominantBaseline" | "fill" | "fillOpacity" | "fillRule" | "filter" | "floodColor" | "floodOpacity" | "fontFamily" | "fontSize" | "fontSizeAdjust" | "fontStretch" | "fontStyle" | "fontVariant" | "fontWeight" | "glyphOrientationHorizontal" | "glyphOrientationVertical" | "imageRendering" | "letterSpacing" | "letterSpacing" | "markerEnd" | "markerMid" | "markerStart" | "opacity" | "overflow" | "pointerEvents" | "shapeRendering" | "stopColor" | "stopColor" | "stroke" | "strokeDashArray" | "strokeDashOffset" | "strokeLineCap" | "strokeLineJoin" | "strokeMiterLimit" | "strokeOpacity" | "strokeWidth" | "textAnchor" | "textDecoration" | "textRendering" | "transform" | "transformOrigin" | "unicodeBidi" | "vectorEffect" | "visibility" | "wordSpacing" | "writingMode"> {
+}
+/** Note: All SVG presentation attributes in lower case. They can also be used as CSS properties. */
+interface SVGPresentationAttributes_native extends Pick<SVGOtherAttributes_native, "alignment-baseline" | "baseline-shift" | "clip" | "clip-path" | "clip-rule" | "color" | "color-interpolation" | "color-interpolation-filters" | "color-rendering" | "cursor" | "d" | "direction" | "display" | "dominant-baseline" | "fill" | "fill-opacity" | "fill-rule" | "filter" | "flood-color" | "flood-opacity" | "font-family" | "font-size" | "font-size-adjust" | "font-stretch" | "font-style" | "font-variant" | "font-weight" | "glyph-orientation-horizontal" | "glyph-orientation-vertical" | "image-rendering" | "letter-spacing" | "letter-spacing" | "marker-end" | "marker-mid" | "marker-start" | "opacity" | "overflow" | "pointer-events" | "shape-rendering" | "stop-color" | "stop-color" | "stroke" | "stroke-dasharray" | "stroke-dashoffset" | "stroke-linecap" | "stroke-linejoin" | "stroke-miterlimit" | "stroke-opacity" | "stroke-width" | "text-anchor" | "text-decoration" | "text-rendering" | "transform" | "transform-origin" | "unicode-bidi" | "vector-effect" | "visibility" | "word-spacing" | "writing-mode"> {
 }
 /** All attributes that are specific to tags in camelCase - excluding SVGCoreAttributes. */
 interface SVGOtherAttributes extends Omit<SVGOtherAttributes_native, "accent-height" | "alignment-baseline" | "allow-reorder" | "arabic-form" | "baseline-shift" | "color-interpolation" | "color-interpolation-filters" | "color-rendering" | "crossorigin" | "dominant-baseline" | "fill-opacity" | "fill-rule" | "flood-color" | "flood-opacity" | "font-family" | "font-size" | "font-size-adjust" | "font-style" | "font-variant" | "font-weight" | "glyph-name" | "glyph-orientation-horizontal" | "glyph-orientation-vertical" | "horiz-adv-x" | "horiz-origin-x" | "horiz-origin-y" | "image-rendering" | "letter-spacing" | "lighting-color" | "marker-end" | "marker-mid" | "marker-start" | "overline-position" | "overline-thickness" | "paint-order" | "pointer-events" | "shape-rendering" | "stop-color" | "stop-opacity" | "stroke-dasharray" | "stroke-dashoffset" | "stroke-linecap" | "stroke-linejoin" | "stroke-miterlimit" | "stroke-opacity" | "stroke-width" | "text-anchor" | "text-decoration" | "text-rendering" | "transform-origin" | "underline-position" | "underline-thickness" | "unicode-bidi" | "unicode-range" | "units-per-em" | "v-alphabetic" | "v-hanging" | "v-ideographic" | "v-mathematical" | "vector-effect" | "vert-adv-y" | "vert-origin-x" | "vert-origin-y" | "word-spacing" | "writing-mode" | "xlink:actuate" | "xlink:arcrole" | "xlink:href" | "xlink:role" | "xlink:show" | "xlink:title" | "xlink:type"> {
@@ -921,11 +924,11 @@ interface SVGOtherAttributes extends Omit<SVGOtherAttributes_native, "accent-hei
     "shapeRendering": SVGOtherAttributes_native["shape-rendering"];
     "stopColor": SVGOtherAttributes_native["stop-color"];
     "stopOpacity": SVGOtherAttributes_native["stop-opacity"];
-    "strokeDasharray": SVGOtherAttributes_native["stroke-dasharray"];
-    "strokeDashoffset": SVGOtherAttributes_native["stroke-dashoffset"];
-    "strokeLinecap": SVGOtherAttributes_native["stroke-linecap"];
-    "strokeLinejoin": SVGOtherAttributes_native["stroke-linejoin"];
-    "strokeMiterlimit": SVGOtherAttributes_native["stroke-miterlimit"];
+    "strokeDashArray": SVGOtherAttributes_native["stroke-dasharray"];
+    "strokeDashOffset": SVGOtherAttributes_native["stroke-dashoffset"];
+    "strokeLineCap": SVGOtherAttributes_native["stroke-linecap"];
+    "strokeLineJoin": SVGOtherAttributes_native["stroke-linejoin"];
+    "strokeMiterLimit": SVGOtherAttributes_native["stroke-miterlimit"];
     "strokeOpacity": SVGOtherAttributes_native["stroke-opacity"];
     "strokeWidth": SVGOtherAttributes_native["stroke-width"];
     "textAnchor": SVGOtherAttributes_native["text-anchor"];
@@ -1269,11 +1272,11 @@ interface SVGNativeAttributesBy_native {
         rotate: SVGOtherAttributes_native["rotate"];
     } & SVGAnimationAttributes;
     animateTransform: SVGAnimationAttributes;
-    circle: SVGPresentationAttributes & Pick<SVGOtherAttributes_native, "cx" | "cy" | "r" | "pathLength">;
+    circle: SVGPresentationAttributes_native & Pick<SVGOtherAttributes_native, "cx" | "cy" | "r" | "pathLength">;
     clipPath: Pick<SVGOtherAttributes_native, "clipPathUnits">;
     defs: {};
     desc: {};
-    ellipse: SVGPresentationAttributes & Pick<SVGOtherAttributes_native, "cx" | "cy" | "rx" | "ry" | "pathLength">;
+    ellipse: SVGPresentationAttributes_native & Pick<SVGOtherAttributes_native, "cx" | "cy" | "rx" | "ry" | "pathLength">;
     feBlend: Pick<SVGOtherAttributes_native, "in" | "in2" | "mode">;
     feColorMatrix: Pick<SVGOtherAttributes_native, "in" | "type" | "values">;
     feComponentTransfer: Pick<SVGOtherAttributes_native, "in">;
@@ -1300,20 +1303,20 @@ interface SVGNativeAttributesBy_native {
     feTurbulunece: Pick<SVGOtherAttributes_native, "baseFrequency" | "numOctaves" | "seed" | "stitchTiles" | "type">;
     filter: Pick<SVGOtherAttributes_native, "x" | "y" | "width" | "height" | "filterUnits" | "primitiveUnits" | "xlink:href">;
     foreignObject: Pick<SVGOtherAttributes_native, "height" | "width" | "x" | "y">;
-    g: SVGPresentationAttributes;
-    image: SVGPresentationAttributes & Pick<SVGOtherAttributes_native, "x" | "y" | "width" | "height" | "href" | "xlink:href" | "preserveAspectRatio" | "crossorigin" | "decoding">;
-    line: SVGPresentationAttributes & Pick<SVGOtherAttributes_native, "x1" | "y1" | "x2" | "y2" | "pathLength">;
+    g: SVGPresentationAttributes_native;
+    image: SVGPresentationAttributes_native & Pick<SVGOtherAttributes_native, "x" | "y" | "width" | "height" | "href" | "xlink:href" | "preserveAspectRatio" | "crossorigin" | "decoding">;
+    line: SVGPresentationAttributes_native & Pick<SVGOtherAttributes_native, "x1" | "y1" | "x2" | "y2" | "pathLength">;
     linearGradient: Pick<SVGOtherAttributes_native, "gradientUnits" | "gradientTransform" | "href" | "spreadMethod" | "x1" | "x2" | "xlink:href" | "y1" | "y2">;
     marker: Pick<SVGOtherAttributes_native, "markerHeight" | "markerUnits" | "markerWidth" | "orient" | "preserveAspectRatio" | "refX" | "refY" | "viewBox">;
     mask: Pick<SVGOtherAttributes_native, "height" | "maskContentUnits" | "maskUnits" | "x" | "y" | "width">;
     metadata: {};
     mpath: Pick<SVGOtherAttributes_native, "xlink:href">;
-    path: SVGPresentationAttributes & Pick<SVGOtherAttributes_native, "d" | "pathLength">;
+    path: SVGPresentationAttributes_native & Pick<SVGOtherAttributes_native, "d" | "pathLength">;
     pattern: Pick<SVGOtherAttributes_native, "height" | "href" | "patternContentUnits" | "patternTransform" | "patternUnits" | "preserveAspectRatio" | "viewBox" | "width" | "x" | "xlink:href" | "y">;
-    polygon: SVGPresentationAttributes & Pick<SVGOtherAttributes_native, "points" | "pathLength">;
-    polyline: SVGPresentationAttributes & Pick<SVGOtherAttributes_native, "points" | "pathLength">;
+    polygon: SVGPresentationAttributes_native & Pick<SVGOtherAttributes_native, "points" | "pathLength">;
+    polyline: SVGPresentationAttributes_native & Pick<SVGOtherAttributes_native, "points" | "pathLength">;
     radialGradient: Pick<SVGOtherAttributes_native, "cx" | "cy" | "fr" | "fx" | "fy" | "gradientUnits" | "gradientTransform" | "href" | "r" | "spreadMethod" | "xlink:href">;
-    rect: SVGPresentationAttributes & Pick<SVGOtherAttributes_native, "x" | "y" | "width" | "height" | "rx" | "ry" | "pathLength">;
+    rect: SVGPresentationAttributes_native & Pick<SVGOtherAttributes_native, "x" | "y" | "width" | "height" | "rx" | "ry" | "pathLength">;
     script: Pick<SVGOtherAttributes_native, "crossorigin" | "href" | "type" | "xlink:href">;
     set: Pick<SVGOtherAttributes_native, "to">;
     stop: Pick<SVGOtherAttributes_native, "offset" | "stop-color" | "stop-opacity">;
@@ -1323,7 +1326,7 @@ interface SVGNativeAttributesBy_native {
     svg: Pick<SVGOtherAttributes_native, "baseProfile" | "height" | "preserveAspectRatio" | "version" | "viewBox" | "width" | "x" | "y">;
     switch: {};
     symbol: Pick<SVGOtherAttributes_native, "height" | "preserveAspectRatio" | "refX" | "refY" | "viewBox" | "width" | "x" | "y">;
-    text: SVGPresentationAttributes & Pick<SVGOtherAttributes_native, "x" | "y" | "dx" | "dy" | "rotate" | "lengthAdjust" | "textLength">;
+    text: SVGPresentationAttributes_native & Pick<SVGOtherAttributes_native, "x" | "y" | "dx" | "dy" | "rotate" | "lengthAdjust" | "textLength">;
     textPath: Pick<SVGOtherAttributes_native, "href" | "lengthAdjust" | "method" | "path" | "side" | "spacing" | "startOffset" | "textLength">;
     title: {};
     tspan: Pick<SVGOtherAttributes_native, "x" | "y" | "dx" | "dy" | "rotate" | "lengthAdjust" | "textLength">;
@@ -1418,7 +1421,7 @@ declare function parseDOMStyle(cssText: string, nullIfEmpty?: false): CSSPropert
 declare function parseDOMStyle(cssText: string, nullIfEmpty?: boolean): CSSProperties | null;
 /** Returns a clean string without duplicates to be used as class name (with optional nested TypeScript verification).
  * - Note. If you don't care about duplicates, use `classNames` instead.
- *      * In terms of nested processing (eg. in a component structure), it's recommended to use `classNames` on the parental flow, and `cleanNames` only at the leaf (to keep DOM clean).
+ *      * For optimal nested processing (eg. in a component structure), it's recommended to use `classNames` on the extending layers and `cleanNames` only at the last step.
  * - Each item in the cleanNames can be:
  *      1. Single string: `Valid | FalseLike`
  *      2. Array or set: `Array<Valid | FalseLike> | Set<Valid | FalseLike>`
@@ -1509,7 +1512,7 @@ declare function cleanNames<ValidNames extends string = string, Inputs extends C
 ]>(...names: Inputs): string;
 /** Returns a string to be used as class name (with optional nested TypeScript verification) without removing duplicates.
  * - Note. If you want to remove any duplicates, use `cleanNames` instead.
- *      * In terms of nested processing (eg. in a component structure), it's recommended to use `classNames` on the parental flow, and `cleanNames` only at the leaf (to keep DOM clean).
+ *      * For optimal nested processing (eg. in a component structure), it's recommended to use `classNames` on the extending layers and `cleanNames` only at the last step.
  * - Each item in the classNames can be:
  *      1. Single string: `Valid | FalseLike`
  *      2. Array or set: `Array<Valid | FalseLike> | Set<Valid | FalseLike>`
