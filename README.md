@@ -354,7 +354,7 @@ classNames("a b", "a", ["a", "b"], {a: false, "a b": true});         // "a b a a
 type Names = "a" | "b";
 
 // Just try "a" and "b" separately.
-classNames<Names>("a", "b", ["b", "a"], { a: true }); // "a b b a a"
+classNames<Names>("a", "b", ["b", "a"], new Set(["b"]), { a: true }); // "a b b a b a"
 classNames<Names>("a", "b", ["b", "a"], { a: true }, "c"); // Type guards against "c"
 classNames<Names>("a", "a b", "b", ["a b"]); // Type guards against "a b".
 // Let's allow any string, but still use suggestions.
@@ -417,7 +417,7 @@ type Names = "a" | "b";
 
 // Just try "a" and "b" separately.
 cleanNames<Names>("a", "b", ["b", "a"], { a: true }); // "a b"
-cleanNames<Names>("a", "b", ["b", "a"], { a: true }, "c"); // Type guards against "c"
+cleanNames<Names>("a", "b", ["b", "a"], new Set(["b"]), { a: true }, "c"); // Type guards against "c"
 cleanNames<Names>("a", "a b", "b", ["a b"]); // Type guards against "a b".
 // Let's allow any string, but still use suggestions.
 cleanNames<Names | string & {}>("a", "a b", ["a b"], "c"); // "a b c", won't suggest "c" but allows it.

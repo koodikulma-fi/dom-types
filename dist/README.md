@@ -354,7 +354,7 @@ classNames("a b", "a", ["a", "b"], {a: false, "a b": true});         // "a b a a
 type Names = "a" | "b";
 
 // Just try "a" and "b" separately.
-classNames<Names>("a", "b", ["b", "a"], { a: true }); // "a b b a a"
+classNames<Names>("a", "b", ["b", "a"], new Set(["b"]), { a: true }); // "a b b a b a"
 classNames<Names>("a", "b", ["b", "a"], { a: true }, "c"); // Type guards against "c"
 classNames<Names>("a", "a b", "b", ["a b"]); // Type guards against "a b".
 // Let's allow any string, but still use suggestions.
@@ -372,7 +372,7 @@ const validNames = classNames as ValidateNames<Names>;
 // .. These should not produce errors in typing.
 validNames(["a"], { b: true });
 validNames(["a", "b", ""]);
-validNames(["a", "b", "a b", "b a"]);
+validNames(["a", "b", "a b", "b a"], new Set(["a", "b a"]));
 validNames(["a", false, undefined, "b"]);
 validNames(["a", false, undefined, "b"] as const);
 validNames({"a": true, "b a": false});
@@ -382,6 +382,7 @@ validNames("a", "a b", false, ["a"], ["b a", ""], undefined, { "a": true, "b a":
 validNames("FAIL");
 validNames(["FAIL"]);
 validNames({"FAIL": false});
+validNames(new Set(["a", "b", "FAIL"]));
 validNames("a", "a b", undefined, "FAIL", ["a", false]);
 validNames("a", "a b", undefined, ["a", "FAIL", false]);
 validNames(["a", "b", "a b", "FAIL", false]);
@@ -402,7 +403,7 @@ validNames("a", "a b", false, ["a", "FAIL"], ["b a", ""], undefined, {"a": true,
 // Numeric and false-like are cut off ("", false, null, undefined).
 cleanNames("a", "b", 0, undefined, [false, "c"], { d: true }); // "a b c d"
 // Each string is splitted by " " and collected to a record, so duplicates are dropped easily.
-cleanNames("a b", "b", "b b a a", ["b"], { a: true }); // "a b"
+cleanNames("a b", "b", "b b a a", ["b"], new Set(["b"]), { a: true }); // "a b"
 // Simulate some validation.
 cleanNames("a", 1 && "b", ["b", 0 && "c"], { "b d": true, "e": null }); // "a b d"
 // If you input numbers other than 0, they are type guarded - guard stops at first fail.
@@ -416,7 +417,7 @@ type Names = "a" | "b";
 
 // Just try "a" and "b" separately.
 cleanNames<Names>("a", "b", ["b", "a"], { a: true }); // "a b"
-cleanNames<Names>("a", "b", ["b", "a"], { a: true }, "c"); // Type guards against "c"
+cleanNames<Names>("a", "b", ["b", "a"], new Set(["b"]), { a: true }, "c"); // Type guards against "c"
 cleanNames<Names>("a", "a b", "b", ["a b"]); // Type guards against "a b".
 // Let's allow any string, but still use suggestions.
 cleanNames<Names | string & {}>("a", "a b", ["a b"], "c"); // "a b c", won't suggest "c" but allows it.
@@ -433,7 +434,7 @@ const validNames = cleanNames as ValidateNames<Names>;
 // .. These should not produce errors in typing.
 validNames(["a"], { b: true });
 validNames(["a", "b", ""]);
-validNames(["a", "b", "a b", "b a"]);
+validNames(["a", "b", "a b", "b a"], new Set(["a", "b a"]));
 validNames(["a", false, undefined, "b"]);
 validNames(["a", false, undefined, "b"] as const);
 validNames({"a": true, "b a": false});
@@ -443,6 +444,7 @@ validNames("a", "a b", false, ["a"], ["b a", ""], undefined, { "a": true, "b a":
 validNames("FAIL");
 validNames(["FAIL"]);
 validNames({"FAIL": false});
+validNames(new Set(["a", "b", "FAIL"]));
 validNames("a", "a b", undefined, "FAIL", ["a", false]);
 validNames("a", "a b", undefined, ["a", "FAIL", false]);
 validNames(["a", "b", "a b", "FAIL", false]);
