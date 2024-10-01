@@ -73,7 +73,7 @@ export function parseDOMStyle(cssText: string, nullIfEmpty: boolean = false): CS
  * // Numeric and false-like are cut off ("", false, null, undefined).
  * cleanNames("a", "b", 0, undefined, [false, "c"], { d: true }); // "a b c d"
  * // Each string is splitted by " " and collected to a record, so duplicates are dropped easily.
- * cleanNames("a b", "b", "b b a a", ["b"], { a: true }); // "a b"
+ * cleanNames("a b", "b", "b b a a", ["b"], new Set(["b"]), { a: true }); // "a b"
  * // Simulate some validation.
  * cleanNames("a", 1 && "b", ["b", 0 && "c"], { "b d": true, "e": null }); // "a b d"
  * // If you input numbers other than 0, they are type guarded - guard stops at first fail.
@@ -104,7 +104,7 @@ export function parseDOMStyle(cssText: string, nullIfEmpty: boolean = false): CS
  * // .. These should not produce errors in typing.
  * validNames(["a"], { b: true });
  * validNames(["a", "b", ""]);
- * validNames(["a", "b", "a b", "b a"]);
+ * validNames(["a", "b", "a b", "b a"], new Set(["a", "b a"]));
  * validNames(["a", false, undefined, "b"]);
  * validNames(["a", false, undefined, "b"] as const);
  * validNames({"a": true, "b a": false});
@@ -114,6 +114,7 @@ export function parseDOMStyle(cssText: string, nullIfEmpty: boolean = false): CS
  * validNames("FAIL");
  * validNames(["FAIL"]);
  * validNames({"FAIL": false});
+ * validNames(new Set(["a", "b", "FAIL"]));
  * validNames("a", "a b", undefined, "FAIL", ["a", false]);
  * validNames("a", "a b", undefined, ["a", "FAIL", false]);
  * validNames(["a", "b", "a b", "FAIL", false]);
@@ -188,7 +189,7 @@ export function cleanNames<
  * type Names = "a" | "b";
  * 
  * // Just try "a" and "b" separately.
- * classNames<Names>("a", "b", ["b", "a"], { a: true }); // "a b b a a"
+ * classNames<Names>("a", "b", ["b", "a"], new Set(["b"]), { a: true }); // "a b b a b a"
  * classNames<Names>("a", "b", ["b", "a"], { a: true }, "c"); // Type guards against "c"
  * classNames<Names>("a", "a b", "b", ["a b"]); // Type guards against "a b".
  * // Let's allow any string, but still use suggestions.
@@ -206,7 +207,7 @@ export function cleanNames<
  * // .. These should not produce errors in typing.
  * validNames(["a"], { b: true });
  * validNames(["a", "b", ""]);
- * validNames(["a", "b", "a b", "b a"]);
+ * validNames(["a", "b", "a b", "b a"], new Set(["a", "b a"]));
  * validNames(["a", false, undefined, "b"]);
  * validNames(["a", false, undefined, "b"] as const);
  * validNames({"a": true, "b a": false});
@@ -216,6 +217,7 @@ export function cleanNames<
  * validNames("FAIL");
  * validNames(["FAIL"]);
  * validNames({"FAIL": false});
+ * validNames(new Set(["a", "b", "FAIL"]));
  * validNames("a", "a b", undefined, "FAIL", ["a", false]);
  * validNames("a", "a b", undefined, ["a", "FAIL", false]);
  * validNames(["a", "b", "a b", "FAIL", false]);
@@ -260,9 +262,9 @@ export function classNames<
             continue;
         if (typeof name === "string")
             str += " " + name;
-        else if (Array.isArray(name))
-            str += " " + name.filter(n => n).join(" ");
-        else if (name && name.constructor instanceof Object)
+        else if (name[Symbol.iterator] && typeof name[Symbol.iterator] === "function")
+            str += " " + [...name as Iterable<any>].filter(n => n).join(" ");
+        else if (name && typeof name === "object")
             str += " " + Object.keys(name).filter(n => name[n]).join(" ");
     }
     // Remove the initial empty and remove any double spaces.
@@ -332,7 +334,7 @@ export function collectKeysTo(record: Record<string, true>, keyLikes: Exclude<Cl
         }
         case "object": {
             // Array like.
-            if (Array.isArray(keyLikes)) {
+            if (keyLikes[Symbol.iterator] && typeof keyLikes[Symbol.iterator] === "function") {
                 // It's just a simple array - not recursive anymore, because the typing didn't work that nicely with deep stuff / recursion.
                 // .. So we just iterate each, split by " " and collect.
                 for (const key of keyLikes as Iterable<string>) {

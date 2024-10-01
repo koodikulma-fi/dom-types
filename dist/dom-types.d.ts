@@ -15,6 +15,14 @@ interface DataAttributes {
 
 /** False like JS values. */
 type FalseLike = "" | 0 | false | null | undefined | void;
+/** Collect values of an iterable. */
+type IterableValues<T, Fallback = never> = T extends Iterable<infer R> ? R : Fallback;
+/** Split a string into a typed array.
+ * - Use with PropType to validate and get deep value types with, say, dotted strings.
+ */
+type Split<S extends string, D extends string> = string extends S ? string[] : S extends '' ? [] : S extends `${infer T}${D}${infer U}` ? [T, ...Split<U, D>] : [S];
+/** Split a string array by a string. */
+type SplitArr<S extends string[] | readonly string[], D extends string> = Split<S[number] & string, D>;
 /** Type for className input.
  * - Represents what can be fed into the classNames or cleanNames methods with (Valid extends string):
  *     1. Single string: `Valid | FalseLike`
@@ -23,12 +31,6 @@ type FalseLike = "" | 0 | false | null | undefined | void;
  *     + If you want to use deeper validation use `ValidateNames<Valid>`
  */
 type ClassNameInput<Valid extends string = string, Nulls = FalseLike> = Valid | Nulls | Partial<Record<Valid, any>> | Iterable<Valid | Nulls>;
-/** Split a string into a typed array.
- * - Use with PropType to validate and get deep value types with, say, dotted strings.
- */
-type Split<S extends string, D extends string> = string extends S ? string[] : S extends '' ? [] : S extends `${infer T}${D}${infer U}` ? [T, ...Split<U, D>] : [S];
-/** Split a string array by a string. */
-type SplitArr<S extends string[] | readonly string[], D extends string> = Split<S[number] & string, D>;
 /** Typing tool for class name validation. The input can be:
  *    1. A string, either single or concatenated: "bold", "bold italic".
  *    2. An array of strings, similarly either single or concatenated: ["bold", "bold italic"].
@@ -45,13 +47,16 @@ type NameValidator<Valid extends any, Input> = [
     Input
 ] extends [Array<any> | Readonly<Array<any>>] ? Input extends Valid[] ? Valid[] : SplitArr<Input, " "> extends Valid[] ? any : never : [
     Input
+] extends [Iterable<any> | Readonly<Iterable<any>>] ? Input extends Iterable<Valid> ? Iterable<Valid> : Split<IterableValues<Input> & string, " "> extends Iterable<Valid> ? any : never : [
+    Input
 ] extends [object] ? keyof Input extends Valid ? any : Split<keyof Input & string, " "> extends Valid[] ? any : never : any;
 /** Helper to validate class names (paired with a javascript function that actually supports handling: (...params: any[]) => string;
  * 1. First create a type for valid names, eg.: `type ValidNames = "bold" | "italic" | "underline" | "dimmed";
  * 2. Then define a shortcut for the validator with the ValidNames type: `const cleanNames: ValidateNames<ValidNames> = MixDOM.classNames;`.
+ *      * You can use either: `classNames` or `cleanNames` as the JS side implementation.
  * 3. Then reuse the function for validation:
  *     a. For strings: `const okName = cleanNames("bold", "underline italic", false, "");` // => "bold underline italic"
- *     b. For arrays: `const okName = cleanNames(["underline", "dimmed italic", false, ""], [], undefined, ["bold"]);` // => "underline dimmed italic bold"
+ *     b. For iterables: `const okName = cleanNames(["underline", "dimmed italic", false, ""], [], undefined, ["bold"]);` // => "underline dimmed italic bold"
  *     c. For objects: `const okName = cleanNames({"bold": false, "dimmed italic": true}, null, {"underline": true });` // => "dimmed italic underline"
  * - You can also mix these freely: `const okName = cleanNames("bold", ["italic"], {"underline": false});`
  * - Note however, that the typing support is made for 10 arguments max. Anything after that uses a common type ...T[], so it will get buggy in various ways.
@@ -69,7 +74,7 @@ type NameValidator<Valid extends any, Input> = [
  * // .. These should not produce errors in typing.
  * validate(["a"]);
  * validate(["a", "b", ""]);
- * validate(["a", "b", "a b", "b a"]);
+ * validate(["a", "b", "a b", "b a"], new Set(["a", "b a"]));
  * validate(["a", false, undefined, "b"]);
  * validate(["a", false, undefined, "b"] as const);
  * validate({"a": true, "b a": false});
@@ -79,6 +84,7 @@ type NameValidator<Valid extends any, Input> = [
  * validate("FAIL");
  * validate(["FAIL"]);
  * validate({"FAIL": false});
+ * validate(new Set(["a", "b", "FAIL"]));
  * validate("a", "a b", undefined, "FAIL", ["a", false]);
  * validate("a", "a b", undefined, ["a", "FAIL", false]);
  * validate(["a", "b", "a b", "FAIL", false]);
@@ -1428,7 +1434,7 @@ declare function parseDOMStyle(cssText: string, nullIfEmpty?: boolean): CSSPrope
  * // Numeric and false-like are cut off ("", false, null, undefined).
  * cleanNames("a", "b", 0, undefined, [false, "c"], { d: true }); // "a b c d"
  * // Each string is splitted by " " and collected to a record, so duplicates are dropped easily.
- * cleanNames("a b", "b", "b b a a", ["b"], { a: true }); // "a b"
+ * cleanNames("a b", "b", "b b a a", ["b"], new Set(["b"]), { a: true }); // "a b"
  * // Simulate some validation.
  * cleanNames("a", 1 && "b", ["b", 0 && "c"], { "b d": true, "e": null }); // "a b d"
  * // If you input numbers other than 0, they are type guarded - guard stops at first fail.
@@ -1459,7 +1465,7 @@ declare function parseDOMStyle(cssText: string, nullIfEmpty?: boolean): CSSPrope
  * // .. These should not produce errors in typing.
  * validNames(["a"], { b: true });
  * validNames(["a", "b", ""]);
- * validNames(["a", "b", "a b", "b a"]);
+ * validNames(["a", "b", "a b", "b a"], new Set(["a", "b a"]));
  * validNames(["a", false, undefined, "b"]);
  * validNames(["a", false, undefined, "b"] as const);
  * validNames({"a": true, "b a": false});
@@ -1469,6 +1475,7 @@ declare function parseDOMStyle(cssText: string, nullIfEmpty?: boolean): CSSPrope
  * validNames("FAIL");
  * validNames(["FAIL"]);
  * validNames({"FAIL": false});
+ * validNames(new Set(["a", "b", "FAIL"]));
  * validNames("a", "a b", undefined, "FAIL", ["a", false]);
  * validNames("a", "a b", undefined, ["a", "FAIL", false]);
  * validNames(["a", "b", "a b", "FAIL", false]);
@@ -1529,7 +1536,7 @@ declare function cleanNames<ValidNames extends string = string, Inputs extends C
  * type Names = "a" | "b";
  *
  * // Just try "a" and "b" separately.
- * classNames<Names>("a", "b", ["b", "a"], { a: true }); // "a b b a a"
+ * classNames<Names>("a", "b", ["b", "a"], new Set(["b"]), { a: true }); // "a b b a b a"
  * classNames<Names>("a", "b", ["b", "a"], { a: true }, "c"); // Type guards against "c"
  * classNames<Names>("a", "a b", "b", ["a b"]); // Type guards against "a b".
  * // Let's allow any string, but still use suggestions.
@@ -1547,7 +1554,7 @@ declare function cleanNames<ValidNames extends string = string, Inputs extends C
  * // .. These should not produce errors in typing.
  * validNames(["a"], { b: true });
  * validNames(["a", "b", ""]);
- * validNames(["a", "b", "a b", "b a"]);
+ * validNames(["a", "b", "a b", "b a"], new Set(["a", "b a"]));
  * validNames(["a", false, undefined, "b"]);
  * validNames(["a", false, undefined, "b"] as const);
  * validNames({"a": true, "b a": false});
@@ -1557,6 +1564,7 @@ declare function cleanNames<ValidNames extends string = string, Inputs extends C
  * validNames("FAIL");
  * validNames(["FAIL"]);
  * validNames({"FAIL": false});
+ * validNames(new Set(["a", "b", "FAIL"]));
  * validNames("a", "a b", undefined, "FAIL", ["a", false]);
  * validNames("a", "a b", undefined, ["a", "FAIL", false]);
  * validNames(["a", "b", "a b", "FAIL", false]);
@@ -1683,4 +1691,4 @@ declare function applyDOMProps(domElement: HTMLElement | SVGElement | Element | 
  */
 declare function readDOMString(tag: string, domProps?: DOMCleanProps | null, childrenContent?: string | null | boolean, readFromNode?: Node | null, skipAttrs?: Record<string, any>): string;
 
-export { BoolOrStr, CSSBlendMode, CSSColorNames, CSSNumericPropertyNames, CSSProperties, ClassNameInput, DOMAttributes, DOMAttributesAny, DOMAttributesAny_native, DOMAttributesBy, DOMAttributesBy_native, DOMAttributes_native, DOMCleanProps, DOMDiffProps, DOMElement, DOMTags, DOMUncleanProps, DataAttributes, FalseLike, GetMethodKeys, GlobalEventHandler, GlobalListeners, GlobalListeners_native, HTMLAttributes, HTMLAttributesAny, HTMLAttributesAny_native, HTMLAttributes_native, HTMLGlobalAttributes, HTMLGlobalAttributes_native, HTMLTags, InheritInitial, InheritInitialRevUnset, IsReadOnlyKey, NameValidator, OrString, SVGAttributes, SVGAttributesAny, SVGAttributesAny_native, SVGAttributes_native, SVGTags, Split, SplitArr, ValidateNames, applyDOMProps, camelCaseStr, classNames, cleanDOMProps, cleanNames, collectKeysTo, createDOMElement, domListenerProps, domRenamedAttributes, domSkipAttributes, equalDOMProps, equalSubDictionaries, getDictionaryDiffs, getNameDiffs, isNodeSVG, lowerCaseStr, parseDOMStyle, readDOMProps, readDOMString };
+export { BoolOrStr, CSSBlendMode, CSSColorNames, CSSNumericPropertyNames, CSSProperties, ClassNameInput, DOMAttributes, DOMAttributesAny, DOMAttributesAny_native, DOMAttributesBy, DOMAttributesBy_native, DOMAttributes_native, DOMCleanProps, DOMDiffProps, DOMElement, DOMTags, DOMUncleanProps, DataAttributes, FalseLike, GetMethodKeys, GlobalEventHandler, GlobalListeners, GlobalListeners_native, HTMLAttributes, HTMLAttributesAny, HTMLAttributesAny_native, HTMLAttributes_native, HTMLGlobalAttributes, HTMLGlobalAttributes_native, HTMLTags, InheritInitial, InheritInitialRevUnset, IsReadOnlyKey, IterableValues, NameValidator, OrString, SVGAttributes, SVGAttributesAny, SVGAttributesAny_native, SVGAttributes_native, SVGTags, Split, SplitArr, ValidateNames, applyDOMProps, camelCaseStr, classNames, cleanDOMProps, cleanNames, collectKeysTo, createDOMElement, domListenerProps, domRenamedAttributes, domSkipAttributes, equalDOMProps, equalSubDictionaries, getDictionaryDiffs, getNameDiffs, isNodeSVG, lowerCaseStr, parseDOMStyle, readDOMProps, readDOMString };

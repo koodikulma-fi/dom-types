@@ -1,8 +1,21 @@
 
-// - Simple validation - //
+// - Helpers - //
 
 /** False like JS values. */
 export type FalseLike = "" | 0 | false | null | undefined | void;
+/** Collect values of an iterable. */
+export type IterableValues<T, Fallback = never> = T extends Iterable<infer R> ? R : Fallback;
+// Thanks to: https://github.com/microsoft/TypeScript/pull/40336
+/** Split a string into a typed array.
+ * - Use with PropType to validate and get deep value types with, say, dotted strings.
+ */
+export type Split<S extends string, D extends string> = string extends S ? string[] : S extends '' ? [] : S extends `${infer T}${D}${infer U}` ? [T, ...Split<U, D>] : [S];
+/** Split a string array by a string. */
+export type SplitArr<S extends string[] | readonly string[], D extends string> = Split<S[number] & string, D>;
+
+
+// - Simple validation - //
+
 /** Type for className input.
  * - Represents what can be fed into the classNames or cleanNames methods with (Valid extends string):
  *     1. Single string: `Valid | FalseLike`
@@ -11,17 +24,6 @@ export type FalseLike = "" | 0 | false | null | undefined | void;
  *     + If you want to use deeper validation use `ValidateNames<Valid>`
  */
 export type ClassNameInput<Valid extends string = string, Nulls = FalseLike> = Valid | Nulls | Partial<Record<Valid, any>> | Iterable<Valid | Nulls>;
-
-
-// - Split helpers - //
-
-// Thanks to: https://github.com/microsoft/TypeScript/pull/40336
-/** Split a string into a typed array.
- * - Use with PropType to validate and get deep value types with, say, dotted strings.
- */
-export type Split<S extends string, D extends string> = string extends S ? string[] : S extends '' ? [] : S extends `${infer T}${D}${infer U}` ? [T, ...Split<U, D>] : [S];
-/** Split a string array by a string. */
-export type SplitArr<S extends string[] | readonly string[], D extends string> = Split<S[number] & string, D>;
 
 
 // - Algoritm: Class name validation - //
@@ -41,7 +43,8 @@ export type NameValidator<Valid extends any, Input> =
     [Input] extends [string] ? Split<Input, " "> extends Valid[] ? string : never :
     // Array - check each STRING VALUE inside and split it and check if extends Valid[]. (Other types are ignored.)
     [Input] extends [Array<any> | Readonly<Array<any>>] ? Input extends Valid[] ? Valid[] : SplitArr<Input, " "> extends Valid[] ? any : never :
-    // [Input] extends [Array<any> | Readonly<Array<any>>] ? Input extends Valid[] ? Valid[] : Split<Input[number], " "> extends Valid[] ? any : never :
+    // Other iterables.
+    [Input] extends [Iterable<any> | Readonly<Iterable<any>>] ? Input extends Iterable<Valid> ? Iterable<Valid> : Split<IterableValues<Input> & string, " "> extends Iterable<Valid> ? any : never :
     // Object - check each STRING KEY inside and split it and check if extends Valid[].
     [Input] extends [object] ? keyof Input extends Valid ? any : Split<keyof Input & string, " "> extends Valid[] ? any : never :
     // Otherwise allow anything.
@@ -50,9 +53,10 @@ export type NameValidator<Valid extends any, Input> =
 /** Helper to validate class names (paired with a javascript function that actually supports handling: (...params: any[]) => string;
  * 1. First create a type for valid names, eg.: `type ValidNames = "bold" | "italic" | "underline" | "dimmed";
  * 2. Then define a shortcut for the validator with the ValidNames type: `const cleanNames: ValidateNames<ValidNames> = MixDOM.classNames;`.
+ *      * You can use either: `classNames` or `cleanNames` as the JS side implementation.
  * 3. Then reuse the function for validation:
  *     a. For strings: `const okName = cleanNames("bold", "underline italic", false, "");` // => "bold underline italic"
- *     b. For arrays: `const okName = cleanNames(["underline", "dimmed italic", false, ""], [], undefined, ["bold"]);` // => "underline dimmed italic bold"
+ *     b. For iterables: `const okName = cleanNames(["underline", "dimmed italic", false, ""], [], undefined, ["bold"]);` // => "underline dimmed italic bold"
  *     c. For objects: `const okName = cleanNames({"bold": false, "dimmed italic": true}, null, {"underline": true });` // => "dimmed italic underline"
  * - You can also mix these freely: `const okName = cleanNames("bold", ["italic"], {"underline": false});`
  * - Note however, that the typing support is made for 10 arguments max. Anything after that uses a common type ...T[], so it will get buggy in various ways.
@@ -70,7 +74,7 @@ export type NameValidator<Valid extends any, Input> =
  * // .. These should not produce errors in typing.
  * validate(["a"]);
  * validate(["a", "b", ""]);
- * validate(["a", "b", "a b", "b a"]);
+ * validate(["a", "b", "a b", "b a"], new Set(["a", "b a"]));
  * validate(["a", false, undefined, "b"]);
  * validate(["a", false, undefined, "b"] as const);
  * validate({"a": true, "b a": false});
@@ -80,6 +84,7 @@ export type NameValidator<Valid extends any, Input> =
  * validate("FAIL");
  * validate(["FAIL"]);
  * validate({"FAIL": false});
+ * validate(new Set(["a", "b", "FAIL"]));
  * validate("a", "a b", undefined, "FAIL", ["a", false]);
  * validate("a", "a b", undefined, ["a", "FAIL", false]);
  * validate(["a", "b", "a b", "FAIL", false]);
