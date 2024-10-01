@@ -4,7 +4,7 @@
 /** False like JS values. */
 export type FalseLike = "" | 0 | false | null | undefined | void;
 /** Type for className input.
- * - Represents what can be fed into the classNames method with (Valid extends string):
+ * - Represents what can be fed into the classNames or cleanNames methods with (Valid extends string):
  *     1. Single string: `Valid | FalseLike`
  *     2. Array, set or such: `Iterable<Valid | FalseLike>`
  *     3. Dictionary: `Record<Valid, any>`
@@ -64,6 +64,7 @@ export type NameValidator<Valid extends any, Input> =
  * // Prepare.
  * type ValidNames = "a" | "b";
  * const validate = classNames as ValidateNames<ValidNames>;
+ * // const validate = cleanNames as ValidateNames<ValidNames>; // Works too.
  * 
  * // Do tests.
  * // .. These should not produce errors in typing.

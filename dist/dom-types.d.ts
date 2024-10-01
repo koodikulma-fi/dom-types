@@ -16,7 +16,7 @@ interface DataAttributes {
 /** False like JS values. */
 type FalseLike = "" | 0 | false | null | undefined | void;
 /** Type for className input.
- * - Represents what can be fed into the classNames method with (Valid extends string):
+ * - Represents what can be fed into the classNames or cleanNames methods with (Valid extends string):
  *     1. Single string: `Valid | FalseLike`
  *     2. Array, set or such: `Iterable<Valid | FalseLike>`
  *     3. Dictionary: `Record<Valid, any>`
@@ -63,6 +63,7 @@ type NameValidator<Valid extends any, Input> = [
  * // Prepare.
  * type ValidNames = "a" | "b";
  * const validate = classNames as ValidateNames<ValidNames>;
+ * // const validate = cleanNames as ValidateNames<ValidNames>; // Works too.
  *
  * // Do tests.
  * // .. These should not produce errors in typing.
@@ -1379,8 +1380,8 @@ interface DOMCleanProps {
 interface DOMDiffProps {
     /** If no style, no changes in styles. If value in the dictionary is undefined means removed. */
     style?: CSSProperties;
-    /** If no classNames, no changes in class names. The keys are class names: for each, if true class name was added, if false name was removed. */
-    classNames?: Record<string, boolean>;
+    /** If no className, no changes in class names. The keys are class names: for each, if true class name was added, if false name was removed. */
+    className?: Record<string, boolean>;
     /** If no data, no changes in data attribute. If value in the dictionary is undefined means removed: eg. `delete element.dataSet.myKey`. */
     data?: Record<string, any>;
     /** If no attributes, no changes in general attributes. If value in the dictionary is undefined means removed: eg. `element.removeAttribute(attr)`. Otherwise apply: `element.setAttribute(attr, val)`. */
@@ -1589,9 +1590,20 @@ declare function classNames<ValidNames extends string = string, Inputs extends C
     ClassNameInput<ValidNames>?
 ]>(...names: Inputs): string;
 /** Get diffs in class names in the form of: Record<string, boolean>, where true means added, false removed, otherwise not included.
- * - Note. This process only checks for changes - it ignores changes in order completely.
+ * - Note. This process only checks for name changes - it ignores changes in _order_ completely.
+ *
+ * ```
+ *
+ * // Common usage.
+ * getNameDiffs("", "a") // { a: true }
+ * getNameDiffs("a", "") // { a: false }
+ * getNameDiffs("a b", "a b c") // { c: true }
+ * getNameDiffs("a b c", "a b") // { c: false }
+ * getNameDiffs("c b a a a", "a b b   b c e"); // { e: true }
+ *
+ * ```
  */
-declare function getClassNameDiffs(origName?: string, newName?: string): Record<string, boolean> | null;
+declare function getNameDiffs(origName?: string, newName?: string): Record<string, boolean> | null;
 /** Collects unique names as dictionary keys with value `true` for each found.
  * - The names are assumed to be:
  *      1. String (use stringSplitter),
@@ -1601,10 +1613,10 @@ declare function getClassNameDiffs(origName?: string, newName?: string): Record<
 declare function collectKeysTo(record: Record<string, true>, keyLikes: Exclude<ClassNameInput, FalseLike>, stringSplitter?: string): void;
 /** Collect shallow differences in two dictionaries. Assumes first one is original and second are the updates (= the next state) of the dictionary. Returns `null` if no changes detected. */
 declare function getDictionaryDiffs<T extends Record<string, any>>(orig: Partial<T>, update: Partial<T>): Partial<T> | null;
-/** Checks if both `a` and `b` contains the same property, and if so whether the sub value dictionaries are equal in the shallow sense.
- * - Checks for all given props. If any not equal, returns false.
- * - Note that a[prop] and b[prop] are assumed to be dictionaries if present.
- *      * If the sub value (a[prop][p] or b[prop][p]) is found is undefined in both, but only found in one set, returns false.
+/** Checks if sub dictionaries in both `a` and `b` are equal.
+ * - In case a sub dictionary is false-like for one, and empty dictionary for other {}, regards them as equal.
+ *      * For example, `equalSubDictionaries({ test: {} }, {}, "test")` returns true.
+ *      * But `equalSubDictionaries({ test: { me: true } }, {}, "test")` returns false.
  */
 declare function equalSubDictionaries<Prop extends string>(a: Partial<Record<Prop, any>>, b: Partial<Record<Prop, any>>, ...props: Prop[]): boolean;
 
@@ -1671,4 +1683,4 @@ declare function applyDOMProps(domElement: HTMLElement | SVGElement | Element | 
  */
 declare function readDOMString(tag: string, domProps?: DOMCleanProps | null, childrenContent?: string | null | boolean, readFromNode?: Node | null, skipAttrs?: Record<string, any>): string;
 
-export { BoolOrStr, CSSBlendMode, CSSColorNames, CSSNumericPropertyNames, CSSProperties, ClassNameInput, DOMAttributes, DOMAttributesAny, DOMAttributesAny_native, DOMAttributesBy, DOMAttributesBy_native, DOMAttributes_native, DOMCleanProps, DOMDiffProps, DOMElement, DOMTags, DOMUncleanProps, DataAttributes, FalseLike, GetMethodKeys, GlobalEventHandler, GlobalListeners, GlobalListeners_native, HTMLAttributes, HTMLAttributesAny, HTMLAttributesAny_native, HTMLAttributes_native, HTMLGlobalAttributes, HTMLGlobalAttributes_native, HTMLTags, InheritInitial, InheritInitialRevUnset, IsReadOnlyKey, NameValidator, OrString, SVGAttributes, SVGAttributesAny, SVGAttributesAny_native, SVGAttributes_native, SVGTags, Split, SplitArr, ValidateNames, applyDOMProps, camelCaseStr, classNames, cleanDOMProps, cleanNames, collectKeysTo, createDOMElement, domListenerProps, domRenamedAttributes, domSkipAttributes, equalDOMProps, equalSubDictionaries, getClassNameDiffs, getDictionaryDiffs, isNodeSVG, lowerCaseStr, parseDOMStyle, readDOMProps, readDOMString };
+export { BoolOrStr, CSSBlendMode, CSSColorNames, CSSNumericPropertyNames, CSSProperties, ClassNameInput, DOMAttributes, DOMAttributesAny, DOMAttributesAny_native, DOMAttributesBy, DOMAttributesBy_native, DOMAttributes_native, DOMCleanProps, DOMDiffProps, DOMElement, DOMTags, DOMUncleanProps, DataAttributes, FalseLike, GetMethodKeys, GlobalEventHandler, GlobalListeners, GlobalListeners_native, HTMLAttributes, HTMLAttributesAny, HTMLAttributesAny_native, HTMLAttributes_native, HTMLGlobalAttributes, HTMLGlobalAttributes_native, HTMLTags, InheritInitial, InheritInitialRevUnset, IsReadOnlyKey, NameValidator, OrString, SVGAttributes, SVGAttributesAny, SVGAttributesAny_native, SVGAttributes_native, SVGTags, Split, SplitArr, ValidateNames, applyDOMProps, camelCaseStr, classNames, cleanDOMProps, cleanNames, collectKeysTo, createDOMElement, domListenerProps, domRenamedAttributes, domSkipAttributes, equalDOMProps, equalSubDictionaries, getDictionaryDiffs, getNameDiffs, isNodeSVG, lowerCaseStr, parseDOMStyle, readDOMProps, readDOMString };

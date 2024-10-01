@@ -33,7 +33,7 @@ A couple of helper methods for reading and applying the type suggested features 
 - `readDOMProps(node): DOMCleanProps`
 - `cleanDOMProps(uncleanProps, listenerProps?, renamedAttrs?): DOMCleanProps`
 - `equalDOMProps(aDomProps, bDomProps): boolean`
-- `applyDOMProps(domElement, newProps, oldProps?, skipAttrs?): void`
+- `applyDOMProps(element, newProps, oldProps = {}, skipAttrs?, logWarnings = true): DOMDiffProps | null`
 
 Other general DOM helpers:
 - `createDOMElement(tag, checkSVGByParentNode?, namespaceURI?): HTMLElement | SVGElement`
@@ -109,11 +109,12 @@ const domRenamedAttributes = {
 ---
 
 ### 2.2. DOM props helpers
-- `readDOMString(tag, domProps?, childrenContent?, readFromNode?, skipAttrs?): string`
-- `readDOMProps(node): DOMCleanProps`
-- `cleanDOMProps(uncleanProps, listenerProps?, renamedAttrs?): DOMCleanProps`
-- `equalDOMProps(aDomProps, bDomProps): boolean`
-- `applyDOMProps(domElement, newProps, oldProps?, skipAttrs?): void`
+- The helpers are designed to meet practical needs and to enforce the naming convention:
+    * `readDOMString(tag, domProps?, childrenContent?, readFromNode?, skipAttrs?): string`
+    * `readDOMProps(node): DOMCleanProps`
+    * `cleanDOMProps(uncleanProps, listenerProps?, renamedAttrs?): DOMCleanProps`
+    * `equalDOMProps(aDomProps, bDomProps): boolean`
+    * `applyDOMProps(element, newProps, oldProps = {}, skipAttrs?, logWarnings = true): DOMDiffProps | null`
 
 #### library - method: `readDOMString(tag, domProps?, childrenContent?, readFromNode?, skipAttrs?)`
 
@@ -176,22 +177,77 @@ cleanDOMProps({ unknownThing: 5 });
 
 ```
 
-#### library - method: `equalDOMProps`
+#### library - method: `equalDOMProps(aDomProps, bDomProps)`
 
-- `equalDOMProps(aDomProps, bDomProps): boolean`
+- Compares two sets of DOMCleanProps to determine whether they are equal or not.
+    * Technically, they allow some tolerance over the cleaniness, if the structure is in place.
+- The method is useful to determine whether needs to apply anything to the DOM or not.
 
-#### library - method: `applyDOMProps`
+```typescript
 
-- `applyDOMProps(domElement, newProps, oldProps?, skipAttrs?): void`
+// True like tests.
+equalDOMProps({ className: undefined }, {}); // true
+equalDOMProps(
+    { attributes: {}, className: "" },
+    { listeners: {}, data: {} }
+); // true
+equalDOMProps(
+    { style: { backgroundColor: "#fff" } },
+    { style: { backgroundColor: "#fff" } }
+); // true
+
+// False like tests are obvious.
+equalDOMProps({ className: "active" }, {}); // false
+equalDOMProps(
+    { attributes: {}, className: "" },
+    { listeners: {}, data: { myName: "me" } }
+); // false
+equalDOMProps(
+    { style: { backgroundColor: "#000" } },
+    { style: { backgroundColor: "#fff" } }
+); // false
+
+
+```
+
+#### library - method: `applyDOMProps(element, newProps, oldProps = {}, skipAttrs?, logWarnings = true)`
+
+- Apply the cleaned DOM props to an element, optionally comparing against oldProps.
+- Returns info for changes (`DOMDiffProps`), or `null` if didn't apply any.
+
+```typescript
+
+// Create an element and apply props.
+const el = createDOMElement("div");
+const props1 = cleanDOMProps({ style: "background: #fff", class: "test", className: "me" });
+applyDOMProps(el, props1); // Applies style and class: <div style="background:#fff" class="test me" />
+// .. Returns: { className: { test: true, me: true }, style: { background: "#fff" } }
+
+// Apply another set of props, extending earlier props.
+const props2 = { ...props1, data: { myName: "me" } };
+applyDOMProps(el, props2, props1); // Applies data: <div ... data-my-name="me" />
+// .. Returns: { data: { myName: "me" } }
+
+// Reuse data from props2, but otherwise clean.
+const props3 = { data: props2.data };
+applyDOMProps(el, props3, props2); // Removes style and class: <div data-my-name="me" />
+// .. Returns: { className: { test: false, me: false }, style: { background: undefined } }
+
+// Test empty update.
+applyDOMProps(el, {...props3}, props3);
+// .. Returns: null
+
+```
 
 ---
 
 ### 2.3. General DOM helpers
-- `createDOMElement(tag, checkSVGByParentNode?, namespaceURI?): HTMLElement | SVGElement`
-- `isNodeSVG(node): boolean`
-- `classNames(...namesStrArrOrDictionary): string`
-- `cleanNames(...namesStrArrOrDictionary): string`
-- `parseDOMStyle(styleString): CSSProperties`
+- DOM helpers that are independent from the attribute naming.
+    * `createDOMElement(tag, checkSVGByParentNode?, namespaceURI?): HTMLElement | SVGElement`
+    * `isNodeSVG(node): boolean`
+    * `classNames(...namesStrArrOrDictionary): string`
+    * `cleanNames(...namesStrArrOrDictionary): string`
+    * `parseDOMStyle(styleString): CSSProperties`
 
 #### library - method: `createDOMElement(tag, checkSVGByParentNode?, namespaceURI?)`
 - Create a new HTML or SVG element with tag suggestions.
@@ -404,11 +460,12 @@ el.style["font-size"]       // "12px"
 ---
 
 ### 2.4. Core methods
-- `getDictionaryDiffs(orig, updated)`
-- `equalSubDictionaries(a, b, ...props)`
-- `collectKeysTo(record, keyLikes, splitter = "")`
-- `lowerCaseStr(str, delimiter = "-")`
-- `camelCaseStr(str, splitter = "-")`
+- `getDictionaryDiffs(orig, updated): Record<string, any>`
+- `equalSubDictionaries(a, b, ...props): boolean`
+- `getNameDiffs(origName, newName): Record<string, boolean> | null`
+- `collectKeysTo(record, keyLikes, splitter = ""): Record<string, true>`
+- `lowerCaseStr(str, delimiter = "-"): string`
+- `camelCaseStr(str, splitter = "-"): string`
 
 #### library - method: `getDictionaryDiffs(orig, updated)`
 - If unchanged, returns null, otherwise a new dictionary with keys only for changed, and value of each the new value or `undefined` if removed.
@@ -426,8 +483,9 @@ const myDiffs = getDictionaryDiffs({ a: undefined }, {}); // Returns null.
 
 ```
 
-#### library - method: `equalSubDictionaries(orig, updated, ...props)`
-- Compares the given objects by sub properties, assuming the sub values (if found) are dictionaries to be shallow compared.
+#### library - method: `equalSubDictionaries(a, b, ...props)`
+- Checks if sub dictionaries in both `a` and `b` are equal in shallow comparison for given properties.
+- In case one has an empty dictionary and the other nothing (or false-like), then regards them as equal.
 
 ```typescript
 
@@ -454,9 +512,25 @@ const b: MyObj = {
 // Test.
 equalSubDictionaries(a, b, "set1");         // false, a.set1.deep !== a.set2.deep
 equalSubDictionaries(a, b, "set2");         // true
-equalSubDictionaries(a, b, "other");        // false, a.other.more is undefined.
-equalSubDictionaries(a, b, "another");      // false, a.another is undefined.
+equalSubDictionaries(a, b, "other");        // false, b.other.more !== a.other.more.
+equalSubDictionaries(a, b, "another");      // true, b.another is just {}, so undefined is fine.
 equalSubDictionaries(a, b, "set1", "set2"); // false, because "set1" returns false.
+
+```
+
+#### library - method: `getNameDiffs(origName, newName)`
+
+- Get diffs in class names in the form of: Record<string, boolean>, where true means added, false removed, otherwise not included.
+- Note that the method does not care about the order, just whether the names are present or not. Skips empty "".
+
+```typescript
+
+// Common usage.
+getNameDiffs("", "a") // { a: true }
+getNameDiffs("a", "") // { a: false }
+getNameDiffs("a b", "a b c") // { c: true }
+getNameDiffs("a b c", "a b") // { c: false }
+getNameDiffs("c b a a a", "a b b   b c e"); // { e: true }
 
 ```
 

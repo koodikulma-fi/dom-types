@@ -270,9 +270,20 @@ export function classNames<
 }
 
 /** Get diffs in class names in the form of: Record<string, boolean>, where true means added, false removed, otherwise not included.
- * - Note. This process only checks for changes - it ignores changes in order completely.
+ * - Note. This process only checks for name changes - it ignores changes in _order_ completely.
+ * 
+ * ```
+ * 
+ * // Common usage.
+ * getNameDiffs("", "a") // { a: true }
+ * getNameDiffs("a", "") // { a: false }
+ * getNameDiffs("a b", "a b c") // { c: true }
+ * getNameDiffs("a b c", "a b") // { c: false }
+ * getNameDiffs("c b a a a", "a b b   b c e"); // { e: true }
+ * 
+ * ```
  */
-export function getClassNameDiffs(origName?: string, newName?: string): Record<string, boolean> | null {
+export function getNameDiffs(origName?: string, newName?: string): Record<string, boolean> | null {
     // Quick check.
     origName = origName || "";
     newName = newName || "";
@@ -373,39 +384,33 @@ export function getDictionaryDiffs<T extends Record<string, any>>(orig: Partial<
     return hasDiffs ? diffs : null;
 }
 
-/** Checks if both `a` and `b` contains the same property, and if so whether the sub value dictionaries are equal in the shallow sense.
- * - Checks for all given props. If any not equal, returns false.
- * - Note that a[prop] and b[prop] are assumed to be dictionaries if present.
- *      * If the sub value (a[prop][p] or b[prop][p]) is found is undefined in both, but only found in one set, returns false.
+/** Checks if sub dictionaries in both `a` and `b` are equal.
+ * - In case a sub dictionary is false-like for one, and empty dictionary for other {}, regards them as equal.
+ *      * For example, `equalSubDictionaries({ test: {} }, {}, "test")` returns true.
+ *      * But `equalSubDictionaries({ test: { me: true } }, {}, "test")` returns false.
  */
 export function equalSubDictionaries<Prop extends string>(a: Partial<Record<Prop, any>>, b: Partial<Record<Prop, any>>, ...props: Prop[]): boolean {
     // Loop given props.
     for (const prop of props) {
-        // At least `a` has the complex prop.
-        if (a[prop]) {
-            // But `b` doesn't have the complex prop.
-            if (!b[prop])
+        // Neither has.
+        if (!a[prop] && !b[prop])
+            continue;
+        // Either or both have.
+        const aData = a[prop] || {} as Object;
+        const bData = b[prop] || {} as Object;
+        if (aData === bData)
+            continue;
+        // Check that each property in aData that is identical to those in bData.
+        // .. In case aData[p] is undefined, we don't care if bData actually has the property or not.
+        for (const p in aData) {
+            if (bData[p] !== aData[p])
                 return false;
-            // Compare complex data (as shallow dictionaries).
-            const aData = a[prop] as Object;
-            const bData = b[prop] as Object;
-            if (aData !== bData) {
-                // Check if all in aData are found and matching in bData.
-                for (const p in aData) {
-                    if (bData[p] !== aData[p] || aData[p] === undefined && !bData.hasOwnProperty(p))
-                        return false;
-                }
-                // Check if bData has any that aData doesn't.
-                for (const p in bData) {
-                    if (aData[p] === undefined && !aData.hasOwnProperty(p))
-                        return false;
-                }
-            }
         }
-        // Only `b` has the prop.
-        else if (b[prop])
-            return false;
-        // Are equal - neither had it, or both had it and were equal for shallow comparison.
+        // Check the same for bData.
+        for (const p in bData) {
+            if (aData[p] !== bData[p])
+                return false;
+        }
     }
     // Equal for all given props.
     return true;

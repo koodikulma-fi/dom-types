@@ -4,7 +4,7 @@
 // Typing.
 import { DOMCleanProps, DOMDiffProps, DOMTags, DOMUncleanProps } from "../ts";
 // Library.
-import { equalSubDictionaries, getClassNameDiffs, getDictionaryDiffs, parseDOMStyle, camelCaseStr, lowerCaseStr } from "./domLib";
+import { equalSubDictionaries, getNameDiffs, getDictionaryDiffs, parseDOMStyle, camelCaseStr, lowerCaseStr } from "./domLib";
 // Constants.
 import { domListenerProps, domRenamedAttributes, domSkipAttributes } from "./domConstants";
 
@@ -126,27 +126,7 @@ export function cleanDOMProps(origProps: DOMUncleanProps, listenerProps: Partial
 
 /** Comparison method specialized into DOMCleanProps (= cleaned up attributes description of a dom element). */
 export function equalDOMProps(a: DOMCleanProps, b: DOMCleanProps): boolean {
-    // Added (not existing in a) or changed (existing in both).
-    for (const attr in b) {
-        // Class names.
-        if (attr === "className") {
-            if ((a.className || "") !== (b.className || ""))
-                return false;
-        }
-        // Others are dictionaries suitable for shallow comparison.
-        // .. For optimal checks, they should never contain empty dictionaries, or then should be undefined. (This is so in cleanDOMProps.)
-        else if (!equalSubDictionaries(a, b, attr))
-            return false;
-    }
-    // Deleted - not existing in b.
-    // .. Note that at this moment, we've already validated all cases where exists in both.
-    // .. So, if the b[prop] is undefined, and a[prop] is not, there's a change. (If b[prop] is not undefined, then handled above - not here.)
-    for (const prop in a) {
-        if (b[prop] === undefined && a[prop] !== undefined && prop !== "className")
-            return false;
-    }
-    // Are equal.
-    return true;
+    return (a.className || "") === (b.className || "") && equalSubDictionaries(a, b, "style", "data", "listeners", "attributes");
 }
 
 /** Returns the dictionaries for differences.
@@ -192,9 +172,9 @@ export function applyDOMProps(domElement: HTMLElement | SVGElement | Element | n
     // Class.
     if (oldProps.className || newProps.className) {
         // Collect diffs.
-        const classDiffs = getClassNameDiffs(oldProps.className, newProps.className);
+        const classDiffs = getNameDiffs(oldProps.className, newProps.className);
         if (classDiffs)
-            diffs.classNames = classDiffs;
+            diffs.className = classDiffs;
         // Apply.
         if (classDiffs && domElement)
             for (const name in classDiffs)

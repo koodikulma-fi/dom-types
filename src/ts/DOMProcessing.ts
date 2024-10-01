@@ -48,8 +48,8 @@ export interface DOMCleanProps {
 export interface DOMDiffProps {
     /** If no style, no changes in styles. If value in the dictionary is undefined means removed. */
     style?: CSSProperties;
-    /** If no classNames, no changes in class names. The keys are class names: for each, if true class name was added, if false name was removed. */
-    classNames?: Record<string, boolean>;
+    /** If no className, no changes in class names. The keys are class names: for each, if true class name was added, if false name was removed. */
+    className?: Record<string, boolean>;
     /** If no data, no changes in data attribute. If value in the dictionary is undefined means removed: eg. `delete element.dataSet.myKey`. */
     data?: Record<string, any>;
     /** If no attributes, no changes in general attributes. If value in the dictionary is undefined means removed: eg. `element.removeAttribute(attr)`. Otherwise apply: `element.setAttribute(attr, val)`. */
