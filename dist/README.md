@@ -29,17 +29,18 @@ A couple of (mutable) constants for enforcing the naming:
 - `domListenerProps`: The known listener properties - applied as event listeners.
 
 A couple of helper methods for reading and applying the type suggested features into/from DOM:
-- `readDOMString(tag, domProps?, childrenContent?, readFromNode?) => string`
+- `readDOMString(tag, domProps?, childrenContent?, readFromNode?, skipAttrs?) => string`
 - `readDOMProps(node) => DOMCleanProps`
-- `cleanDOMProps(uncleanProps) => DOMCleanProps`
+- `cleanDOMProps(uncleanProps, listenerProps?, renamedAttrs?) => DOMCleanProps`
 - `equalDOMProps(aDomProps, bDomProps) => boolean`
-- `applyDOMProps(domProps) => void`
+- `applyDOMProps(domElement, newProps, oldProps?, skipAttrs?) => void`
 
 Other general DOM helpers:
-- `classNames(...namesStrArrOrDictionary)`
-- `parseDOMStyle(styleString) => CSSProperties`
 - `createDOMElement(tag, checkByParentNode?, namespaceURI?) => HTMLElement | SVGElement | null`
 - `isNodeSVG(node) => boolean`
+- `classNames(...namesStrArrOrDictionary)`
+- `cleanNames(...namesStrArrOrDictionary)`
+- `parseDOMStyle(styleString) => CSSProperties`
 
 Core methods behind the scenes:
 - `getDictionaryDiffs(orig, updated)`
@@ -54,9 +55,12 @@ Core methods behind the scenes:
 
 ## 2. JS TOOLS (doc)
 
+---
+
 ### 2.1. Constants
 - The usage of constants can be overridden on the methods that use them (as the last arguments):
     * For example, `cleanDOMProps`, `applyDOMProps` and `readDOMString` use the constants.
+    * An alternative way to customize is by _mutating_ the constants - though it'll affect your whole project.
 
 #### library - constant: `domSkipAttributes`
 - Simply defines a set of attributes that will be totally ignored from the processing.
@@ -101,8 +105,31 @@ const domRenamedAttributes = {
 
 #### library - constant: `domListenerProps`
 
+---
+
 ### 2.2. Props
-readDOMProps(node: HTMLElement | SVGElement | Node): DOMCleanProps
+
+#### library - method: `readDOMString`
+
+- `readDOMString(tag, domProps?, childrenContent?, readFromNode?, skipAttrs?) => string`
+
+#### library - method: `readDOMProps`
+
+- `readDOMProps(node) => DOMCleanProps`
+
+#### library - method: `cleanDOMProps`
+
+- `cleanDOMProps(uncleanProps, listenerProps?, renamedAttrs?) => DOMCleanProps`
+
+#### library - method: `equalDOMProps`
+
+- `equalDOMProps(aDomProps, bDomProps) => boolean`
+
+#### library - method: `applyDOMProps`
+
+- `applyDOMProps(domElement, newProps, oldProps?, skipAttrs?) => void`
+
+---
 
 ### 2.3. General
 - `createDOMElement(tag, checkByParentNode?, namespaceURI?): HTMLElement | SVGElement | null`
@@ -171,19 +198,19 @@ isNodeSVG(a_html);  // false
 ```
 
 #### library - method: `classNames`
+- Simply concats non-false like strings from string, array or dictionary input.
+- Does not remove any duplicates - to do that use `cleanNames` instead.
 
 ```typescript
 
-// - Basic JS usage - //
+// - Basic usage - //
 
-// Numeric and false-like are cut off ("", false, null, undefined).
-classNames("a", "b", 0, undefined, [false, "c"], { d: true }); // "a b c d"
-// Each string is splitted by " " and collected to a record, so duplicates are dropped easily.
-classNames("a b", "b", "b b a a", ["b"], { a: true }); // "a b"
-// Simulate some validation.
-classNames("a", 1 && "b", ["b", 0 && "c"], { "d": true, "e": null }); // "a b d"
-// If you input numbers other than 0, they are type guarded - guard stops at first fail.
-classNames(0, 1, -1); // 1 nor -1 won't be allowed here.
+// Simply concats the strings with " " as the joiner.
+classNames(true && "a", 1 && "b", false && "c", null, undefined, 0); // "a b"
+classNames("a b", ["c", "d e", false], {"f g": true, h: false});     // "a b c d e f g"
+
+// But doesn't remove duplicates.
+classNames("a b", "a", ["a", "b"], {a: false, "a b": true});         // "a b a a b a b"
 
 
 // - Simple usage with typing - //
@@ -192,19 +219,79 @@ classNames(0, 1, -1); // 1 nor -1 won't be allowed here.
 type Names = "a" | "b";
 
 // Just try "a" and "b" separately.
-classNames<Names>("a", "b", ["b", "a"], { a: true }); // "a b"
+classNames<Names>("a", "b", ["b", "a"], { a: true }); // "a b b a a"
 classNames<Names>("a", "b", ["b", "a"], { a: true }, "c"); // Type guards against "c"
 classNames<Names>("a", "a b", "b", ["a b"]); // Type guards against "a b".
 // Let's allow any string, but still use suggestions.
-classNames<Names | string & {}>("a", "a b", ["a b"], "c"); // "a b c", won't suggest "c" but allows it.
+classNames<Names | string & {}>("a", "a b", ["a b"], "c"); // "a a b a b c", won't suggest "c" but allows it.
 // We could also use this pattern for some very specific cases - though, get type heavy quickly.
-classNames<Names | `${Names} ${Names}`>("a", "a b", ["a b"]); // "a b", would not allow "a b b"
+classNames<Names | `${Names} ${Names}`>("a", "a b", ["a b"]); // "a a b a b", would not allow "a b b"
 
 
 // - For full concatenated validation use ValidateNames type - //
 
 // Prepare.
 const validNames = classNames as ValidateNames<Names>;
+
+// Do tests. All below output "a b".
+// .. These should not produce errors in typing.
+validNames(["a"], { b: true });
+validNames(["a", "b", ""]);
+validNames(["a", "b", "a b", "b a"]);
+validNames(["a", false, undefined, "b"]);
+validNames(["a", false, undefined, "b"] as const);
+validNames({"a": true, "b a": false});
+validNames({"a": true, "b a": false} as const);
+validNames("a", "a b", false, ["a"], ["b a", ""], undefined, { "a": true, "b a": false });
+// .. These should fail each in typing, since "FAIL" is not part of ValidNames.
+validNames("FAIL");
+validNames(["FAIL"]);
+validNames({"FAIL": false});
+validNames("a", "a b", undefined, "FAIL", ["a", false]);
+validNames("a", "a b", undefined, ["a", "FAIL", false]);
+validNames(["a", "b", "a b", "FAIL", false]);
+validNames("a", "a b", false, ["a"], ["b a", ""], undefined, {"a": true, "FAIL": true, "b a": false});
+validNames("a", "FAIL", "a b", false, ["a"], ["b a", ""], undefined, {"a": true, "b a": false});
+validNames("a", "a b", false, ["a", "FAIL"], ["b a", ""], undefined, {"a": true, "b a": false});
+
+```
+
+#### library - method: `cleanNames`
+- Like classNames but removes any duplicates in the outcome.
+
+```typescript
+
+// - Basic JS usage - //
+
+// Numeric and false-like are cut off ("", false, null, undefined).
+cleanNames("a", "b", 0, undefined, [false, "c"], { d: true }); // "a b c d"
+// Each string is splitted by " " and collected to a record, so duplicates are dropped easily.
+cleanNames("a b", "b", "b b a a", ["b"], { a: true }); // "a b"
+// Simulate some validation.
+cleanNames("a", 1 && "b", ["b", 0 && "c"], { "b d": true, "e": null }); // "a b d"
+// If you input numbers other than 0, they are type guarded - guard stops at first fail.
+cleanNames(0, 1, -1); // 1 nor -1 won't be allowed here.
+
+
+// - Simple usage with typing - //
+
+// Let's define our valid names.
+type Names = "a" | "b";
+
+// Just try "a" and "b" separately.
+cleanNames<Names>("a", "b", ["b", "a"], { a: true }); // "a b"
+cleanNames<Names>("a", "b", ["b", "a"], { a: true }, "c"); // Type guards against "c"
+cleanNames<Names>("a", "a b", "b", ["a b"]); // Type guards against "a b".
+// Let's allow any string, but still use suggestions.
+cleanNames<Names | string & {}>("a", "a b", ["a b"], "c"); // "a b c", won't suggest "c" but allows it.
+// We could also use this pattern for some very specific cases - though, get type heavy quickly.
+cleanNames<Names | `${Names} ${Names}`>("a", "a b", ["a b"]); // "a b", would not allow "a b b"
+
+
+// - For full concatenated validation use ValidateNames type - //
+
+// Prepare.
+const validNames = cleanNames as ValidateNames<Names>;
 
 // Do tests. All below output "a b".
 // .. These should not produce errors in typing.
@@ -256,7 +343,9 @@ el.style["font-size"]       // "12px"
 
 ```
 
-### 2.4. Core
+---
+
+### 2.4. Core methods
 - `getDictionaryDiffs(orig, updated)`
 - `equalSubDictionaries(a, b, ...props)`
 - `collectKeysTo(record, keyLikes, splitter = "")`
@@ -315,7 +404,7 @@ equalSubDictionaries(a, b, "set1", "set2"); // false, because "set1" returns fal
 
 #### library - method: `collectKeysTo(record, keyLikes, stringSplitter = "")`
 - Helper to collect found keys from a string, array or dictionary using a string splitter.
-- This is the core method for the `classNames` method.
+- This is the core method for the `cleanNames` method.
 
 ```typescript
 
@@ -341,9 +430,11 @@ collection // { a: true, b: true, c: true, d: true, e: true }
 ```typescript
 
 // Simple tests.
-lowerCaseStr("myLife") // "my-life"
-lowerCaseStr("MyLife") // "-my-life"
-lowerCaseStr("TEST") // "-t-e-s-t"
+lowerCaseStr("myLife");     // "my-life"
+lowerCaseStr("MyLife");     // "-my-life"
+lowerCaseStr("TEST");       // "-t-e-s-t"
+lowerCaseStr("TEST", "_");  // "_t_e_s_t"
+lowerCaseStr("TEST", "");   // "test"
 
 ```
 
@@ -354,9 +445,10 @@ lowerCaseStr("TEST") // "-t-e-s-t"
 ```typescript
 
 // Simple tests.
-camelCaseStr("my-life") // "myLife"
-camelCaseStr("-my-life") // "MyLife"
-camelCaseStr("-t-e-s-t") // "TEST"
-camelCaseStr("---what---") // "What"
+camelCaseStr("my-life");        // "myLife"
+camelCaseStr("-my-life");       // "MyLife"
+camelCaseStr("-t-e-s-t");       // "TEST"
+camelCaseStr("---what---");     // "What"
+camelCaseStr("__what__", "_");  // "What"
 
 ```

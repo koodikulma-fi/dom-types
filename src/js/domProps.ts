@@ -60,9 +60,9 @@ export function readDOMProps(node: HTMLElement | SVGElement | Node): DOMCleanPro
  *      * _data_: Converts all "data-*" to a dictionary with camelCase keys (according to the native data attribute convention), and also supports "data" as a stand alone dictionary.
  *      * _listeners_: Converts any known listener props to its listener form, eg. "onClick" or "onclick" both become "click" - with both, the latter value overrides.
  *      * _attributes_: Any other are found in `{ attributes }`. Cleans "aria" related: eg. "ariaAutoComplete" becomes "aria-autocomplete" - with both, the latter value overrides.
- * - You can customize the constListenerProps and constRenamedAttrs. They default to the domListenerProps and domRenamedAttributes constants.
+ * - You can customize the listenerProps and renamedAttrs. They default to the domListenerProps and domRenamedAttributes constants.
  */
-export function cleanDOMProps(origProps: DOMUncleanProps, constListenerProps: Partial<Record<string, string>> = domListenerProps, constRenamedAttrs: Partial<Record<string, string>> = domRenamedAttributes): DOMCleanProps {
+export function cleanDOMProps(origProps: DOMUncleanProps, listenerProps: Partial<Record<string, string>> = domListenerProps, renamedAttrs: Partial<Record<string, string>> = domRenamedAttributes): DOMCleanProps {
     // Loop all mixed up props.
     const props: DOMCleanProps = {};
     let lProp: string | undefined;
@@ -84,7 +84,7 @@ export function cleanDOMProps(origProps: DOMUncleanProps, constListenerProps: Pa
                 props.className = props.className ? props.className + " " + origProps[prop] : origProps[prop];
         }
         // Listeners.
-        else if (lProp = constListenerProps[prop.toLowerCase()]) {
+        else if (lProp = listenerProps[prop.toLowerCase()]) {
             // Don't assign empty.
             if (!origProps[prop])
                 continue;
@@ -117,7 +117,7 @@ export function cleanDOMProps(origProps: DOMUncleanProps, constListenerProps: Pa
             // Make sure has.
             props.attributes = props.attributes || {};
             // Assign and handle naming conversion for "aria" related.
-            props.attributes[constRenamedAttrs[prop] || prop.startsWith("aria") && prop[4] !== "-" && "aria-" + prop.slice(4).toLowerCase() || prop] = origProps[prop];
+            props.attributes[renamedAttrs[prop] || prop.startsWith("aria") && prop[4] !== "-" && "aria-" + prop.slice(4).toLowerCase() || prop] = origProps[prop];
         }
     }
     // Return cleaned.

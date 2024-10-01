@@ -55,27 +55,28 @@ export function parseDOMStyle(cssText: string, nullIfEmpty: boolean = false): CS
 
 // - Class names - //
 
-/** Returns a string to be used as class name (with no duplicates and optional nested TypeScript verification).
- * - Each item in the classNames can be:
+/** Returns a clean string without duplicates to be used as class name (with optional nested TypeScript verification).
+ * - Note. If you don't care about duplicates, use `classNames` instead.
+ * - Each item in the cleanNames can be:
  *      1. Single string: `Valid | FalseLike`
  *      2. Array or set: `Array<Valid | FalseLike> | Set<Valid | FalseLike>`
  *      3. Dictionary: `Record<Valid, any>`
  * - To use concatenated class name strings (eg. "bold italic"), you should:
- *      1. Declare a validator by: `const classNames: ValidateNames<ValidName> = classNames;`
- *      2. Then use it like this: `const okName = classNames("bold italic", ["bold"], {"italic": false, "bold": true})`;
+ *      1. Declare a validator by: `const validNames: ValidateNames<ValidName> = cleanNames;`
+ *      2. Then use it like this: `const okName = validNames("bold italic", ["bold"], {"italic": false, "bold": true})`;
  * 
  * ```
  * 
  * // - Basic JS usage - //
  * 
  * // Numeric and false-like are cut off ("", false, null, undefined).
- * classNames("a", "b", 0, undefined, [false, "c"], { d: true }); // "a b c d"
+ * cleanNames("a", "b", 0, undefined, [false, "c"], { d: true }); // "a b c d"
  * // Each string is splitted by " " and collected to a record, so duplicates are dropped easily.
- * classNames("a b", "b", "b b a a", ["b"], { a: true }); // "a b"
+ * cleanNames("a b", "b", "b b a a", ["b"], { a: true }); // "a b"
  * // Simulate some validation.
- * classNames("a", 1 && "b", ["b", 0 && "c"], { "d": true, "e": null }); // "a b d"
+ * cleanNames("a", 1 && "b", ["b", 0 && "c"], { "b d": true, "e": null }); // "a b d"
  * // If you input numbers other than 0, they are type guarded - guard stops at first fail.
- * classNames(0, 1, -1); // "", though note that 1 nor -1 won't be allowed by TS.
+ * cleanNames(0, 1, -1); // "", though note that 1 nor -1 won't be allowed by TS.
  * 
  * 
  * // - Simple usage with typing - //
@@ -84,13 +85,114 @@ export function parseDOMStyle(cssText: string, nullIfEmpty: boolean = false): CS
  * type Names = "a" | "b";
  * 
  * // Just try "a" and "b" separately.
- * classNames<Names>("a", "b", ["b", "a"], { a: true }); // "a b"
+ * cleanNames<Names>("a", "b", ["b", "a"], { a: true }); // "a b"
+ * cleanNames<Names>("a", "b", ["b", "a"], { a: true }, "c"); // Type guards against "c"
+ * cleanNames<Names>("a", "a b", "b", ["a b"]); // Type guards against "a b".
+ * // Let's allow any string, but still use suggestions.
+ * cleanNames<Names | string & {}>("a", "a b", ["a b"], "c"); // "a b c", won't suggest "c" but allows it.
+ * // We could also use this pattern for some very specific cases - though, get type heavy quickly.
+ * cleanNames<Names | `${Names} ${Names}`>("a", "a b", ["a b"]); // "a b", would not allow "a b b"
+ * 
+ * 
+ * // - For full concatenated validation use ValidateNames type - //
+ * 
+ * // Prepare.
+ * const validNames = cleanNames as ValidateNames<Names>;
+ * 
+ * // Do tests. All below output "a b".
+ * // .. These should not produce errors in typing.
+ * validNames(["a"], { b: true });
+ * validNames(["a", "b", ""]);
+ * validNames(["a", "b", "a b", "b a"]);
+ * validNames(["a", false, undefined, "b"]);
+ * validNames(["a", false, undefined, "b"] as const);
+ * validNames({"a": true, "b a": false});
+ * validNames({"a": true, "b a": false} as const);
+ * validNames("a", "a b", false, ["a"], ["b a", ""], undefined, { "a": true, "b a": false });
+ * // .. These should fail each in typing, since "FAIL" is not part of ValidNames.
+ * validNames("FAIL");
+ * validNames(["FAIL"]);
+ * validNames({"FAIL": false});
+ * validNames("a", "a b", undefined, "FAIL", ["a", false]);
+ * validNames("a", "a b", undefined, ["a", "FAIL", false]);
+ * validNames(["a", "b", "a b", "FAIL", false]);
+ * validNames("a", "a b", false, ["a"], ["b a", ""], undefined, {"a": true, "FAIL": true, "b a": false});
+ * validNames("a", "FAIL", "a b", false, ["a"], ["b a", ""], undefined, {"a": true, "b a": false});
+ * validNames("a", "a b", false, ["a", "FAIL"], ["b a", ""], undefined, {"a": true, "b a": false});
+ * 
+ * ```
+ */
+export function cleanNames<
+    // Type argument.
+    ValidNames extends string = string,
+    // Local variable - let's allow 20 name args.
+    Inputs extends ClassNameInput<string>[] = [
+        ClassNameInput<ValidNames>?,
+        ClassNameInput<ValidNames>?,
+        ClassNameInput<ValidNames>?,
+        ClassNameInput<ValidNames>?,
+        ClassNameInput<ValidNames>?,
+        ClassNameInput<ValidNames>?,
+        ClassNameInput<ValidNames>?,
+        ClassNameInput<ValidNames>?,
+        ClassNameInput<ValidNames>?,
+        ClassNameInput<ValidNames>?,
+        ClassNameInput<ValidNames>?,
+        ClassNameInput<ValidNames>?,
+        ClassNameInput<ValidNames>?,
+        ClassNameInput<ValidNames>?,
+        ClassNameInput<ValidNames>?,
+        ClassNameInput<ValidNames>?,
+        ClassNameInput<ValidNames>?,
+        ClassNameInput<ValidNames>?,
+        ClassNameInput<ValidNames>?,
+        ClassNameInput<ValidNames>?,
+    ]
+>(...names: Inputs): string {
+    // Collect all to a dictionary.
+    const record: Record<string, true> = {};
+    for (const name of names)
+        if (name)
+            collectKeysTo(record, name, " ");
+    // Return the valid keys joined by space - the collectKeysTo makes sure there's no duplicates nor empties.
+    return Object.keys(record).join(" ");
+}
+
+/** Returns a clean string without duplicates to be used as class name (with optional nested TypeScript verification).
+ * - Note. If you want to remove any duplicates, use `cleanNames` instead.
+ * - Each item in the classNames can be:
+ *      1. Single string: `Valid | FalseLike`
+ *      2. Array or set: `Array<Valid | FalseLike> | Set<Valid | FalseLike>`
+ *      3. Dictionary: `Record<Valid, any>`
+ * - To use concatenated class name strings (eg. "bold italic"), you should:
+ *      1. Declare a validator by: `const validNames: ValidateNames<ValidName> = classNames;`
+ *      2. Then use it like this: `const okName = validNames("bold italic", ["bold"], {"italic": false, "bold": true})`;
+ * 
+ * ```
+ * 
+ * // - Basic usage - //
+ * 
+ * // Simply concats the strings with " " as the joiner.
+ * classNames(true && "a", 1 && "b", false && "c", null, undefined, 0); // "a b"
+ * classNames("a b", ["c", "d e", false], {"f g": true, h: false});     // "a b c d e f g"
+ * 
+ * // But doesn't remove duplicates.
+ * classNames("a b", "a", ["a", "b"], {a: false, "a b": true});         // "a b a a b a b"
+ * 
+ * 
+ * // - Simple usage with typing - //
+ * 
+ * // Let's define our valid names.
+ * type Names = "a" | "b";
+ * 
+ * // Just try "a" and "b" separately.
+ * classNames<Names>("a", "b", ["b", "a"], { a: true }); // "a b b a a"
  * classNames<Names>("a", "b", ["b", "a"], { a: true }, "c"); // Type guards against "c"
  * classNames<Names>("a", "a b", "b", ["a b"]); // Type guards against "a b".
  * // Let's allow any string, but still use suggestions.
- * classNames<Names | string & {}>("a", "a b", ["a b"], "c"); // "a b c", won't suggest "c" but allows it.
+ * classNames<Names | string & {}>("a", "a b", ["a b"], "c"); // "a a b a b c", won't suggest "c" but allows it.
  * // We could also use this pattern for some very specific cases - though, get type heavy quickly.
- * classNames<Names | `${Names} ${Names}`>("a", "a b", ["a b"]); // "a b", would not allow "a b b"
+ * classNames<Names | `${Names} ${Names}`>("a", "a b", ["a b"]); // "a a b a b", would not allow "a b b"
  * 
  * 
  * // - For full concatenated validation use ValidateNames type - //
@@ -118,6 +220,7 @@ export function parseDOMStyle(cssText: string, nullIfEmpty: boolean = false): CS
  * validNames("a", "a b", false, ["a"], ["b a", ""], undefined, {"a": true, "FAIL": true, "b a": false});
  * validNames("a", "FAIL", "a b", false, ["a"], ["b a", ""], undefined, {"a": true, "b a": false});
  * validNames("a", "a b", false, ["a", "FAIL"], ["b a", ""], undefined, {"a": true, "b a": false});
+ * 
  * 
  * ```
  */
@@ -147,14 +250,21 @@ export function classNames<
         ClassNameInput<ValidNames>?,
         ClassNameInput<ValidNames>?,
     ]
->(...classNames: Inputs): string {
-    // Collect all to a dictionary.
-    const record: Record<string, true> = {};
-    for (const name of classNames)
-        if (name)
-            collectKeysTo(record, name, " ");
-    // Return the valid keys joined by space - the collectKeysTo makes sure there's no duplicates nor empties.
-    return Object.keys(record).join(" ");
+>(...names: Inputs): string {
+    // Just concat all.
+    let str = "";
+    for (const name of names) {
+        if (!name)
+            continue;
+        if (typeof name === "string")
+            str += " " + name;
+        else if (Array.isArray(name))
+            str += " " + name.filter(n => n).join(" ");
+        else if (name && name.constructor instanceof Object)
+            str += " " + Object.keys(name).filter(n => name[n]).join(" ");
+    }
+    // Remove the initial empty and remove any double spaces.
+    return str.trimStart().replace(/\s+/g, " ");
 }
 
 /** Get diffs in class names in the form of: Record<string, boolean>, where true means added, false removed, otherwise not included.

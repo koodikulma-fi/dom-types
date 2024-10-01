@@ -1409,27 +1409,28 @@ declare function camelCaseStr(str: string, splitter?: string): string;
 declare function parseDOMStyle(cssText: string, nullIfEmpty: true): CSSProperties | null;
 declare function parseDOMStyle(cssText: string, nullIfEmpty?: false): CSSProperties;
 declare function parseDOMStyle(cssText: string, nullIfEmpty?: boolean): CSSProperties | null;
-/** Returns a string to be used as class name (with no duplicates and optional nested TypeScript verification).
- * - Each item in the classNames can be:
+/** Returns a clean string without duplicates to be used as class name (with optional nested TypeScript verification).
+ * - Note. If you don't care about duplicates, use `classNames` instead.
+ * - Each item in the cleanNames can be:
  *      1. Single string: `Valid | FalseLike`
  *      2. Array or set: `Array<Valid | FalseLike> | Set<Valid | FalseLike>`
  *      3. Dictionary: `Record<Valid, any>`
  * - To use concatenated class name strings (eg. "bold italic"), you should:
- *      1. Declare a validator by: `const classNames: ValidateNames<ValidName> = classNames;`
- *      2. Then use it like this: `const okName = classNames("bold italic", ["bold"], {"italic": false, "bold": true})`;
+ *      1. Declare a validator by: `const validNames: ValidateNames<ValidName> = cleanNames;`
+ *      2. Then use it like this: `const okName = validNames("bold italic", ["bold"], {"italic": false, "bold": true})`;
  *
  * ```
  *
  * // - Basic JS usage - //
  *
  * // Numeric and false-like are cut off ("", false, null, undefined).
- * classNames("a", "b", 0, undefined, [false, "c"], { d: true }); // "a b c d"
+ * cleanNames("a", "b", 0, undefined, [false, "c"], { d: true }); // "a b c d"
  * // Each string is splitted by " " and collected to a record, so duplicates are dropped easily.
- * classNames("a b", "b", "b b a a", ["b"], { a: true }); // "a b"
+ * cleanNames("a b", "b", "b b a a", ["b"], { a: true }); // "a b"
  * // Simulate some validation.
- * classNames("a", 1 && "b", ["b", 0 && "c"], { "d": true, "e": null }); // "a b d"
+ * cleanNames("a", 1 && "b", ["b", 0 && "c"], { "b d": true, "e": null }); // "a b d"
  * // If you input numbers other than 0, they are type guarded - guard stops at first fail.
- * classNames(0, 1, -1); // "", though note that 1 nor -1 won't be allowed by TS.
+ * cleanNames(0, 1, -1); // "", though note that 1 nor -1 won't be allowed by TS.
  *
  *
  * // - Simple usage with typing - //
@@ -1438,13 +1439,100 @@ declare function parseDOMStyle(cssText: string, nullIfEmpty?: boolean): CSSPrope
  * type Names = "a" | "b";
  *
  * // Just try "a" and "b" separately.
- * classNames<Names>("a", "b", ["b", "a"], { a: true }); // "a b"
+ * cleanNames<Names>("a", "b", ["b", "a"], { a: true }); // "a b"
+ * cleanNames<Names>("a", "b", ["b", "a"], { a: true }, "c"); // Type guards against "c"
+ * cleanNames<Names>("a", "a b", "b", ["a b"]); // Type guards against "a b".
+ * // Let's allow any string, but still use suggestions.
+ * cleanNames<Names | string & {}>("a", "a b", ["a b"], "c"); // "a b c", won't suggest "c" but allows it.
+ * // We could also use this pattern for some very specific cases - though, get type heavy quickly.
+ * cleanNames<Names | `${Names} ${Names}`>("a", "a b", ["a b"]); // "a b", would not allow "a b b"
+ *
+ *
+ * // - For full concatenated validation use ValidateNames type - //
+ *
+ * // Prepare.
+ * const validNames = cleanNames as ValidateNames<Names>;
+ *
+ * // Do tests. All below output "a b".
+ * // .. These should not produce errors in typing.
+ * validNames(["a"], { b: true });
+ * validNames(["a", "b", ""]);
+ * validNames(["a", "b", "a b", "b a"]);
+ * validNames(["a", false, undefined, "b"]);
+ * validNames(["a", false, undefined, "b"] as const);
+ * validNames({"a": true, "b a": false});
+ * validNames({"a": true, "b a": false} as const);
+ * validNames("a", "a b", false, ["a"], ["b a", ""], undefined, { "a": true, "b a": false });
+ * // .. These should fail each in typing, since "FAIL" is not part of ValidNames.
+ * validNames("FAIL");
+ * validNames(["FAIL"]);
+ * validNames({"FAIL": false});
+ * validNames("a", "a b", undefined, "FAIL", ["a", false]);
+ * validNames("a", "a b", undefined, ["a", "FAIL", false]);
+ * validNames(["a", "b", "a b", "FAIL", false]);
+ * validNames("a", "a b", false, ["a"], ["b a", ""], undefined, {"a": true, "FAIL": true, "b a": false});
+ * validNames("a", "FAIL", "a b", false, ["a"], ["b a", ""], undefined, {"a": true, "b a": false});
+ * validNames("a", "a b", false, ["a", "FAIL"], ["b a", ""], undefined, {"a": true, "b a": false});
+ *
+ * ```
+ */
+declare function cleanNames<ValidNames extends string = string, Inputs extends ClassNameInput<string>[] = [
+    ClassNameInput<ValidNames>?,
+    ClassNameInput<ValidNames>?,
+    ClassNameInput<ValidNames>?,
+    ClassNameInput<ValidNames>?,
+    ClassNameInput<ValidNames>?,
+    ClassNameInput<ValidNames>?,
+    ClassNameInput<ValidNames>?,
+    ClassNameInput<ValidNames>?,
+    ClassNameInput<ValidNames>?,
+    ClassNameInput<ValidNames>?,
+    ClassNameInput<ValidNames>?,
+    ClassNameInput<ValidNames>?,
+    ClassNameInput<ValidNames>?,
+    ClassNameInput<ValidNames>?,
+    ClassNameInput<ValidNames>?,
+    ClassNameInput<ValidNames>?,
+    ClassNameInput<ValidNames>?,
+    ClassNameInput<ValidNames>?,
+    ClassNameInput<ValidNames>?,
+    ClassNameInput<ValidNames>?
+]>(...names: Inputs): string;
+/** Returns a clean string without duplicates to be used as class name (with optional nested TypeScript verification).
+ * - Note. If you want to remove any duplicates, use `cleanNames` instead.
+ * - Each item in the classNames can be:
+ *      1. Single string: `Valid | FalseLike`
+ *      2. Array or set: `Array<Valid | FalseLike> | Set<Valid | FalseLike>`
+ *      3. Dictionary: `Record<Valid, any>`
+ * - To use concatenated class name strings (eg. "bold italic"), you should:
+ *      1. Declare a validator by: `const validNames: ValidateNames<ValidName> = classNames;`
+ *      2. Then use it like this: `const okName = validNames("bold italic", ["bold"], {"italic": false, "bold": true})`;
+ *
+ * ```
+ *
+ * // - Basic usage - //
+ *
+ * // Simply concats the strings with " " as the joiner.
+ * classNames(true && "a", 1 && "b", false && "c", null, undefined, 0); // "a b"
+ * classNames("a b", ["c", "d e", false], {"f g": true, h: false});     // "a b c d e f g"
+ *
+ * // But doesn't remove duplicates.
+ * classNames("a b", "a", ["a", "b"], {a: false, "a b": true});         // "a b a a b a b"
+ *
+ *
+ * // - Simple usage with typing - //
+ *
+ * // Let's define our valid names.
+ * type Names = "a" | "b";
+ *
+ * // Just try "a" and "b" separately.
+ * classNames<Names>("a", "b", ["b", "a"], { a: true }); // "a b b a a"
  * classNames<Names>("a", "b", ["b", "a"], { a: true }, "c"); // Type guards against "c"
  * classNames<Names>("a", "a b", "b", ["a b"]); // Type guards against "a b".
  * // Let's allow any string, but still use suggestions.
- * classNames<Names | string & {}>("a", "a b", ["a b"], "c"); // "a b c", won't suggest "c" but allows it.
+ * classNames<Names | string & {}>("a", "a b", ["a b"], "c"); // "a a b a b c", won't suggest "c" but allows it.
  * // We could also use this pattern for some very specific cases - though, get type heavy quickly.
- * classNames<Names | `${Names} ${Names}`>("a", "a b", ["a b"]); // "a b", would not allow "a b b"
+ * classNames<Names | `${Names} ${Names}`>("a", "a b", ["a b"]); // "a a b a b", would not allow "a b b"
  *
  *
  * // - For full concatenated validation use ValidateNames type - //
@@ -1473,6 +1561,7 @@ declare function parseDOMStyle(cssText: string, nullIfEmpty?: boolean): CSSPrope
  * validNames("a", "FAIL", "a b", false, ["a"], ["b a", ""], undefined, {"a": true, "b a": false});
  * validNames("a", "a b", false, ["a", "FAIL"], ["b a", ""], undefined, {"a": true, "b a": false});
  *
+ *
  * ```
  */
 declare function classNames<ValidNames extends string = string, Inputs extends ClassNameInput<string>[] = [
@@ -1496,7 +1585,7 @@ declare function classNames<ValidNames extends string = string, Inputs extends C
     ClassNameInput<ValidNames>?,
     ClassNameInput<ValidNames>?,
     ClassNameInput<ValidNames>?
-]>(...classNames: Inputs): string;
+]>(...names: Inputs): string;
 /** Get diffs in class names in the form of: Record<string, boolean>, where true means added, false removed, otherwise not included.
  * - Note. This process only checks for changes - it ignores changes in order completely.
  */
@@ -1560,9 +1649,9 @@ declare function readDOMProps(node: HTMLElement | SVGElement | Node): DOMCleanPr
  *      * _data_: Converts all "data-*" to a dictionary with camelCase keys (according to the native data attribute convention), and also supports "data" as a stand alone dictionary.
  *      * _listeners_: Converts any known listener props to its listener form, eg. "onClick" or "onclick" both become "click" - with both, the latter value overrides.
  *      * _attributes_: Any other are found in `{ attributes }`. Cleans "aria" related: eg. "ariaAutoComplete" becomes "aria-autocomplete" - with both, the latter value overrides.
- * - You can customize the constListenerProps and constRenamedAttrs. They default to the domListenerProps and domRenamedAttributes constants.
+ * - You can customize the listenerProps and renamedAttrs. They default to the domListenerProps and domRenamedAttributes constants.
  */
-declare function cleanDOMProps(origProps: DOMUncleanProps, constListenerProps?: Partial<Record<string, string>>, constRenamedAttrs?: Partial<Record<string, string>>): DOMCleanProps;
+declare function cleanDOMProps(origProps: DOMUncleanProps, listenerProps?: Partial<Record<string, string>>, renamedAttrs?: Partial<Record<string, string>>): DOMCleanProps;
 /** Comparison method specialized into DOMCleanProps (= cleaned up attributes description of a dom element). */
 declare function equalDOMProps(a: DOMCleanProps, b: DOMCleanProps): boolean;
 /** Returns the dictionaries for differences.
@@ -1580,4 +1669,4 @@ declare function applyDOMProps(domElement: HTMLElement | SVGElement | Element | 
  */
 declare function readDOMString(tag: string, domProps?: DOMCleanProps | null, childrenContent?: string | null | boolean, readFromNode?: Node | null, skipAttrs?: Record<string, any>): string;
 
-export { BoolOrStr, CSSBlendMode, CSSColorNames, CSSNumericPropertyNames, CSSProperties, ClassNameInput, DOMAttributes, DOMAttributesAny, DOMAttributesAny_native, DOMAttributesBy, DOMAttributesBy_native, DOMAttributes_native, DOMCleanProps, DOMDiffProps, DOMElement, DOMTags, DOMUncleanProps, DataAttributes, FalseLike, GetMethodKeys, GlobalEventHandler, GlobalListeners, GlobalListeners_native, HTMLAttributes, HTMLAttributesAny, HTMLAttributesAny_native, HTMLAttributes_native, HTMLGlobalAttributes, HTMLGlobalAttributes_native, HTMLTags, InheritInitial, InheritInitialRevUnset, IsReadOnlyKey, NameValidator, OrString, SVGAttributes, SVGAttributesAny, SVGAttributesAny_native, SVGAttributes_native, SVGTags, Split, SplitArr, ValidateNames, applyDOMProps, camelCaseStr, classNames, cleanDOMProps, collectKeysTo, createDOMElement, domListenerProps, domRenamedAttributes, domSkipAttributes, equalDOMProps, equalSubDictionaries, getClassNameDiffs, getDictionaryDiffs, isNodeSVG, lowerCaseStr, parseDOMStyle, readDOMProps, readDOMString };
+export { BoolOrStr, CSSBlendMode, CSSColorNames, CSSNumericPropertyNames, CSSProperties, ClassNameInput, DOMAttributes, DOMAttributesAny, DOMAttributesAny_native, DOMAttributesBy, DOMAttributesBy_native, DOMAttributes_native, DOMCleanProps, DOMDiffProps, DOMElement, DOMTags, DOMUncleanProps, DataAttributes, FalseLike, GetMethodKeys, GlobalEventHandler, GlobalListeners, GlobalListeners_native, HTMLAttributes, HTMLAttributesAny, HTMLAttributesAny_native, HTMLAttributes_native, HTMLGlobalAttributes, HTMLGlobalAttributes_native, HTMLTags, InheritInitial, InheritInitialRevUnset, IsReadOnlyKey, NameValidator, OrString, SVGAttributes, SVGAttributesAny, SVGAttributesAny_native, SVGAttributes_native, SVGTags, Split, SplitArr, ValidateNames, applyDOMProps, camelCaseStr, classNames, cleanDOMProps, cleanNames, collectKeysTo, createDOMElement, domListenerProps, domRenamedAttributes, domSkipAttributes, equalDOMProps, equalSubDictionaries, getClassNameDiffs, getDictionaryDiffs, isNodeSVG, lowerCaseStr, parseDOMStyle, readDOMProps, readDOMString };
