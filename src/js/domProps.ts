@@ -133,7 +133,7 @@ export function equalDOMProps(a: DOMCleanProps, b: DOMCleanProps): boolean {
  * - After the process, the given newProps then represents the appliedProps, so to speak.
  * - If element is null, just returns the diffs without applying anything.
  */
-export function applyDOMProps(domElement: HTMLElement | SVGElement | Element | null, newProps: DOMCleanProps, oldProps: DOMCleanProps = {}, skipAttrs: Record<string, any> = domSkipAttributes, logWarnings: boolean = true): DOMDiffProps | null {
+export function applyDOMProps(domElement: HTMLElement | SVGElement | Element | null, newProps: DOMCleanProps, oldProps: DOMCleanProps = {}, logWarnings: boolean = true, skipAttrs: Record<string, any> = domSkipAttributes): DOMDiffProps | null {
     
     // Prepare.
     const diffs: DOMDiffProps = {};

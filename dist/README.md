@@ -33,7 +33,7 @@ A couple of helper methods for reading and applying the type suggested features 
 - `readDOMProps(node): DOMCleanProps`
 - `cleanDOMProps(uncleanProps, listenerProps?, renamedAttrs?): DOMCleanProps`
 - `equalDOMProps(aDomProps, bDomProps): boolean`
-- `applyDOMProps(element, newProps, oldProps = {}, skipAttrs?, logWarnings = true): DOMDiffProps | null`
+- `applyDOMProps(element, newProps, oldProps = {}, logWarnings = true, skipAttrs?): DOMDiffProps | null`
 
 Other general DOM helpers:
 - `createDOMElement(tag, checkSVGByParentNode?, namespaceURI?): HTMLElement | SVGElement`
@@ -133,7 +133,7 @@ const domListenerAttributes = {
     * `readDOMProps(node): DOMCleanProps`
     * `cleanDOMProps(uncleanProps, listenerProps?, renamedAttrs?): DOMCleanProps`
     * `equalDOMProps(aDomProps, bDomProps): boolean`
-    * `applyDOMProps(element, newProps, oldProps = {}, skipAttrs?, logWarnings = true): DOMDiffProps | null`
+    * `applyDOMProps(element, newProps, oldProps = {}, logWarnings = true, skipAttrs?): DOMDiffProps | null`
 
 #### library - method: `readDOMString(tag, domProps?, childrenContent?, readFromNode?, skipAttrs?)`
 
@@ -143,13 +143,13 @@ const domListenerAttributes = {
 
 ```typescript
 
-// Outputs: "<div style='background-color: #fff'><span>some text</span></div>"
+// Returns: "<div style='background-color: #fff'><span>some text</span></div>"
 readDOMString("div", { style: { backgroundColor: "#fff" }, }, "<span>some text</span>");
 
-// Outputs: "<div></div>", we use `true` as childrenContent to use a closing tag without content.
+// Returns: "<div></div>", we use `true` as childrenContent to use a closing tag without content.
 readDOMString("div", null, true);
 
-// Outputs: "<img src='pics/my_image.jpg' class='image' />"
+// Returns: "<img src='pics/my_image.jpg' class='image' />"
 readDOMString("img", { className: "image", attributes: { src: "pics/my_image.jpg" }});
 
 ```
@@ -168,7 +168,7 @@ input.disabled = true;
 
 // Read info.
 readDOMProps(input);
-// Outputs: {
+// Returns: {
 //      className: "my test",
 //      style: { borderColor: "rgb(0,0,0)" }, // Or whatever browser used.
 //      attributes: { disabled: "" }
@@ -184,13 +184,16 @@ readDOMProps(input);
 
 // - Do some test - //
 
-// Outputs: { style: { position: "absolute" }, attributes: { src: "pics/my-gif.gif" } }
-cleanDOMProps({ style: "position: absolute", src: "pics/my-gif.gif" });
+// Returns: { className: "test me" }
+cleanDOMProps({ class: "test", className: "me" });
 
-// Outputs: { listeners: { click: () => {}, abort: (e) => {} } }
+// Returns: { style: { borderColor: "#fff" }, attributes: { src: "pics/my-gif.gif" } }
+cleanDOMProps({ style: "border-color: #fff", src: "pics/my-gif.gif" });
+
+// Returns: { listeners: { click: () => {}, abort: (e) => {} } }
 cleanDOMProps({ onclick: () => {}, onAbort: (e) => {} });
 
-// Outputs: { attributes: { unknownThing: 5 } }
+// Returns: { attributes: { unknownThing: 5 } }
 cleanDOMProps({ unknownThing: 5 });
 
 
@@ -215,7 +218,7 @@ equalDOMProps(
     { style: { backgroundColor: "#fff" } }
 ); // true
 
-// False like tests are obvious.
+// False like tests are more obvious.
 equalDOMProps({ className: "active" }, {}); // false
 equalDOMProps(
     { attributes: {}, className: "" },
@@ -229,7 +232,7 @@ equalDOMProps(
 
 ```
 
-#### library - method: `applyDOMProps(element, newProps, oldProps = {}, skipAttrs?, logWarnings = true)`
+#### library - method: `applyDOMProps(element, newProps, oldProps = {}, logWarnings = true, skipAttrs?)`
 
 - Apply the cleaned DOM props to an element, optionally comparing against oldProps.
 - Returns info for changes (`DOMDiffProps`), or `null` if didn't apply any.
@@ -603,3 +606,7 @@ camelCaseStr("---what---");     // "What"
 camelCaseStr("__what__", "_");  // "What"
 
 ```
+
+---
+
+[Back to top](#what)

@@ -1672,7 +1672,7 @@ declare function equalDOMProps(a: DOMCleanProps, b: DOMCleanProps): boolean;
  * - After the process, the given newProps then represents the appliedProps, so to speak.
  * - If element is null, just returns the diffs without applying anything.
  */
-declare function applyDOMProps(domElement: HTMLElement | SVGElement | Element | null, newProps: DOMCleanProps, oldProps?: DOMCleanProps, skipAttrs?: Record<string, any>, logWarnings?: boolean): DOMDiffProps | null;
+declare function applyDOMProps(domElement: HTMLElement | SVGElement | Element | null, newProps: DOMCleanProps, oldProps?: DOMCleanProps, logWarnings?: boolean, skipAttrs?: Record<string, any>): DOMDiffProps | null;
 /** Helper to write a DOM string for a single tag.
  * - To write a DOM string for a tree of infos, handle the tree externally with recursion and call this with childrenContent for each.
  * @param tag The tag of the DOM element. If "", reads it from readFromNode if given, or assumes it's a text node like situation: just output the textContent.
