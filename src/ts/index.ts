@@ -2,7 +2,7 @@
 // - Export all - //
 
 // Standalone.
-// export * from "./common";            // Don't export.
+export * from "./common";
 export * from "./ClassNames";
 // In order of inheritance:
 export * from "./CSSProperties";        // Requires common.

@@ -5,18 +5,18 @@
 import { CSSProperties, FalseLike, ClassNameInput } from "../ts";
 
 
-// - String - //
+// - String helpers - //
 
 // Thanks to: https://stackoverflow.com/questions/24758284/how-to-change-camelcase-to-slug-case-or-kabob-case-via-regex-in-javascript
 /**
- * - With "-" (default) as replaceBy, functions like this:
+ * - With "-" (default) as delimiter, functions like this:
  *      * "testProp" => "test-prop"
  *      * "TestProp" => "-test-prop"
  *      * "TEST" => "-t-e-s-t"
  * - This behaviour mirrors how element.dataset[prop] = value works. For example: `dataset.TestProp = true`  =>  `<div data--test-prop="true" />`
  */
-export function decapitalizeString(str: string, replaceBy: string = "-"): string {
-    return str.replace(/([A-Z])/g, replaceBy + "$1").toLowerCase();
+export function lowerCaseStr(str: string, delimiter: string = "-"): string {
+    return str.replace(/([A-Z])/g, delimiter + "$1").toLowerCase();
 }
 /**
  * - With "-" (default) as splitter, functions like this:
@@ -25,12 +25,9 @@ export function decapitalizeString(str: string, replaceBy: string = "-"): string
  *      * "--test---prop" => "TestProp"
  * - This behaviour mirrors how element.dataset[prop] = value works. For example: `<div data--test-prop="true" />`  =>  `dataset.TestProp` // true
  */
-export function recapitalizeString(str: string, splitter: string = "-"): string {
+export function camelCaseStr(str: string, splitter: string = "-"): string {
     return str.split(splitter).map((s, i) => s ? i ? s[0].toUpperCase() + s.slice(1) : s : "").join("");
 }
-
-
-// - HTML props - //
 
 // Help from: https://stackoverflow.com/questions/8987550/convert-css-text-to-javascript-object
 /** Parse style string to a dictionary with camelCase keys. Value is string or undefined. */
@@ -68,61 +65,61 @@ export function parseDOMStyle(cssText: string, nullIfEmpty: boolean = false): CS
  *      2. Then use it like this: `const okName = classNames("bold italic", ["bold"], {"italic": false, "bold": true})`;
  * 
  * ```
-
-// - Basic JS usage - //
-
-// Numeric and false-like are cut off ("", false, null, undefined).
-classNames("a", "b", 0, undefined, [false, "c"], { d: true }); // "a b c d"
-// Each string is splitted by " " and collected to a record, so duplicates are dropped easily.
-classNames("a b", "b", "b b a a", ["b"], { a: true }); // "a b"
-// Simulate some validation.
-classNames("a", 1 && "b", ["b", 0 && "c"], { "d": true, "e": null }); // "a b d"
-// If you input numbers other than 0, they are type guarded - guard stops at first fail.
-classNames(0, 1, -1); // "", though note that 1 nor -1 won't be allowed by TS.
-
-
-// - Simple usage with typing - //
-
-// Let's define our valid names.
-type Names = "a" | "b";
-
-// Just try "a" and "b" separately.
-classNames<Names>("a", "b", ["b", "a"], { a: true }); // "a b"
-classNames<Names>("a", "b", ["b", "a"], { a: true }, "c"); // Type guards against "c"
-classNames<Names>("a", "a b", "b", ["a b"]); // Type guards against "a b".
-// Let's allow any string, but still use suggestions.
-classNames<Names | string & {}>("a", "a b", ["a b"], "c"); // "a b c", won't suggest "c" but allows it.
-// We could also use this pattern for some very specific cases - though, get type heavy quickly.
-classNames<Names | `${Names} ${Names}`>("a", "a b", ["a b"]); // "a b", would not allow "a b b"
-
-
-// - For full concatenated validation use ValidateNames type - //
-
-// Prepare.
-const validNames = classNames as ValidateNames<Names>;
-
-// Do tests. All below output "a b".
-// .. These should not produce errors in typing.
-validNames(["a"], { b: true });
-validNames(["a", "b", ""]);
-validNames(["a", "b", "a b", "b a"]);
-validNames(["a", false, undefined, "b"]);
-validNames(["a", false, undefined, "b"] as const);
-validNames({"a": true, "b a": false});
-validNames({"a": true, "b a": false} as const);
-validNames("a", "a b", false, ["a"], ["b a", ""], undefined, { "a": true, "b a": false });
-// .. These should fail each in typing, since "FAIL" is not part of ValidNames.
-validNames("FAIL");
-validNames(["FAIL"]);
-validNames({"FAIL": false});
-validNames("a", "a b", undefined, "FAIL", ["a", false]);
-validNames("a", "a b", undefined, ["a", "FAIL", false]);
-validNames(["a", "b", "a b", "FAIL", false]);
-validNames("a", "a b", false, ["a"], ["b a", ""], undefined, {"a": true, "FAIL": true, "b a": false});
-validNames("a", "FAIL", "a b", false, ["a"], ["b a", ""], undefined, {"a": true, "b a": false});
-validNames("a", "a b", false, ["a", "FAIL"], ["b a", ""], undefined, {"a": true, "b a": false});
-
-```
+ * 
+ * // - Basic JS usage - //
+ * 
+ * // Numeric and false-like are cut off ("", false, null, undefined).
+ * classNames("a", "b", 0, undefined, [false, "c"], { d: true }); // "a b c d"
+ * // Each string is splitted by " " and collected to a record, so duplicates are dropped easily.
+ * classNames("a b", "b", "b b a a", ["b"], { a: true }); // "a b"
+ * // Simulate some validation.
+ * classNames("a", 1 && "b", ["b", 0 && "c"], { "d": true, "e": null }); // "a b d"
+ * // If you input numbers other than 0, they are type guarded - guard stops at first fail.
+ * classNames(0, 1, -1); // "", though note that 1 nor -1 won't be allowed by TS.
+ * 
+ * 
+ * // - Simple usage with typing - //
+ * 
+ * // Let's define our valid names.
+ * type Names = "a" | "b";
+ * 
+ * // Just try "a" and "b" separately.
+ * classNames<Names>("a", "b", ["b", "a"], { a: true }); // "a b"
+ * classNames<Names>("a", "b", ["b", "a"], { a: true }, "c"); // Type guards against "c"
+ * classNames<Names>("a", "a b", "b", ["a b"]); // Type guards against "a b".
+ * // Let's allow any string, but still use suggestions.
+ * classNames<Names | string & {}>("a", "a b", ["a b"], "c"); // "a b c", won't suggest "c" but allows it.
+ * // We could also use this pattern for some very specific cases - though, get type heavy quickly.
+ * classNames<Names | `${Names} ${Names}`>("a", "a b", ["a b"]); // "a b", would not allow "a b b"
+ * 
+ * 
+ * // - For full concatenated validation use ValidateNames type - //
+ * 
+ * // Prepare.
+ * const validNames = classNames as ValidateNames<Names>;
+ * 
+ * // Do tests. All below output "a b".
+ * // .. These should not produce errors in typing.
+ * validNames(["a"], { b: true });
+ * validNames(["a", "b", ""]);
+ * validNames(["a", "b", "a b", "b a"]);
+ * validNames(["a", false, undefined, "b"]);
+ * validNames(["a", false, undefined, "b"] as const);
+ * validNames({"a": true, "b a": false});
+ * validNames({"a": true, "b a": false} as const);
+ * validNames("a", "a b", false, ["a"], ["b a", ""], undefined, { "a": true, "b a": false });
+ * // .. These should fail each in typing, since "FAIL" is not part of ValidNames.
+ * validNames("FAIL");
+ * validNames(["FAIL"]);
+ * validNames({"FAIL": false});
+ * validNames("a", "a b", undefined, "FAIL", ["a", false]);
+ * validNames("a", "a b", undefined, ["a", "FAIL", false]);
+ * validNames(["a", "b", "a b", "FAIL", false]);
+ * validNames("a", "a b", false, ["a"], ["b a", ""], undefined, {"a": true, "FAIL": true, "b a": false});
+ * validNames("a", "FAIL", "a b", false, ["a"], ["b a", ""], undefined, {"a": true, "b a": false});
+ * validNames("a", "a b", false, ["a", "FAIL"], ["b a", ""], undefined, {"a": true, "b a": false});
+ * 
+ * ```
  */
 export function classNames<
     // Type argument.
@@ -155,60 +152,9 @@ export function classNames<
     const record: Record<string, true> = {};
     for (const name of classNames)
         if (name)
-            collectNamesTo(name, record, " ");
-    // Return the valid keys joined by space - the collectNamesTo makes sure there's no duplicates nor empties.
+            collectKeysTo(record, name, " ");
+    // Return the valid keys joined by space - the collectKeysTo makes sure there's no duplicates nor empties.
     return Object.keys(record).join(" ");
-}
-
-/** Collects unique names as dictionary keys with value `true` for each found.
- * - The names are assumed to be:
- *      1. String (use stringSplitter),
- *      2. Iterable of string names, or an iterable of this type itself (recursively).
- *      3. Record where names are keys, values tells whether to include or not.
- */
-export function collectNamesTo(names: Exclude<ClassNameInput, FalseLike>, record: Record<string, true>, stringSplitter: string = ""): void {
-    // Note, this assumes names is not empty (especially not null or "").
-    switch(typeof names) {
-        // String, split by empty spaces.
-        case "string": {
-            if (stringSplitter) {
-                for (const name of names.split(stringSplitter))
-                    if (name)
-                        record[name] = true;
-            }
-            else
-                record[names] = true;
-            break;
-        }
-        case "object": {
-            // Dictionary like.
-            if (names.constructor === Object) {
-                for (const name in names as Record<string, any>)
-                    if (name && names[name])
-                        record[name] = true;
-            }
-            // Array like.
-            else {
-                // It's just a simple array - not recursive anymore, because the typing didn't work that nicely with deep stuff / recursion.
-                // .. So we just iterate each, split by " " and collect.
-                for (const cName of names as Iterable<string>) {
-                    if (cName && typeof cName === "string") {
-                        if (stringSplitter) {
-                            for (const name of cName.split(stringSplitter))
-                                if (name)
-                                    record[name] = true;
-                        }
-                        else
-                            record[cName] = true;
-                    }
-                }
-                // for (const preName of names as Iterable<PreClassName>)
-                //     if (preName)
-                //         collectNamesTo(preName, record, stringSplitter);
-            }
-            break;
-        }
-    }
 }
 
 /** Get diffs in class names in the form of: Record<string, boolean>, where true means added, false removed, otherwise not included.
@@ -241,8 +187,59 @@ export function getClassNameDiffs(origName?: string, newName?: string): Record<s
     return did !== null ? diffs : null;
 }
 
+/** Collects unique names as dictionary keys with value `true` for each found.
+ * - The names are assumed to be:
+ *      1. String (use stringSplitter),
+ *      2. Iterable of string names, or an iterable of this type itself (recursively).
+ *      3. Record where names are keys, values tells whether to include or not.
+ */
+export function collectKeysTo(record: Record<string, true>, keyLikes: Exclude<ClassNameInput, FalseLike>, stringSplitter: string = ""): void {
+    // Note, this assumes names is not empty (especially not null or "").
+    switch(typeof keyLikes) {
+        // String, split by empty spaces.
+        case "string": {
+            if (stringSplitter) {
+                for (const key of keyLikes.split(stringSplitter))
+                    if (key)
+                        record[key] = true;
+            }
+            else
+                record[keyLikes] = true;
+            break;
+        }
+        case "object": {
+            // Array like.
+            if (Array.isArray(keyLikes)) {
+                // It's just a simple array - not recursive anymore, because the typing didn't work that nicely with deep stuff / recursion.
+                // .. So we just iterate each, split by " " and collect.
+                for (const key of keyLikes as Iterable<string>) {
+                    if (key && typeof key === "string") {
+                        if (stringSplitter) {
+                            for (const k of key.split(stringSplitter))
+                                if (k)
+                                    record[k] = true;
+                        }
+                        else
+                            record[key] = true;
+                    }
+                }
+            }
+            // Dictionary like.
+            else {
+                for (const key in keyLikes as Record<string, any>)
+                    if (key && keyLikes[key]) {
+                        for (const k of keyLikes[key])
+                            if (k)
+                                record[k] = true;
+                    }
+            }
+            break;
+        }
+    }
+}
 
-// - Comparison helpers - //
+
+// - Dictionary comparison helpers - //
 
 /** Collect shallow differences in two dictionaries. Assumes first one is original and second are the updates (= the next state) of the dictionary. Returns `null` if no changes detected. */
 export function getDictionaryDiffs<T extends Record<string, any>>(orig: Partial<T>, update: Partial<T>): Partial<T> | null {
@@ -264,32 +261,40 @@ export function getDictionaryDiffs<T extends Record<string, any>>(orig: Partial<
     return hasDiffs ? diffs : null;
 }
 
-/** Checks if both `a` and `b` contains the same property, which is presumably a dictionary, and if so whether the dictionaries are equal in the shallow sense. If not, returns false. */
-export function equalSubDictionaries<Prop extends string>(a: Partial<Record<Prop, any>>, b: Partial<Record<Prop, any>>, prop: Prop): boolean {
-    // At least `a` has the complex prop.
-    if (a[prop]) {
-        // But `b` doesn't have the complex prop.
-        if (!b[prop])
-            return false;
-        // Compare complex data (as shallow dictionaries).
-        const aData = a[prop];
-        const bData = b[prop];
-        // .. Added or changed.
-        if (aData !== bData) {
-            for (const p in bData) {
-                if (aData[p] !== bData[p])
-                    return false;
-            }
-            // .. Deleted.
-            for (const p in aData) {
-                if (bData[p] === undefined && aData[p] !== undefined)
-                    return false;
+/** Checks if both `a` and `b` contains the same property, and if so whether the sub value dictionaries are equal in the shallow sense.
+ * - Checks for all given props. If any not equal, returns false.
+ * - Note that a[prop] and b[prop] are assumed to be dictionaries if present.
+ *      * If the sub value (a[prop][p] or b[prop][p]) is found is undefined in both, but only found in one set, returns false.
+ */
+export function equalSubDictionaries<Prop extends string>(a: Partial<Record<Prop, any>>, b: Partial<Record<Prop, any>>, ...props: Prop[]): boolean {
+    // Loop given props.
+    for (const prop of props) {
+        // At least `a` has the complex prop.
+        if (a[prop]) {
+            // But `b` doesn't have the complex prop.
+            if (!b[prop])
+                return false;
+            // Compare complex data (as shallow dictionaries).
+            const aData = a[prop] as Object;
+            const bData = b[prop] as Object;
+            if (aData !== bData) {
+                // Check if all in aData are found and matching in bData.
+                for (const p in aData) {
+                    if (bData[p] !== aData[p] || aData[p] === undefined && !bData.hasOwnProperty(p))
+                        return false;
+                }
+                // Check if bData has any that aData doesn't.
+                for (const p in bData) {
+                    if (aData[p] === undefined && !aData.hasOwnProperty(p))
+                        return false;
+                }
             }
         }
+        // Only `b` has the prop.
+        else if (b[prop])
+            return false;
+        // Are equal - neither had it, or both had it and were equal for shallow comparison.
     }
-    // Only `b` has the prop.
-    else if (b[prop])
-        return false;
-    // Are equal - neither had it, or both had it and were equal for shallow comparison.
+    // Equal for all given props.
     return true;
 }
