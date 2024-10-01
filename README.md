@@ -29,24 +29,24 @@ A couple of (mutable) constants for enforcing the naming:
 - `domListenerProps`: The known listener properties - applied as event listeners.
 
 A couple of helper methods for reading and applying the type suggested features into/from DOM:
-- `readDOMString(tag, domProps?, childrenContent?, readFromNode?, skipAttrs?) => string`
-- `readDOMProps(node) => DOMCleanProps`
-- `cleanDOMProps(uncleanProps, listenerProps?, renamedAttrs?) => DOMCleanProps`
-- `equalDOMProps(aDomProps, bDomProps) => boolean`
-- `applyDOMProps(domElement, newProps, oldProps?, skipAttrs?) => void`
+- `readDOMString(tag, domProps?, childrenContent?, readFromNode?, skipAttrs?): string`
+- `readDOMProps(node): DOMCleanProps`
+- `cleanDOMProps(uncleanProps, listenerProps?, renamedAttrs?): DOMCleanProps`
+- `equalDOMProps(aDomProps, bDomProps): boolean`
+- `applyDOMProps(domElement, newProps, oldProps?, skipAttrs?): void`
 
 Other general DOM helpers:
-- `createDOMElement(tag, checkByParentNode?, namespaceURI?) => HTMLElement | SVGElement | null`
-- `isNodeSVG(node) => boolean`
+- `createDOMElement(tag, checkSVGByParentNode?, namespaceURI?): HTMLElement | SVGElement`
+- `isNodeSVG(node): boolean`
 - `classNames(...namesStrArrOrDictionary)`
 - `cleanNames(...namesStrArrOrDictionary)`
-- `parseDOMStyle(styleString) => CSSProperties`
+- `parseDOMStyle(styleString): CSSProperties`
 
 Core methods behind the scenes:
 - `getDictionaryDiffs(orig, updated)`
 - `equalSubDictionaries(a, b, ...props)`
 - `collectKeysTo(record, keyLikes, splitter = "")`
-- `lowerCaseStr(str, replaceBy = "-")`
+- `lowerCaseStr(str, delimiter = "-")`
 - `camelCaseStr(str, splitter = "-")`
 
 ---
@@ -57,10 +57,11 @@ Core methods behind the scenes:
 
 ---
 
-### 2.1. Constants
+### 2.1. DOM constants
 - The usage of constants can be overridden on the methods that use them (as the last arguments):
     * For example, `cleanDOMProps`, `applyDOMProps` and `readDOMString` use the constants.
     * An alternative way to customize is by _mutating_ the constants - though it'll affect your whole project.
+- The constants are `domSkipAttributes`, `domRenamedAttrs`, and `domListenerProps`.
 
 #### library - constant: `domSkipAttributes`
 - Simply defines a set of attributes that will be totally ignored from the processing.
@@ -107,37 +108,92 @@ const domRenamedAttributes = {
 
 ---
 
-### 2.2. Props
+### 2.2. DOM props helpers
+- `readDOMString(tag, domProps?, childrenContent?, readFromNode?, skipAttrs?): string`
+- `readDOMProps(node): DOMCleanProps`
+- `cleanDOMProps(uncleanProps, listenerProps?, renamedAttrs?): DOMCleanProps`
+- `equalDOMProps(aDomProps, bDomProps): boolean`
+- `applyDOMProps(domElement, newProps, oldProps?, skipAttrs?): void`
 
-#### library - method: `readDOMString`
+#### library - method: `readDOMString(tag, domProps?, childrenContent?, readFromNode?, skipAttrs?)`
 
-- `readDOMString(tag, domProps?, childrenContent?, readFromNode?, skipAttrs?) => string`
+- The methods converts the tag, domProps and childrenContent to a string.
+- Also supports reading tag and domProps from the readFromNode.
+- Skips any listener attributes.
 
-#### library - method: `readDOMProps`
+```typescript
 
-- `readDOMProps(node) => DOMCleanProps`
+// Outputs: "<div style='background-color: #fff'><span>some text</span></div>"
+readDOMString("div", { style: { backgroundColor: "#fff" }, }, "<span>some text</span>");
 
-#### library - method: `cleanDOMProps`
+// Outputs: "<div></div>", we use `true` as childrenContent to use a closing tag without content.
+readDOMString("div", null, true);
 
-- `cleanDOMProps(uncleanProps, listenerProps?, renamedAttrs?) => DOMCleanProps`
+// Outputs: "<img src='pics/my_image.jpg' class='image' />"
+readDOMString("img", { className: "image", attributes: { src: "pics/my_image.jpg" }});
+
+```
+
+#### library - method: `readDOMProps(node)`
+
+- The methods reads the `DOMCleanProps` type information from the given node.
+
+```typescript
+
+// Create an element and set it up.
+const input = document.createElement("input");
+input.className = "my test";
+input.style.cssText = "border-color: #000"; // Might become, say, "rgb(0,0,0)"
+input.disabled = true;
+
+// Read info.
+readDOMProps(input);
+// Outputs: {
+//      className: "my test",
+//      style: { borderColor: "rgb(0,0,0)" }, // Or whatever browser used.
+//      attributes: { disabled: "" }
+// }
+
+```
+
+#### library - method: `cleanDOMProps(uncleanProps, listenerProps?, renamedAttrs?)`
+
+- Helps to clean unorganized properties into `DOMCleanProps` form.
+
+```typescript
+
+// - Do some test - //
+
+// Outputs: { style: { position: "absolute" }, attributes: { src: "pics/my-gif.gif" } }
+cleanDOMProps({ style: "position: absolute", src: "pics/my-gif.gif" });
+
+// Outputs: { listeners: { click: () => {}, abort: (e) => {} } }
+cleanDOMProps({ onclick: () => {}, onAbort: (e) => {} });
+
+// Outputs: { attributes: { unknownThing: 5 } }
+cleanDOMProps({ unknownThing: 5 });
+
+
+```
 
 #### library - method: `equalDOMProps`
 
-- `equalDOMProps(aDomProps, bDomProps) => boolean`
+- `equalDOMProps(aDomProps, bDomProps): boolean`
 
 #### library - method: `applyDOMProps`
 
-- `applyDOMProps(domElement, newProps, oldProps?, skipAttrs?) => void`
+- `applyDOMProps(domElement, newProps, oldProps?, skipAttrs?): void`
 
 ---
 
-### 2.3. General
-- `createDOMElement(tag, checkByParentNode?, namespaceURI?): HTMLElement | SVGElement | null`
+### 2.3. General DOM helpers
+- `createDOMElement(tag, checkSVGByParentNode?, namespaceURI?): HTMLElement | SVGElement`
 - `isNodeSVG(node): boolean`
 - `classNames(...namesStrArrOrDictionary): string`
+- `cleanNames(...namesStrArrOrDictionary): string`
 - `parseDOMStyle(styleString): CSSProperties`
 
-#### library - method: `createDOMElement`
+#### library - method: `createDOMElement(tag, checkSVGByParentNode?, namespaceURI?)`
 - Create a new HTML or SVG element with tag suggestions.
 - Use lowercase tag names to stay consistent all around.
 
@@ -159,8 +215,8 @@ const a_svg = createDOMElement("a", group);         // SVGAElement
 const circle_ALT = createDOMElement("circle", group, "http://www.w3.org/2000/svg");
 
 // Don't create SVG elements without the parent check, unless "svg" tag or saying it's SVG.
-const circle_NONO = createDOMElement("circle");         // HTMLElement - in JS, too
-const circle_OKAY = createDOMElement("circle", true);   // SVGCircleElement - in JS, too
+const circle_NONO = createDOMElement("circle");         // HTMLElement - in JS, too.
+const circle_OKAY = createDOMElement("circle", true);   // SVGCircleElement - in JS, too.
 
 // Insert accordingly.
 document.body.appendChild(div);
@@ -185,7 +241,7 @@ const svg = createDOMElement("svg");
 const group = createDOMElement("group", svg);
 const circle = createDOMElement("circle", group);
 const a_svg = createDOMElement("a", group); // On the SVG side.
-const a_html = createDOMElement("a", div); // On the HTML side.
+const a_html = createDOMElement("a", div);  // On the HTML side.
 
 // Test for SVG.
 isNodeSVG(div);     // false
@@ -197,7 +253,7 @@ isNodeSVG(a_html);  // false
 
 ```
 
-#### library - method: `classNames`
+#### library - method: `classNames(...strLikes)`
 - Simply concats non-false like strings from string, array or dictionary input.
 - Does not remove any duplicates - to do that use `cleanNames` instead.
 
@@ -256,7 +312,7 @@ validNames("a", "a b", false, ["a", "FAIL"], ["b a", ""], undefined, {"a": true,
 
 ```
 
-#### library - method: `cleanNames`
+#### library - method: `cleanNames(...strLikes)`
 - Like classNames but removes any duplicates in the outcome.
 
 ```typescript
@@ -316,7 +372,7 @@ validNames("a", "a b", false, ["a", "FAIL"], ["b a", ""], undefined, {"a": true,
 
 ```
 
-#### library - method: `parseDOMStyle`
+#### library - method: `parseDOMStyle(str)`
 - Split the style string and return a dictionary with camelCase keys with respective values.
 - Note that both keys are compatible with `element.style[styleProp] = value` usage.
     * For example, `element.style["border-color"] = "#000"` and `element.style["borderColor"] = "#000"` work the same.
@@ -349,7 +405,7 @@ el.style["font-size"]       // "12px"
 - `getDictionaryDiffs(orig, updated)`
 - `equalSubDictionaries(a, b, ...props)`
 - `collectKeysTo(record, keyLikes, splitter = "")`
-- `lowerCaseStr(str, replaceBy = "-")`
+- `lowerCaseStr(str, delimiter = "-")`
 - `camelCaseStr(str, splitter = "-")`
 
 #### library - method: `getDictionaryDiffs(orig, updated)`
@@ -423,7 +479,7 @@ collection // { a: true, b: true, c: true, d: true, e: true }
 
 ```
 
-#### library - method: `lowerCaseStr(str, replaceBy = "-")`
+#### library - method: `lowerCaseStr(str, delimiter = "-")`
 - Helper to convert a camelCase or PascalCase string to dash-case (by default).
 - This method is useful with the native Element's `dataset` feature.
 
