@@ -1411,6 +1411,7 @@ declare function parseDOMStyle(cssText: string, nullIfEmpty?: false): CSSPropert
 declare function parseDOMStyle(cssText: string, nullIfEmpty?: boolean): CSSProperties | null;
 /** Returns a clean string without duplicates to be used as class name (with optional nested TypeScript verification).
  * - Note. If you don't care about duplicates, use `classNames` instead.
+ *      * In terms of nested processing (eg. in a component structure), it's recommended to use `classNames` on the parental flow, and `cleanNames` only at the leaf (to keep DOM clean).
  * - Each item in the cleanNames can be:
  *      1. Single string: `Valid | FalseLike`
  *      2. Array or set: `Array<Valid | FalseLike> | Set<Valid | FalseLike>`
@@ -1498,8 +1499,9 @@ declare function cleanNames<ValidNames extends string = string, Inputs extends C
     ClassNameInput<ValidNames>?,
     ClassNameInput<ValidNames>?
 ]>(...names: Inputs): string;
-/** Returns a clean string without duplicates to be used as class name (with optional nested TypeScript verification).
+/** Returns a string to be used as class name (with optional nested TypeScript verification) without removing duplicates.
  * - Note. If you want to remove any duplicates, use `cleanNames` instead.
+ *      * In terms of nested processing (eg. in a component structure), it's recommended to use `classNames` on the parental flow, and `cleanNames` only at the leaf (to keep DOM clean).
  * - Each item in the classNames can be:
  *      1. Single string: `Valid | FalseLike`
  *      2. Array or set: `Array<Valid | FalseLike> | Set<Valid | FalseLike>`

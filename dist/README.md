@@ -256,6 +256,7 @@ isNodeSVG(a_html);  // false
 #### library - method: `classNames(...strLikes)`
 - Simply concats non-false like strings from string, array or dictionary input.
 - Does not remove any duplicates - to do that use `cleanNames` instead.
+- Note. In terms of nested processing (eg. in a component structure), it's recommended to use `classNames` on the parental flow, and `cleanNames` only at the leaf (to keep DOM clean).
 
 ```typescript
 
@@ -313,7 +314,8 @@ validNames("a", "a b", false, ["a", "FAIL"], ["b a", ""], undefined, {"a": true,
 ```
 
 #### library - method: `cleanNames(...strLikes)`
-- Like classNames but removes any duplicates in the outcome.
+- Like `classNames` but removes any duplicates in the outcome.
+- Typically used right before applying to DOM (to keep DOM clean).
 
 ```typescript
 
