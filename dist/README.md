@@ -43,11 +43,12 @@ Other general DOM helpers:
 - `parseDOMStyle(styleString): CSSProperties`
 
 Core methods behind the scenes:
-- `getDictionaryDiffs(orig, updated)`
-- `equalSubDictionaries(a, b, ...props)`
-- `collectKeysTo(record, keyLikes, splitter = "")`
-- `lowerCaseStr(str, delimiter = "-")`
-- `camelCaseStr(str, splitter = "-")`
+- `getDictionaryDiffs(orig, updated): Record<string, any>`
+- `equalSubDictionaries(a, b, ...props): boolean`
+- `getNameDiffs(origName, newName): Record<string, boolean> | null`
+- `collectKeysTo(record, keyLikes, splitter = ""): Record<string, true>`
+- `lowerCaseStr(str, delimiter = "-"): string`
+- `camelCaseStr(str, splitter = "-"): string`
 
 ---
 
@@ -64,6 +65,7 @@ Core methods behind the scenes:
 - The constants are `domSkipAttributes`, `domRenamedAttrs`, and `domListenerProps`.
 
 #### library - constant: `domSkipAttributes`
+
 - Simply defines a set of attributes that will be totally ignored from the processing.
 - Note that this is used in applyDOMProps and readDOMString as an overrideable default.
 
@@ -80,11 +82,12 @@ const domSkipAttributes = {
 ```
 
 #### library - constant: `domRenamedAttributes`
+
 - A dictionary with all the renamed attributes as keys and their native name as value.
 
 ```typescript
 
-// This is just an example, not the full list.
+// This is just an example, not the whole dictionary.
 const domRenamedAttributes = {
     // HTML side has 2 non-optional ones.
     acceptCharset: "accept-charset", // Not optional.
@@ -100,11 +103,27 @@ const domRenamedAttributes = {
     xlinkHref: "xlink:href",
     xmlBase: "xml:base",
     // ... any many more ... 
-}
+};
 
 ```
 
 #### library - constant: `domListenerProps`
+
+- A dictionary whose keys are lowercase listener attributes and values the event names.
+- It's used by checking if the attribute (converted to lowercase) is found in the dictionary.
+    * Can then use the value for adding / removing a listener: `el.addEventListener(eName, listener)`
+
+```typescript
+
+// This is just an example, not the whole dictionary.
+const domListenerAttributes = {
+    onabort: "abort",
+    onclick: "click",
+    ondblclick: "dblclick",
+    // ... and many more ...
+};
+
+```
 
 ---
 
