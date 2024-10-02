@@ -2059,16 +2059,21 @@ declare function classNames<ValidNames extends string = string, Inputs extends C
  *
  * ```
  *
- * // Common usage.
- * getNameDiffs("", "a") // { a: true }
- * getNameDiffs("a", "") // { a: false }
- * getNameDiffs("a b", "a b c") // { c: true }
- * getNameDiffs("a b c", "a b") // { c: false }
+ * // Common usage with " " as splitter.
+ * getNameDiffs("", "a")            // { a: true }
+ * getNameDiffs("a", "")            // { a: false }
+ * getNameDiffs("a b", "a b c")     // { c: true }
+ * getNameDiffs("a b c", "a b")     // { c: false }
  * getNameDiffs("c b a a a", "a b b   b c e"); // { e: true }
+ *
+ * // Testing other splitters.
+ * getNameDiffs("a.b", "a.b.c", ".")    // { c: true }
+ * getNameDiffs("a.b", "a.b c", ".")    // { "b c": true }
+ * getNameDiffs("a", "b c", "");       // { a: false, "b c": true }
  *
  * ```
  */
-declare function getNameDiffs(origName?: string, newName?: string): Record<string, boolean> | null;
+declare function getNameDiffs(origName?: string, newName?: string, splitter?: string): Record<string, boolean> | null;
 /** Collects unique names as dictionary keys with value `true` for each found.
  * - The names are assumed to be:
  *      1. String (use stringSplitter),

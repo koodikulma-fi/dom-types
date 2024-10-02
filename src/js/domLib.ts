@@ -276,24 +276,29 @@ export function classNames<
  * 
  * ```
  * 
- * // Common usage.
- * getNameDiffs("", "a") // { a: true }
- * getNameDiffs("a", "") // { a: false }
- * getNameDiffs("a b", "a b c") // { c: true }
- * getNameDiffs("a b c", "a b") // { c: false }
+ * // Common usage with " " as splitter.
+ * getNameDiffs("", "a")            // { a: true }
+ * getNameDiffs("a", "")            // { a: false }
+ * getNameDiffs("a b", "a b c")     // { c: true }
+ * getNameDiffs("a b c", "a b")     // { c: false }
  * getNameDiffs("c b a a a", "a b b   b c e"); // { e: true }
+ * 
+ * // Testing other splitters.
+ * getNameDiffs("a.b", "a.b.c", ".")    // { c: true }
+ * getNameDiffs("a.b", "a.b c", ".")    // { "b c": true }
+ * getNameDiffs("a", "b c", "");       // { a: false, "b c": true }
  * 
  * ```
  */
-export function getNameDiffs(origName?: string, newName?: string): Record<string, boolean> | null {
+export function getNameDiffs(origName?: string, newName?: string, splitter: string = " "): Record<string, boolean> | null {
     // Quick check.
     origName = origName || "";
     newName = newName || "";
     if (origName === newName)
         return null;
     // Prepare outcome.
-    const origNames = origName.split(" ");
-    const newNames = newName.split(" ");
+    const origNames = splitter ? origName.split(splitter) : [origName];
+    const newNames = splitter ? newName.split(splitter) : [newName];
     const diffs = {};
     // Removed.
     let did: null | boolean = null;

@@ -48,7 +48,7 @@ Other general DOM helpers:
 Core methods behind the scenes:
 - [`getDictionaryDiffs`](#library---method-getdictionarydiffsorig-updated)`(orig, updated): Record<string, any>`
 - [`equalSubDictionaries`](#library---method-equalsubdictionariesa-b-props)`(a, b, ...props): boolean`
-- [`getNameDiffs`](#library---method-getnamediffsorigname-newname)`(origName, newName): Record<string, boolean> | null`
+- [`getNameDiffs`](#library---method-getnamediffsorigname-newname)`(origName, newName, splitter = " "): Record<string, boolean> | null`
 - [`collectKeysTo`](#library---method-collectkeystorecord-keylikes-stringsplitter--)`(record, keyLikes, splitter = ""): Record<string, true>`
 - [`lowerCaseStr`](#library---method-lowercasestrstr-delimiter---)`(str, delimiter = "-"): string`
 - [`camelCaseStr`](#library---method-camelcasestrstr-splitter---)`(str, splitter = "-"): string`
@@ -763,19 +763,26 @@ equalSubDictionaries(a, b, "set1", "set2"); // false, because "set1" returns fal
 
 ```
 
-#### library - method: `getNameDiffs(origName, newName)`
+#### library - method: `getNameDiffs(origName, newName, splitter = " ")`
 
-- Get diffs in class names in the form of: Record<string, boolean>, where true means added, false removed, otherwise not included.
+- Get diffs in names in the form of: `Record<string, boolean>`, where true means added, false removed, otherwise not included.
+- The names are splitted from each given string using the splitter - defaults to " ".
+    * If no splitter is defined, won't split them, but just compare the two words as such.
 - Note that the method does not care about the order, just whether the names are present or not. Skips empty "".
 
 ```typescript
 
-// Common usage.
-getNameDiffs("", "a") // { a: true }
-getNameDiffs("a", "") // { a: false }
-getNameDiffs("a b", "a b c") // { c: true }
-getNameDiffs("a b c", "a b") // { c: false }
+// Common usage with " " as splitter.
+getNameDiffs("", "a")           // { a: true }
+getNameDiffs("a", "")           // { a: false }
+getNameDiffs("a b", "a b c")    // { c: true }
+getNameDiffs("a b c", "a b")    // { c: false }
 getNameDiffs("c b a a a", "a b b   b c e"); // { e: true }
+
+// Testing other splitters.
+getNameDiffs("a.b", "a.b.c", ".")   // { c: true }
+getNameDiffs("a.b", "a.b c", ".")   // { "b c": true }
+getNameDiffs("a", "b c", "");       // { a: false, "b c": true }
 
 ```
 
