@@ -16,10 +16,11 @@ There are 2 kinds of tools available.
 ### [1. TS DECLARATIONS](#1-ts-declarations-doc)
 
 Declarations for common attributes:
-- Tag based (and tagless) SVG and HTML attributes separately and combined (as DOM) in native and camelCase naming.
+- Tag based (and tagless) SVG and HTML attributes (combined as DOM) in native and camelCase naming.
     * The attributes include global listeners and ARIA attributes.
 - CSS properties as an interface with camelCase keys. For example: `{ "backgroundColor": "#000" }`
-    * Some properties support numeric values, eg. `{ width: 50, opacity: .5 }` reflecting how major browsers work.
+    * Some properties support `number` or `0` values, eg. `{ width: 50, opacity: .5, inset: 0 }`.
+    * All properties have typing suggestions while always allowing any string value.
 
 ### [2. JS TOOLS](#2-js-tools-doc)
 
@@ -72,7 +73,9 @@ Core methods behind the scenes:
     * `DOMAttributesAny_native`: All possible attributes (for any tag) in native case.
     * `SVGAttributesBy_native: Record<Tag, SVGAttributes<Tag>>`: SVG dictionary in native case.
 
-#### 1.1.1 HTML examples
+---
+
+### 1.2. HTML examples
 
 ```typescript
 
@@ -123,7 +126,9 @@ type MyInputTests_native = [
 
 ```
 
-#### 1.1.2 SVG examples
+---
+
+### 1.3. SVG examples
 
 ```typescript
 
@@ -151,7 +156,9 @@ type MyCircleTests_native = [
 
 ```
 
-#### 1.1.3 DOM examples and tag unions
+---
+
+### 1.4. DOM examples and tag unions
 
 - You can also define a union of tags for `DOMAttributes<Tag>` (or HTML or SVG).
     * However, it's typically not recommended, and just easier to use the Any type variant.
@@ -191,7 +198,7 @@ type MyTests = [
 
 ---
 
-### 1.2. Global listeners and ARIA attributes
+### 1.5. Global listeners and ARIA attributes
 
 - The global listeners and ARIA attributes are included in the main declarations, but can be used separately.
 - Accordingly, the global listeners are provided as native and camelCase interfaces:
@@ -222,9 +229,10 @@ type MyTests = [
 ];
 
 ```
+
 ---
 
-### 1.3. CSS properties
+### 1.6. CSS properties
 
 - The CSS properties are available as a camelCase interface, for example: `{ "backgroundColor": "#000" }`
 - This form works nicely with the Element's style, eg. `el.style["backgroundColor"] = "#000"`.
