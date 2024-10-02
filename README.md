@@ -196,12 +196,12 @@ type MyTests = [
 
 ### 1.2. Global listeners and ARIA attributes
 
-- The global listeners and ARIA attributes are included in the main declarations, but can be used separately.
+- The global listeners and ARIA attributes are part of the attributes, but can be used separately.
 - Accordingly, the global listeners are provided as native and camelCase interfaces:
     * `GlobalListeners` and `GlobalListeners_native`.
     * For example: `GlobalListeners["onAbort"]`, or `GlobalListeners_native["onclick"]`.
 - And likewise, the ARIA attributes are provided as native and camelCase interfaces:
-    * `ARIAAttributes` (= global `ARIAMixin`) and `ARIAAttributes_native`.
+    * `ARIAAttributes` (copied from global `ARIAMixin`) and `ARIAAttributes_native`.
     * In addition, there's a string type for `ARIARole`.
 
 ```typescript
@@ -232,11 +232,11 @@ type MyTests = [
 
 - The CSS properties are available as a camelCase interface, for example: `{ "backgroundColor": "#000" }`
 - This form works nicely with the Element's style, eg. `el.style["backgroundColor"] = "#000"`.
-    * Actually both cases are supported by browsers through the syle: `el.style["background-color"] = "#000"`.
-* All values are `string` in type, though some also support `number` or just `0` reflecting what the major browsers support.
+    * Actually both are supported by browsers through style: `el.style["background-color"] = "#000"`.
+* All values are `string`, though some support `number` or just `0` reflecting what the major browsers support.
     - For example: `{ width: 50 }` -> `el.style.width = 50` -> `50` = `50px`.
     - Supporting only `0` is relative common, eg. `{ inset: 0, gap: 0, margin: 0 }`.
-        * Basically, it's supported for all values that could take number with a unit, eg. `{ margin: "5px" }`.
+        * Basically, all properties that could take number with a unit support 0, eg. `{ margin: "5px" }`.
 
 ```typescript
 
