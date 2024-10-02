@@ -2076,11 +2076,27 @@ declare function classNames<ValidNames extends string = string, Inputs extends C
 declare function getNameDiffs(origName?: string, newName?: string, splitter?: string): Record<string, boolean> | null;
 /** Collects unique names as dictionary keys with value `true` for each found.
  * - The names are assumed to be:
- *      1. String (use stringSplitter),
+ *      1. String,
  *      2. Iterable of string names, or an iterable of this type itself (recursively).
  *      3. Record where names are keys, values tells whether to include or not.
+ * - All three forms use the keySplitter paramter to split the given/resulting string.
+ *      * However, if the keySplitter is an empty string ("", default): then uses directly.
+ *
+ * ```
+ *
+ * // Prepare a collection.
+ * const collection: Record<string, true> = {};
+ *
+ * // Use it with a string splitter for " ".
+ * // .. Adds to collection: { a: true, b: true, c: true, d: true, e: true }
+ * collectKeysTo(collection, "a b", ["b c"], { "c d": true, e: true, f: false}, " ");
+ *
+ * // .. Testing empty. Won't add anything - regardless of what the stringSplitter is.
+ * collectKeysTo(collection, "", [""], { "": true });
+ *
+ * ```
  */
-declare function collectKeysTo(record: Record<string, true>, keyLikes: Exclude<ClassNameInput, FalseLike>, stringSplitter?: string): void;
+declare function collectKeysTo(record: Record<string, true>, keyLikes: Exclude<ClassNameInput, FalseLike>, keySplitter?: string): void;
 /** Collect shallow differences in two dictionaries. Assumes first one is original and second are the updates (= the next state) of the dictionary. Returns `null` if no changes detected. */
 declare function getDictionaryDiffs<T extends Record<string, any>>(orig: Partial<T>, update: Partial<T>): Partial<T> | null;
 /** Checks if sub dictionaries in both `a` and `b` are equal.

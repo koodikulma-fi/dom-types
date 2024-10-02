@@ -48,8 +48,8 @@ Other general DOM helpers:
 Core methods behind the scenes:
 - [`getDictionaryDiffs`](#library---method-getdictionarydiffsorig-updated)`(orig, updated): Record<string, any>`
 - [`equalSubDictionaries`](#library---method-equalsubdictionariesa-b-props)`(a, b, ...props): boolean`
-- [`getNameDiffs`](#library---method-getnamediffsorigname-newname)`(origName, newName, splitter = " "): Record<string, boolean> | null`
-- [`collectKeysTo`](#library---method-collectkeystorecord-keylikes-stringsplitter--)`(record, keyLikes, splitter = ""): Record<string, true>`
+- [`getNameDiffs`](#library---method-getnamediffsorigname-newname-splitter---)`(origName, newName, splitter = " "): Record<string, boolean> | null`
+- [`collectKeysTo`](#library---method-collectkeystorecord-keylikes-keysplitter--)`(record, keyLikes, keySplitter = ""): Record<string, true>`
 - [`lowerCaseStr`](#library---method-lowercasestrstr-delimiter---)`(str, delimiter = "-"): string`
 - [`camelCaseStr`](#library---method-camelcasestrstr-splitter---)`(str, splitter = "-"): string`
 
@@ -707,8 +707,8 @@ el.style["font-size"]       // "12px"
 ### 2.4. Core methods
 - `getDictionaryDiffs(orig, updated): Record<string, any>`
 - `equalSubDictionaries(a, b, ...props): boolean`
-- `getNameDiffs(origName, newName): Record<string, boolean> | null`
-- `collectKeysTo(record, keyLikes, splitter = ""): Record<string, true>`
+- `getNameDiffs(origName, newName, splitter = " "): Record<string, boolean> | null`
+- `collectKeysTo(record, keyLikes, keySplitter = ""): Record<string, true>`
 - `lowerCaseStr(str, delimiter = "-"): string`
 - `camelCaseStr(str, splitter = "-"): string`
 
@@ -786,7 +786,7 @@ getNameDiffs("a", "b c", "");       // { a: false, "b c": true }
 
 ```
 
-#### library - method: `collectKeysTo(record, keyLikes, stringSplitter = "")`
+#### library - method: `collectKeysTo(record, keyLikes, keySplitter = "")`
 - Helper to collect found keys from a string, array or dictionary using a string splitter.
 - This is the core method for the `cleanNames` method.
 
@@ -798,7 +798,7 @@ const collection: Record<string, true> = {};
 // Use it with a string splitter for " ".
 // .. Adds to collection: { a: true, b: true, c: true, d: true, e: true }
 collectKeysTo(collection, "a b", ["b c"], { "c d": true, e: true, f: false}, " ");
-// .. Testing empty. Won't add anything - regardless of what the stringSplitter is.
+// .. Testing empty. Won't add anything - regardless of what the keySplitter is.
 collectKeysTo(collection, "", [""], { "": true });
 
 // Test the claims.
