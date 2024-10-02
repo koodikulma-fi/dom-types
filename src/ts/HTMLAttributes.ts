@@ -2,7 +2,7 @@
 // - Imports - //
 
 // Local.
-import { BoolOrStr, DataAttributes, OrString } from "./common";
+import { BoolOrStr, DataAttributes, AnyString } from "./common";
 import { GlobalListeners, GlobalListeners_native } from "./GlobalListeners";
 import { CSSProperties } from "./CSSProperties";
 import { ARIAAttributes, ARIAAttributes_native, ARIARole } from "./ARIAAttributes";
@@ -59,13 +59,13 @@ export interface HTMLGlobalAttributes extends Partial<DataAttributes>, Omit<HTML
     | "virtualkeyboardpolicy"
     | "writingsuggestions"
 > {
-    autoCapitalize: "none" | "off" | "sentences" | "on" | "words" | "characters" | OrString;
+    autoCapitalize: "none" | "off" | "sentences" | "on" | "words" | "characters" | AnyString;
     autoFocus: boolean | null;
     className: string; // Add in addition to "class".
     contentEditable: BoolOrStr;
     enterKeyHint: string;
     exportParts: string;
-    inputMode: "none" | "text" | "decimal" | "numeric" | "tel" | "search" | "email" | "url" | OrString;
+    inputMode: "none" | "text" | "decimal" | "numeric" | "tel" | "search" | "email" | "url" | AnyString;
     itemId: string;
     itemProp: string;
     itemRef: string | string[];
@@ -74,18 +74,18 @@ export interface HTMLGlobalAttributes extends Partial<DataAttributes>, Omit<HTML
     popOver: string;
     spellCheck: BoolOrStr;
     tabIndex: string | number;
-    virtualKeyboardPolicy: "auto" | "manual" | OrString;
+    virtualKeyboardPolicy: "auto" | "manual" | AnyString;
     writingSuggestions: BoolOrStr;
 }
 
 export interface HTMLGlobalAttributes_native extends Partial<DataAttributes> {
     accesskey: string;
     anchor: string;
-    autocapitalize: "none" | "off" | "sentences" | "on" | "words" | "characters" | OrString;
+    autocapitalize: "none" | "off" | "sentences" | "on" | "words" | "characters" | AnyString;
     autofocus: boolean | null;
     class: string;
     contenteditable: BoolOrStr;
-    dir: "ltr" | "rtl" | "auto" | OrString;
+    dir: "ltr" | "rtl" | "auto" | AnyString;
     data: Record<string, any>;
     draggable: BoolOrStr;
     enterkeyhint: string;
@@ -93,7 +93,7 @@ export interface HTMLGlobalAttributes_native extends Partial<DataAttributes> {
     hidden: BoolOrStr;
     id: string;
     insert: BoolOrStr;
-    inputmode: "none" | "text" | "decimal" | "numeric" | "tel" | "search" | "email" | "url" | OrString;
+    inputmode: "none" | "text" | "decimal" | "numeric" | "tel" | "search" | "email" | "url" | AnyString;
     itemid: string;
     itemprop: string;
     itemref: string | string[];
@@ -103,14 +103,14 @@ export interface HTMLGlobalAttributes_native extends Partial<DataAttributes> {
     nonce: string;
     part: string;
     popover: string;
-    role: ARIARole | OrString;
+    role: ARIARole | AnyString;
     slot: string;
     spellcheck: BoolOrStr;
     style: string | CSSProperties;
     tabindex: string | number;
     title: string;
-    translate: "yes" | "no" | OrString;
-    virtualkeyboardpolicy: "auto" | "manual" | OrString;
+    translate: "yes" | "no" | AnyString;
+    virtualkeyboardpolicy: "auto" | "manual" | AnyString;
     writingsuggestions: BoolOrStr;
 }
 
@@ -184,17 +184,17 @@ interface HTMLOtherAttributes_native {
     "accept": string;
     "accept-charset": string;
     "action": string;
-    "align": "left" | "top" | "right" | "bottom" | OrString;
+    "align": "left" | "top" | "right" | "bottom" | AnyString;
     "allow": string;
     "alt": string;
-    "as": "audio" | "document" | "embed" | "fetch" | "font" | "image" | "object" | "script" | "style" | "track" | "video" | "worker" | OrString;
+    "as": "audio" | "document" | "embed" | "fetch" | "font" | "image" | "object" | "script" | "style" | "track" | "video" | "worker" | AnyString;
     "async": BoolOrStr;
     "autocomplete": BoolOrStr;
     "autoplay": BoolOrStr;
     "background": string;
     "bgcolor": string;
     "border": string;
-    "capture": "user" | "environment" | OrString;
+    "capture": "user" | "environment" | AnyString;
     "charset": string;
     "checked": BoolOrStr;
     "cite": string;
@@ -204,7 +204,7 @@ interface HTMLOtherAttributes_native {
     "content": string | number;
     "controls": BoolOrStr;
     "coords": string;
-    "crossorigin": "anonymous" | "use-credentials" | "" | OrString;
+    "crossorigin": "anonymous" | "use-credentials" | "" | AnyString;
     "csp": string;
     "data": string; // <object>
     "datetime": string;
@@ -214,7 +214,7 @@ interface HTMLOtherAttributes_native {
     "dirname": string;
     "disabled": BoolOrStr;
     "download": string;
-    "enctype": "application/x-www-form-urlencoded" | "multipart/form-data" | "text/plain" | OrString;
+    "enctype": "application/x-www-form-urlencoded" | "multipart/form-data" | "text/plain" | AnyString;
     // "enterkeyhint": string; // Global.
     "for": string;
     "form": string;
@@ -233,10 +233,10 @@ interface HTMLOtherAttributes_native {
     // "intrinsicsize": string; // Deprecated and weird.
     // "inputmode": string; // Global.
     "ismap": BoolOrStr;
-    "kind": "subtitles" | "captions" | "chapters" | "metadata" | OrString;
+    "kind": "subtitles" | "captions" | "chapters" | "metadata" | AnyString;
     "label": string;
     "language": string;
-    "loading": "lazy" | "eager" | OrString;
+    "loading": "lazy" | "eager" | AnyString;
     "list": string;
     "loop": BoolOrStr;
     "low": string | number;
@@ -260,14 +260,14 @@ interface HTMLOtherAttributes_native {
     "preload": string;
     "readonly": string;
     "referrerpolicy": string;
-    "rel": "alternate" | "author" | "bookmark" | "canonical" | "dns-prefetch" | "external" | "expect" | "help" | "icon" | "license" | "manifest" | "me" | "modulepreload" | "next" | "nofollow" | "noopener" | "noreferrer" | "opener" | "pingback" | "preconnect" | "prefetch" | "preload" | "prerender" | "prey" | "privacy-policy" | "search" | "stylesheet" | "tag" | "terms-of-service" | OrString;
+    "rel": "alternate" | "author" | "bookmark" | "canonical" | "dns-prefetch" | "external" | "expect" | "help" | "icon" | "license" | "manifest" | "me" | "modulepreload" | "next" | "nofollow" | "noopener" | "noreferrer" | "opener" | "pingback" | "preconnect" | "prefetch" | "preload" | "prerender" | "prey" | "privacy-policy" | "search" | "stylesheet" | "tag" | "terms-of-service" | AnyString;
     "required": BoolOrStr;
     "reversed": BoolOrStr;
-    "role": ARIARole | OrString;
+    "role": ARIARole | AnyString;
     "rows": string | number;
     "rowspan": string | number;
-    "sandbox": "allow-downloads" | "allow-forms" | "allow-modals" | "allow-orientation-lock" | "allow-pointer-lock" | "allow-popups" | "allow-popups-to-escape-sandbox" | "allow-presentation" | "allow-same-origin" | "allow-scripts" | "allow-storage-access-by-user-activation" | "allow-top-navigation" | "allow-top-navigation-by-user-activation" | "allow-top-navigation-to-custom-protocols" | OrString;
-    "scope": "row" | "col" | "rowgroup" | "colgroup" | OrString;
+    "sandbox": "allow-downloads" | "allow-forms" | "allow-modals" | "allow-orientation-lock" | "allow-pointer-lock" | "allow-popups" | "allow-popups-to-escape-sandbox" | "allow-presentation" | "allow-same-origin" | "allow-scripts" | "allow-storage-access-by-user-activation" | "allow-top-navigation" | "allow-top-navigation-by-user-activation" | "allow-top-navigation-to-custom-protocols" | AnyString;
+    "scope": "row" | "col" | "rowgroup" | "colgroup" | AnyString;
     "selected": BoolOrStr;
     "shape": string;
     "size": string | number;
@@ -285,7 +285,7 @@ interface HTMLOtherAttributes_native {
     "usemap": string;
     "value": string | number;
     "width": string | number;
-    "wrap": "hard" | "soft" | "off" | OrString;
+    "wrap": "hard" | "soft" | "off" | AnyString;
 }
 
 

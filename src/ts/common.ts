@@ -3,9 +3,9 @@
 
 // Used for many attributes.
 export type BoolOrStr = boolean | "true" | "false";
-export type OrString = string & {};
+export type AnyString = string & {};
 export type InheritInitial = "inherit" | "initial";
-export type InheritInitialRevUnset = InheritInitial | "revert" | "revert-layer" | "unset";
+// export type InheritInitialRevUnset = InheritInitial | "revert" | "revert-layer" | "unset";
 
 // Unused.
 // Thanks to: https://stackoverflow.com/questions/69159902/get-non-readonly-keys-of-object

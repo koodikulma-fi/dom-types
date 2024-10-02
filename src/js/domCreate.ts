@@ -1,7 +1,7 @@
 
 // - Imports - //
 
-import { DOMTags, OrString } from "../ts";
+import { DOMTags, AnyString } from "../ts";
 
 
 // - DOM creation - //
@@ -15,8 +15,8 @@ import { DOMTags, OrString } from "../ts";
 export function createDOMElement(tag: "svg", checkSVGByParentNode?: boolean | Node | null | undefined, namespaceURI?: string): SVGSVGElement;
 export function createDOMElement<Tag extends string>(tag: Tag, checkSVGByParentNode: true | SVGElement, namespaceURI?: string): Tag extends keyof SVGElementTagNameMap ? SVGElementTagNameMap[Tag] : SVGElement;
 export function createDOMElement<Tag extends string>(tag: Tag, checkSVGByParentNode?: false | null | undefined | HTMLElement, namespaceURI?: string): Tag extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[Tag] : HTMLElement;
-export function createDOMElement(tag: DOMTags | OrString, checkSVGByParentNode?: boolean | Node | null | undefined, namespaceURI?: string): HTMLElement | SVGElement;
-export function createDOMElement(tag: DOMTags | OrString, checkSVGByParentNode?: boolean | Node | null | undefined, namespaceURI?: string): HTMLElement | SVGElement {
+export function createDOMElement(tag: DOMTags | AnyString, checkSVGByParentNode?: boolean | Node | null | undefined, namespaceURI?: string): HTMLElement | SVGElement;
+export function createDOMElement(tag: DOMTags | AnyString, checkSVGByParentNode?: boolean | Node | null | undefined, namespaceURI?: string): HTMLElement | SVGElement {
     return tag === "svg" || checkSVGByParentNode && (checkSVGByParentNode === true || checkSVGByParentNode["ownerSVGElement"] !== undefined) ?
         document.createElementNS(namespaceURI || "http://www.w3.org/2000/svg", tag) as SVGElement :
         document.createElement(tag) as HTMLElement;

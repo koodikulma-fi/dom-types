@@ -1,7 +1,6 @@
 type BoolOrStr = boolean | "true" | "false";
-type OrString = string & {};
+type AnyString = string & {};
 type InheritInitial = "inherit" | "initial";
-type InheritInitialRevUnset = InheritInitial | "revert" | "revert-layer" | "unset";
 /** See if the Key is readonly. */
 type IsReadOnlyKey<T, Key extends keyof T> = (<G>() => G extends Pick<T, Key> ? true : false) extends (<G>() => G extends Record<Key, T[Key]> ? true : false) ? false : true;
 /** Exclude methods and property functions from an object like. */
@@ -96,17 +95,377 @@ type NameValidator<Valid extends any, Input> = [
  */
 type ValidateNames<Valid extends string, Nulls = FalseLike> = <T1 extends NameValidator<Valid | Nulls, T1>, T2 extends NameValidator<Valid | Nulls, T2>, T3 extends NameValidator<Valid | Nulls, T3>, T4 extends NameValidator<Valid | Nulls, T4>, T5 extends NameValidator<Valid | Nulls, T5>, T6 extends NameValidator<Valid | Nulls, T6>, T7 extends NameValidator<Valid | Nulls, T7>, T8 extends NameValidator<Valid | Nulls, T8>, T9 extends NameValidator<Valid | Nulls, T9>, T10 extends NameValidator<Valid | Nulls, T10>, Tn extends NameValidator<Valid, Tn>>(t1?: T1 | ClassNameInput<Valid, Nulls>, t2?: T2 | ClassNameInput<Valid, Nulls>, t3?: T3 | ClassNameInput<Valid, Nulls>, t4?: T4 | ClassNameInput<Valid, Nulls>, t5?: T5 | ClassNameInput<Valid, Nulls>, t6?: T6 | ClassNameInput<Valid, Nulls>, t7?: T7 | ClassNameInput<Valid, Nulls>, t8?: T8 | ClassNameInput<Valid, Nulls>, t9?: T9 | ClassNameInput<Valid, Nulls>, t10?: T10 | ClassNameInput<Valid, Nulls>, ...tn: Tn[]) => string;
 
-/** There's over 100 color names + PascalCase vs. lowercase. See https://www.w3schools.com/cssref/css_colors.php */
-type CSSColorNames = "transparent" | "currentcolor" | "currentColor" | OrString;
-/** Common blend modes. */
-type CSSBlendMode = "normal" | "multiply" | "screen" | "overlay" | "darken" | "lighten" | "color-dodge" | "color-burn" | "hard-light" | "soft-light" | "difference" | "exclusion" | "hue" | "saturation" | "color" | "luminosity" | OrString;
-/** The CSS properties with camelCase keys. Values are strings, or numbers for certain natively supported style properties (like "width", "height", "opacity" and others). */
-interface CSSProperties extends Partial<Omit<CSSStyleDeclaration, GetMethodKeys<CSSStyleDeclaration> | CSSNumericPropertyNames> & Record<CSSNumericPropertyNames, string | number>> {
+/** The CSS properties with camelCase keys.
+ * - Values are strings, or numbers for certain natively supported style properties (like "width", "height", "opacity" and others).
+ * - Some properties contain extra hints: like "filter": `"blur(px)" | "brightness(%)" | "contrast(%)"` and so on.
+ * - Documented on Q3 2024 from:
+ *      * w3schools: https://www.w3schools.com/cssref
+ *      * MDN reference: https://developer.mozilla.org/en-US/docs/Web/CSS/
+ *      * Quick tests in Chrome and FireFox.
+ */
+interface CSSProperties extends Partial<{
+    [Key in CSSPropertyNamesString]?: InheritInitial | AnyString;
+} & {
+    [Key in CSSPropertyNamesNumeric]?: number | InheritInitial | AnyString;
+} & {
+    [Key in CSSPropertyNamesColor]?: CSSColorNames | InheritInitial;
+}> {
     [index: number]: never;
-    position?: "absolute" | "relative" | "fixed" | "static" | "sticky" | InheritInitialRevUnset | OrString;
+    alignContent?: "stretch" | "center" | "flex-start" | "flex-end" | "space-between" | "space-around" | "space-evenly" | InheritInitial | AnyString;
+    alignItems?: "normal" | "stretch" | "positional alignment" | "flex-start" | "flex-end" | "baseline" | InheritInitial | AnyString;
+    alignSelf?: "auto" | "flex-start" | "flex-end" | "center" | "stretch" | CSSBaselineAlignment | InheritInitial | AnyString;
+    all?: InheritInitial | AnyString;
+    animationDirection?: "normal" | "reverse" | "alternate" | "alternate-reverse" | InheritInitial | AnyString;
+    animationFillMode?: "none" | "forwards" | "backwards" | "both" | InheritInitial | AnyString;
+    animationIterationCount?: number | "infinite" | InheritInitial | AnyString;
+    animationName?: "none" | InheritInitial | AnyString;
+    animationPlayState?: "paused" | "running" | InheritInitial | AnyString;
+    animationTimingFunction?: CSSTimingFunction | InheritInitial | AnyString;
+    /** Shorthand for: "background-color" | "background-image" | "background-position" | "background-size" | "background-repeat" | "background-origin" | "background-clip" | "background-attachment". [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/CSS/background) */
+    background?: CSSColorNames | InheritInitial;
+    backgroundAttachment?: "scroll" | "fixed" | "local" | InheritInitial | AnyString;
+    backgroundBlendMode?: CSSBlendMode | AnyString;
+    backgroundClip?: "border-box" | "padding-box" | "content-box" | InheritInitial | AnyString;
+    backgroundOrigin?: "padding-box" | "border-box" | "content-box";
+    backgroundPosition?: CSSPositionString | InheritInitial | AnyString;
+    backgroundPositionX?: CSSPositionX | InheritInitial | AnyString;
+    backgroundPositionY?: CSSPositionY | InheritInitial | AnyString;
+    backgroundRepeat?: "repeat" | "repeat-x" | "repeat-y" | "no-repeat" | AnyString;
+    backgroundSize?: number | "auto" | "cover" | "contain" | InheritInitial | AnyString;
+    blockSize?: number | "auto" | InheritInitial | AnyString;
+    /** Shorthand for: "border-width" | "border-style" (required) | "border-color". [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/CSS/border) */
+    border?: InheritInitial | AnyString;
+    /** Shorthand for: "border-block-width" | "border-block-style" (required) | "border-block-color". [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/CSS/border-block) */
+    borderBlock?: InheritInitial | AnyString;
+    borderBlockStyle?: CSSBorderStyle | InheritInitial | AnyString;
+    borderBlockWidth?: 0 | InheritInitial | AnyString;
+    /** Shorthand for: "border-block-end-width" | "border-block-end-style" | "border-block-end-color". [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/CSS/border-block-end) */
+    borderBlockEnd?: InheritInitial | AnyString;
+    borderBlockEndStyle?: CSSBorderStyle | InheritInitial | AnyString;
+    borderBlockEndWidth?: 0 | InheritInitial | AnyString;
+    /** Shorthand for: "border-block-start-width" | "border-block-start-style" | "border-block-start-color". [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/CSS/border-block-start) */
+    borderBlockStart?: InheritInitial | AnyString;
+    borderBlockStartStyle?: CSSBorderStyle | InheritInitial | AnyString;
+    borderBlockStartWidth?: 0 | InheritInitial | AnyString;
+    /** Shorthand for: "border-inline-width" | "border-inline-style" (required) | "border-inline-color". [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/CSS/border-inline) */
+    borderInline?: InheritInitial | AnyString;
+    borderInlineStyle?: CSSBorderStyle | InheritInitial | AnyString;
+    borderInlineWidth?: 0 | InheritInitial | AnyString;
+    /** Shorthand for: "border-inline-end-width" | "border-inline-end-style" | "border-inline-end-color". [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/CSS/border-inline-end) */
+    borderInlineEnd?: InheritInitial | AnyString;
+    borderInlineEndStyle?: CSSBorderStyle | InheritInitial | AnyString;
+    borderInlineEndWidth?: 0 | InheritInitial | AnyString;
+    /** Shorthand for: "border-inline-start-width" | "border-inline-start-style" | "border-inline-start-color". [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/CSS/border-inline-start) */
+    borderInlineStart?: InheritInitial | AnyString;
+    borderInlineStartStyle?: CSSBorderStyle | InheritInitial | AnyString;
+    borderInlineStartWidth?: 0 | InheritInitial | AnyString;
+    borderCollapse?: "separate" | "collapse" | InheritInitial | AnyString;
+    borderSpacing?: 0 | InheritInitial | AnyString;
+    /** Shorthand for: "border-image-source" | "border-image-slice" | "border-image-width" | "border-image-outset" | "border-image-repeat". [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/CSS/border-image) */
+    borderImage?: "source slice width outset repeat" | InheritInitial | AnyString;
+    borderImageRepeat?: "stretch" | "repeat" | "round" | "space" | InheritInitial | AnyString;
+    borderImageSlice?: number | "fill" | InheritInitial | AnyString;
+    borderImageSource?: "none" | InheritInitial | AnyString;
+    borderImageWidth?: number | "auto" | InheritInitial | AnyString;
+    /** Shorthand for: "border-bottom-width" | "border-bottom-style" (required) | "border-bottom-color". [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/CSS/border-bottom) */
+    borderBottom?: InheritInitial | AnyString;
+    borderBottomStyle?: CSSBorderStyle | InheritInitial | AnyString;
+    borderBottomWidth?: 0 | InheritInitial | AnyString;
+    /** Shorthand for: "border-left-width" | "border-left-style" (required) | "border-left-color". [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/CSS/border-left) */
+    borderLeft?: InheritInitial | AnyString;
+    borderLeftStyle?: CSSBorderStyle | InheritInitial | AnyString;
+    borderLeftWidth?: 0 | InheritInitial | AnyString;
+    /** Shorthand for: "border-right-width" | "border-right-style" (required) | "border-right-color". [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/CSS/border-right) */
+    borderRight?: InheritInitial | AnyString;
+    borderRightStyle?: CSSBorderStyle | InheritInitial | AnyString;
+    borderRightWidth?: 0 | InheritInitial | AnyString;
+    /** Shorthand for: "border-top-width" | "border-top-style" (required) | "border-top-color". [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/CSS/border-top) */
+    borderTop?: InheritInitial | AnyString;
+    borderTopStyle?: CSSBorderStyle | InheritInitial | AnyString;
+    borderTopWidth?: 0 | InheritInitial | AnyString;
+    bottom?: 0 | "auto" | InheritInitial | AnyString;
+    boxDecorationBreak?: "slice" | "clone" | "initial" | InheritInitial | AnyString;
+    boxReflect?: "none" | "below" | "above" | "left" | "right" | "position" | InheritInitial | AnyString;
+    boxShadow?: "none" | "h v blur? spread? color?" | "h v blur? spread? color? inset" | InheritInitial | AnyString;
+    boxSizing?: "content-box" | "border-box" | InheritInitial | AnyString;
+    breakAfter?: CSSBreakMode | InheritInitial | AnyString;
+    breakBefore?: CSSBreakMode | InheritInitial | AnyString;
+    breakInside?: CSSBreakMode | InheritInitial | AnyString;
+    captionSide?: "top" | "bottom" | InheritInitial | AnyString;
+    caretColor?: "auto" | CSSColorNames | InheritInitial;
+    clear?: "none" | "left" | "right" | "both" | InheritInitial | AnyString;
+    clip?: "auto" | InheritInitial | AnyString;
+    clipPath?: "clip-source" | "basic-shape" | "margin-box" | "border-box" | "padding-box" | "content-box" | "fill-box" | "stroke-box" | "view-box" | "none" | InheritInitial | AnyString;
+    colorScheme?: "normal" | "light" | "dark" | "only" | AnyString;
+    columnCount?: number | "auto" | InheritInitial | AnyString;
+    columnFill?: "balance" | "auto" | InheritInitial | AnyString;
+    columnGap?: 0 | "normal" | InheritInitial | AnyString;
+    columnRuleStyle?: CSSBorderStyle | InheritInitial | AnyString;
+    columnRuleWidth?: number | "medium" | "thin" | "thick" | InheritInitial | AnyString;
+    columnSpan?: "none" | "all" | InheritInitial | AnyString;
+    columnWidth?: 0 | "auto" | InheritInitial | AnyString;
+    columns?: "auto" | InheritInitial | AnyString;
+    content?: "normal" | "none" | "counter" | "attr" | "string" | "open-quote" | "close-quote" | "no-open-quote" | "no-close-quote" | InheritInitial | AnyString;
+    counterIncrement?: "none" | InheritInitial | AnyString;
+    counterReset?: "none" | InheritInitial | AnyString;
+    counterSet?: "none" | InheritInitial | AnyString;
+    cursor?: CSSCursor | InheritInitial | AnyString;
+    direction?: "ltr" | "rtl" | InheritInitial | AnyString;
+    display?: CSSDisplayMode | InheritInitial | AnyString;
+    emptyCells?: "show" | "hide" | InheritInitial | AnyString;
+    filter?: "none" | "blur(px)" | "brightness(%)" | "contrast(%)" | "drop-shadow(h v blur spread)" | "grayscale(%)" | "hue-rotate(deg)" | "invert(%)" | "opacity(%)" | "saturate(%)" | "sepia(%)" | "url(string)" | InheritInitial | AnyString;
+    flex?: "auto" | InheritInitial | AnyString;
+    flexBasis?: 0 | "auto" | InheritInitial | AnyString;
+    flexDirection?: "row" | "row-reverse" | "column" | "column-reverse" | InheritInitial | AnyString;
+    flexWrap?: "nowrap" | "wrap" | "wrap-reverse" | InheritInitial | AnyString;
+    float?: "none" | "left" | "right" | InheritInitial | AnyString;
+    font?: "caption" | "icon" | "menu" | "message-box" | "small-caption" | "status-bar" | InheritInitial | AnyString;
+    fontFeatureSettings?: "normal" | InheritInitial | AnyString;
+    fontKerning?: "auto" | "normal" | InheritInitial | AnyString;
+    fontSize?: "medium" | "xx-small" | "x-small" | "small" | "large" | "x-large" | "xx-large" | "smaller" | "larger" | InheritInitial | AnyString;
+    fontSizeAdjust?: number | "none" | InheritInitial | AnyString;
+    fontStretch?: "ultra-condensed" | "extra-condensed" | "condensed" | "semi-condensed" | "normal" | "semi-expanded" | "expanded" | "extra-expanded" | "ultra-expanded" | InheritInitial | AnyString;
+    fontStyle?: "normal" | "italic" | "oblique" | InheritInitial | AnyString;
+    fontVariant?: "normal" | "small-caps" | InheritInitial | AnyString;
+    fontVariantCaps?: "normal" | "small-caps" | "all-small-caps" | "petite-caps" | "all-petite-caps" | "unicase" | "titling-caps" | "unset" | InheritInitial | AnyString;
+    fontWeight?: number | "normal" | "bold" | "bolder" | "lighter" | InheritInitial | AnyString;
+    gap?: 0 | InheritInitial | AnyString;
+    grid?: "none" | InheritInitial | AnyString;
+    gridArea?: AnyString;
+    gridAutoColumns?: "auto" | "max-content" | "min-content" | AnyString;
+    gridAutoFlow?: "row" | "column" | "dense" | "row dense" | "column dense" | AnyString;
+    gridAutoRows?: "auto" | "max-content" | "min-content" | AnyString;
+    gridColumn?: number | AnyString;
+    gridColumnEnd?: number | "auto" | AnyString;
+    gridColumnStart?: number | "auto" | AnyString;
+    gridRow?: AnyString;
+    gridRowEnd?: number | "auto" | AnyString;
+    /** @deprecated replaced by "rowGap". */
+    gridRowGap?: 0 | "normal" | InheritInitial | AnyString;
+    gridRowStart?: number | "auto" | AnyString;
+    gridTemplate?: "none" | InheritInitial | AnyString;
+    gridTemplateAreas?: "none" | AnyString;
+    gridTemplateColumns?: "none" | "auto" | "max-content" | "min-content" | InheritInitial | AnyString;
+    gridTemplateRows?: "none" | "auto" | "max-content" | "min-content" | InheritInitial | AnyString;
+    hangingPunctuation?: "none" | "first" | "last" | "allow-end" | "force-end" | InheritInitial | AnyString;
+    height?: number | "auto" | InheritInitial | AnyString;
+    hyphens?: "none" | "manual" | "auto" | InheritInitial | AnyString;
+    hyphenateCharacter?: "auto" | InheritInitial | AnyString;
+    imageRendering?: "auto" | "smooth" | "high-quality" | "crisp-edges" | "pixelated" | InheritInitial | AnyString;
+    /** Not present in FireFox in late 2024. */
+    initialLetter?: number | "normal" | InheritInitial | AnyString;
+    inlineSize?: 0 | "auto" | InheritInitial | AnyString;
+    inset?: 0 | "auto" | InheritInitial | AnyString;
+    insetBlock?: 0 | "auto" | InheritInitial | AnyString;
+    insetBlockStart?: 0 | "auto" | InheritInitial | AnyString;
+    insetBlockEnd?: 0 | "auto" | InheritInitial | AnyString;
+    insetInline?: 0 | "auto" | InheritInitial | AnyString;
+    insetInlineStart?: 0 | "auto" | InheritInitial | AnyString;
+    insetInlineEnd?: 0 | "auto" | InheritInitial | AnyString;
+    isolation?: "auto" | "isolate" | InheritInitial | AnyString;
+    justifyContent?: "center" | "flex-start" | "flex-end" | "space-between" | "space-around" | "space-evenly" | InheritInitial | AnyString;
+    justifyItems?: "legacy" | "normal" | "stretch" | "start" | "left" | "center" | "end" | "right" | InheritInitial | AnyString;
+    justifySelf?: "auto" | "normal" | "start" | "left" | "end" | "right" | "center" | "stretch" | CSSBaselineAlignment | InheritInitial | AnyString;
+    left?: 0 | "auto" | InheritInitial | AnyString;
+    letterSpacing?: 0 | "normal" | InheritInitial | AnyString;
+    lineHeight?: number | "normal" | InheritInitial | AnyString;
+    listStyleImage?: "none" | InheritInitial | AnyString;
+    listStylePosition?: "inside" | "outside" | InheritInitial | AnyString;
+    listStyleType?: CSSListStyleType | InheritInitial | AnyString;
+    margin?: 0 | "auto" | InheritInitial | AnyString;
+    marginBlock?: 0 | "auto" | InheritInitial | AnyString;
+    marginBlockEnd?: 0 | "auto" | InheritInitial | AnyString;
+    marginBlockStart?: 0 | "auto" | InheritInitial | AnyString;
+    marginBottom?: 0 | "auto" | InheritInitial | AnyString;
+    marginInline?: 0 | "auto" | InheritInitial | AnyString;
+    marginInlineEnd?: 0 | "auto" | InheritInitial | AnyString;
+    marginInlineStart?: 0 | "auto" | InheritInitial | AnyString;
+    marginLeft?: 0 | "auto" | InheritInitial | AnyString;
+    marginRight?: 0 | "auto" | InheritInitial | AnyString;
+    marginTop?: 0 | "auto" | InheritInitial | AnyString;
+    marker?: "none" | InheritInitial | AnyString;
+    markerEnd?: "none" | InheritInitial | AnyString;
+    markerMid?: "none" | InheritInitial | AnyString;
+    markerStart?: "none" | InheritInitial | AnyString;
+    mask?: "none" | InheritInitial | AnyString;
+    maskClip?: "border-box" | "content-box" | "padding-box" | "fill-box" | "stroke-box" | "view-box" | "no-clip" | "border" | "padding" | "content" | "text" | InheritInitial | AnyString;
+    maskComposite?: "add" | "subtract" | "intersect" | "exclude" | InheritInitial | AnyString;
+    maskImage?: "none" | InheritInitial | AnyString;
+    maskMode?: "match-source" | "luminance" | "alpha" | InheritInitial | AnyString;
+    maskOrigin?: "border-box" | "content-box" | "padding-box" | "fill-box" | "stroke-box" | "view-box" | InheritInitial | AnyString;
+    maskPosition?: CSSPositionString | InheritInitial | AnyString;
+    maskRepeat?: "repeat" | "repeat-x" | "repeat-y" | "space" | "round" | "no-repeat" | InheritInitial | AnyString;
+    maskSize?: 0 | "auto" | "contain" | "cover" | InheritInitial | AnyString;
+    maskType?: "luminance" | "alpha" | InheritInitial | AnyString;
+    maxBlockSize?: 0 | "auto" | InheritInitial | AnyString;
+    maxHeight?: 0 | "none" | InheritInitial | AnyString;
+    maxInlineSize?: 0 | "auto" | InheritInitial | AnyString;
+    maxWidth?: 0 | "none" | InheritInitial | AnyString;
+    minHeight?: 0 | InheritInitial | AnyString;
+    minBlockSize?: 0 | "auto" | InheritInitial | AnyString;
+    minInlineSize?: 0 | "auto" | InheritInitial | AnyString;
+    minWidth?: 0 | InheritInitial | AnyString;
+    mixBlendMode?: CSSBlendMode | AnyString;
+    objectFit?: "fill" | "contain" | "cover" | "scale-down" | "none" | InheritInitial | AnyString;
+    objectPosition?: 0 | InheritInitial | AnyString;
+    /** Shorthand for: "offset-anchor" | "offset-distance" | "offset-path" | "offset-position" | "offset-rotate". [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/CSS/offset) */
+    offset?: "auto" | InheritInitial | AnyString;
+    offsetAnchor?: "auto" | CSSPositionString | InheritInitial | AnyString;
+    offsetDistance?: 0 | "auto" | InheritInitial | AnyString;
+    offsetPath?: "none" | "path(svg_path_string)" | "ray(string)" | "url(string)" | InheritInitial | AnyString;
+    offsetPosition?: "auto" | "normal" | CSSPositionString | InheritInitial | AnyString;
+    offsetRotate?: "auto" | InheritInitial | AnyString;
+    /** Not present in FireFox in late 2024. */
+    orphans?: number | InheritInitial | AnyString;
+    outlineOffset?: 0 | InheritInitial | AnyString;
+    outlineStyle?: CSSBorderStyle | InheritInitial | AnyString;
+    outlineWidth?: 0 | InheritInitial | AnyString;
+    overflow?: CSSOverflowMode | InheritInitial | AnyString;
+    overflowAnchor?: "auto" | "none" | InheritInitial | AnyString;
+    overflowBehavior?: "auto" | "contain" | "none" | InheritInitial | AnyString;
+    overflowBehaviorBlock?: "auto" | "contain" | "none" | InheritInitial | AnyString;
+    overflowBehaviorInline?: "auto" | "contain" | "none" | InheritInitial | AnyString;
+    overflowBehaviorX?: "auto" | "contain" | "none" | InheritInitial | AnyString;
+    overflowBehaviorY?: "auto" | "contain" | "none" | InheritInitial | AnyString;
+    overflowWrap?: "normal" | "anywhere" | "break-word" | InheritInitial | AnyString;
+    overflowX?: CSSOverflowMode | InheritInitial | AnyString;
+    overflowY?: CSSOverflowMode | InheritInitial | AnyString;
+    padding?: 0 | InheritInitial | AnyString;
+    paddingBlock?: 0 | "auto" | InheritInitial | AnyString;
+    paddingBlockEnd?: 0 | "auto" | InheritInitial | AnyString;
+    paddingBlockStart?: 0 | "auto" | InheritInitial | AnyString;
+    paddingBottom?: 0 | InheritInitial | AnyString;
+    paddingInline?: 0 | "auto" | InheritInitial | AnyString;
+    paddingInlineEnd?: 0 | "auto" | InheritInitial | AnyString;
+    paddingInlineStart?: 0 | "auto" | InheritInitial | AnyString;
+    paddingLeft?: 0 | InheritInitial | AnyString;
+    paddingRight?: 0 | InheritInitial | AnyString;
+    paddingTop?: 0 | InheritInitial | AnyString;
+    pageBreakAfter?: "auto" | "always" | "avoid" | "left" | "right" | InheritInitial | AnyString;
+    pageBreakBefore?: "auto" | "always" | "avoid" | "left" | "right" | InheritInitial | AnyString;
+    pageBreakInside?: "auto" | "avoid" | InheritInitial | AnyString;
+    paintOrder?: "normal" | CSSPaintOrderString | InheritInitial | AnyString;
+    perspective?: 0 | "none" | InheritInitial | AnyString;
+    perspectiveOrigin?: 0 | InheritInitial | AnyString;
+    placeContent?: "normal" | "stretch" | "start" | "end" | "center" | "space-between" | "space-around" | "space-evenly" | InheritInitial | AnyString;
+    placeItems?: "normal legacy" | "start" | "end" | "center" | "stretch" | InheritInitial | AnyString;
+    placeSelf?: "auto" | "normal" | "start" | "left" | "end" | "right" | "center" | "stretch" | CSSBaselineAlignment | InheritInitial | AnyString;
+    pointerEvents?: "auto" | "none" | InheritInitial | AnyString;
+    position?: "static" | "absolute" | "fixed" | "relative" | "sticky" | InheritInitial | AnyString;
+    quotes?: "none" | InheritInitial | AnyString;
+    resize?: "none" | "both" | "horizontal" | "vertical" | InheritInitial | AnyString;
+    right?: 0 | "auto" | InheritInitial | AnyString;
+    rotate?: "0deg" | "90deg" | "-90deg" | "180deg" | InheritInitial | AnyString;
+    rowGap?: 0 | "normal" | InheritInitial | AnyString;
+    scale?: number | "none" | InheritInitial | AnyString;
+    scrollBehaviour?: "auto" | "smooth" | InheritInitial | AnyString;
+    scrollMargin?: 0 | InheritInitial | AnyString;
+    scrollMarginBlock?: 0 | InheritInitial | AnyString;
+    scrollMarginBlockEnd?: 0 | InheritInitial | AnyString;
+    scrollMarginBlockStart?: 0 | InheritInitial | AnyString;
+    scrollMarginBottom?: 0 | InheritInitial | AnyString;
+    scrollMarginInline?: 0 | InheritInitial | AnyString;
+    scrollMarginInlineEnd?: 0 | InheritInitial | AnyString;
+    scrollMarginInlineStart?: 0 | InheritInitial | AnyString;
+    scrollMarginLeft?: 0 | InheritInitial | AnyString;
+    scrollMarginRight?: 0 | InheritInitial | AnyString;
+    scrollMarginTop?: 0 | InheritInitial | AnyString;
+    scrollPadding?: 0 | "auto" | InheritInitial | AnyString;
+    scrollPaddingBlock?: 0 | "auto" | InheritInitial | AnyString;
+    scrollPaddingBlockEnd?: 0 | "auto" | InheritInitial | AnyString;
+    scrollPaddingBlockStart?: 0 | "auto" | InheritInitial | AnyString;
+    scrollPaddingBottom?: 0 | "auto" | InheritInitial | AnyString;
+    scrollPaddingInline?: 0 | "auto" | InheritInitial | AnyString;
+    scrollPaddingInlineEnd?: 0 | "auto" | InheritInitial | AnyString;
+    scrollPaddingInlineStart?: 0 | "auto" | InheritInitial | AnyString;
+    scrollPaddingLeft?: 0 | "auto" | InheritInitial | AnyString;
+    scrollPaddingRight?: 0 | "auto" | InheritInitial | AnyString;
+    scrollPaddingTop?: 0 | "auto" | InheritInitial | AnyString;
+    scrollSnapAlign?: "none" | "start" | "end" | "center" | InheritInitial | AnyString;
+    scrollSnapStop?: "normal" | "always" | InheritInitial | AnyString;
+    scrollSnapType?: "none" | "x" | "y" | "block" | "inline" | "both" | "mandatory" | "proximity" | InheritInitial | AnyString;
+    scrollbarColor?: "auto" | CSSColorNames | InheritInitial;
+    tabSize?: number | InheritInitial | AnyString;
+    tableLayout?: "auto" | "fixed" | InheritInitial | AnyString;
+    textAlign?: "left" | "right" | "center" | "justify" | InheritInitial | AnyString;
+    textAlignLast?: "auto" | "left" | "right" | "center" | "justify" | "start" | "end" | InheritInitial | AnyString;
+    /** Shorthand for: "text-decoration-color" | "text-decoration-line" | "text-decoration-style" | "text-decoration-thickness". [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/CSS/text-decoration) */
+    textDecoration?: InheritInitial | AnyString;
+    textDecorationLine?: "none" | "underline" | "overline" | "line-through" | InheritInitial | AnyString;
+    textDecorationStyle?: "solid" | "double" | "dotted" | "dashed" | "wavy" | InheritInitial | AnyString;
+    textDecorationThickness?: 0 | "auto" | "from-font" | InheritInitial | AnyString;
+    /** Shorthand for: "text-emphasis-color" | "text-emphasis-position" | "text-emphasis-style". [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/CSS/text-emphasis) */
+    textEmphasis?: "none" | "filled" | "open" | "dot" | "circle" | "double-circle" | "triangle" | "sesame" | InheritInitial | AnyString;
+    textEmphasisPosition?: "over" | "under" | "left" | "right" | InheritInitial | AnyString;
+    textEmphasisStyle?: "none" | "filled" | "open" | "dot" | "circle" | "double-circle" | "triangle" | "sesame" | InheritInitial | AnyString;
+    textIndent?: 0 | InheritInitial | AnyString;
+    textJustify?: "auto" | "inter-word" | "inter-character" | "none" | InheritInitial | AnyString;
+    textOrientation?: "mixed" | "upright" | "sideways" | "sideways-right" | "use-glyph-orientation" | InheritInitial | AnyString;
+    textOverflow?: "clip" | "ellipsis" | InheritInitial | AnyString;
+    textShadow?: "none" | "h v blur? color?" | InheritInitial | AnyString;
+    textTransform?: "none" | "capitalize" | "uppercase" | "lowercase" | InheritInitial | AnyString;
+    textUnderlineOffset?: 0 | "auto" | InheritInitial | AnyString;
+    textUnderlinePosition?: 0 | "auto" | "under" | "from-font" | "left" | "right" | InheritInitial | AnyString;
+    top?: 0 | "auto" | InheritInitial | AnyString;
+    transform?: "none" | CSSTransformHints | InheritInitial | AnyString;
+    transformOrigin?: CSSPositionString | InheritInitial | AnyString;
+    transformStyle?: "flat" | "preserve-3d" | InheritInitial | AnyString;
+    /** Shorthand for: "transition-delay" | "transition-duration" | "transition-property" | "transition-timing-function". [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/CSS/transition) */
+    transition?: InheritInitial | AnyString;
+    transitionProperty?: "none" | "all" | InheritInitial | AnyString;
+    transitionTimingFunction?: CSSTimingFunction | InheritInitial | AnyString;
+    translate?: "x-axis y-axis z-axis" | InheritInitial | AnyString;
+    unicodeBidi?: "normal" | "embed" | "bidi-override" | "isolate" | "isolate-override" | "plaintext" | InheritInitial | AnyString;
+    userSelect?: "auto" | "none" | "text" | "all" | AnyString;
+    verticalAlign?: "baseline" | "sub" | "super" | "top" | "text-top" | "middle" | "bottom" | "text-bottom" | InheritInitial | AnyString;
+    visibility?: "visible" | "hidden" | "collapse" | InheritInitial | AnyString;
+    whiteSpace?: "normal" | "nowrap" | "pre" | "pre-line" | "pre-wrap" | InheritInitial | AnyString;
+    /** Not present in FireFox in late 2024. */
+    widows?: number | InheritInitial | AnyString;
+    width?: number | "auto" | InheritInitial | AnyString;
+    wordBreak?: "normal" | "break-all" | "keep-all" | "break-word" | InheritInitial | AnyString;
+    wordSpacing?: 0 | "normal" | InheritInitial | AnyString;
+    wordWrap?: "normal" | "break-word" | InheritInitial | AnyString;
+    writingMode?: "horizontal-tb" | "vertical-rl" | "vertical-lr" | InheritInitial | AnyString;
+    zIndex?: number | "auto" | InheritInitial | AnyString;
+    zoom?: number | "normal" | "unset" | InheritInitial | AnyString;
 }
+/** This is just in the ballpark. Hard to get precise info on this. */
+type CSSBaselineAlignment = "baseline" | "first baseline" | "last baseline" | "start baseline" | "end baseline" | "center baseline";
+/** Common blend modes. */
+type CSSBlendMode = "normal" | "multiply" | "screen" | "overlay" | "darken" | "lighten" | "color-dodge" | "color-burn" | "hard-light" | "soft-light" | "difference" | "exclusion" | "hue" | "saturation" | "color" | "luminosity";
+/** Common CSS border styles. Used for all border style related. */
+type CSSBorderStyle = "none" | "hidden" | "dotted" | "dashed" | "solid" | "double" | "groove" | "ridge" | "inset" | "outset";
+/** Common CSS break mode. Used for: "breakAfter", "breakBefore", "breakInside". */
+type CSSBreakMode = "auto" | "all" | "always" | "avoid" | "avoid-column" | "avoid-page" | "avoid-region" | "column" | "left" | "page" | "recto" | "region" | "right" | "verso";
+/** There's over 100 color names + PascalCase vs. lowercase. See https://www.w3schools.com/cssref/css_colors.php */
+type CSSColorNames = "transparent" | "currentcolor" | "currentColor" | AnyString;
+/** The CSS display modes. */
+type CSSDisplayMode = "inline" | "block" | "contents" | "flex" | "grid" | "inline-block" | "inline-flex" | "inline-grid" | "inline-table" | "liste-item" | "run-in" | "table" | "table-caption" | "table-column-group" | "table-header-group" | "table-footer-group" | "table-row-group" | "table-cell" | "table-column" | "table-row" | "none";
+/** The common CSS cursors. */
+type CSSCursor = "alias" | "all-scroll" | "auto" | "cell" | "col-resize" | "context-menu" | "copy" | "crosshair" | "default" | "e-resize" | "ew-resize" | "grab" | "grabbing" | "help" | "move" | "n-resize" | "ne-resize" | "nesw-resize" | "ns-resize" | "nw-resize" | "nwse-resize" | "no-drop" | "none" | "not-allowed" | "pointer" | "progress" | "s-resize" | "se-resize" | "se-resize" | "sw-resize" | "text" | "url(string)" | "vertical-text" | "w-resize" | "wait" | "zoom-in" | "zoom-out";
+/** The common CSS list style types. Just used for "listStyleType". */
+type CSSListStyleType = "disc" | "circle" | "square" | "armenian" | "none" | "cjk-ideographic" | "decimal" | "decimal-leading-zero" | "georgian" | "hebrew" | "hiragana" | "hiragana-iroha" | "katakana" | "katakana-iroha" | "lower-alpha" | "lower-greek" | "lower-latin" | "lower-roman" | "upper-alpha" | "upper-greek" | "upper-latin" | "upper-roman";
+/** The common CSS overflow modes. Used for all overflow related. */
+type CSSOverflowMode = "visible" | "hidden" | "clip" | "scroll" | "auto";
+/** Used for "paintOrder". Defines in which order the rendering happens in micro-scale. */
+type CSSPaintOrderString = "stroke" | `stroke ${"fill" | "markers"}` | `stroke ${"fill markers" | "markers fill"}` | "fill" | `fill ${"stroke" | "markers"}` | `fill ${"stroke markers" | "markers stroke"}` | "markers" | `markers ${"stroke" | "fill"}` | `markers ${"stroke fill" | "fill stroke"}`;
+/** The horizontal positioning options. */
+type CSSPositionX = "left" | "center" | "right";
+/** The vertical positioning options. */
+type CSSPositionY = "top" | "center" | "bottom";
+/** The combined horizontal and vertical options using the common names. The values can also be numbers or percentages. */
+type CSSPositionString = CSSPositionX | CSSPositionY | `${CSSPositionX} ${CSSPositionY}`;
+/** Commonly used CSS properties that are about colors. */
+type CSSPropertyNamesColor = "accentColor" | "backgroundColor" | "borderColor" | "borderBlockColor" | "borderBlockEndColor" | "borderBlockStartColor" | "borderBottomColor" | "borderInlineColor" | "borderInlineEndColor" | "borderInlineStartColor" | "borderLeftColor" | "borderRightColor" | "borderTopColor" | "caretColor" | "color" | "columnRuleColor" | "floodColor" | "lightingColor" | "outlineColor" | "scrollbarColor" | "stopColor" | "textEmphasisColor" | "textDecorationColor" | "webkitTextFillColor" | "webkitTextStrokeColor";
 /** Commonly used CSS properties that can receive numeric input natively. */
-type CSSNumericPropertyNames = "borderWidth" | "borderBottomWidth" | "borderLeftWidth" | "borderRightWidth" | "borderTopWidth" | "bottom" | "columnGap" | "flexGrow" | "flexShrink" | "fontWeight" | "gap" | "gridColumnEnd" | "gridColumnGap" | "gridColumnStart" | "gridRowEnd" | "gridRowGap" | "gridRowStart" | "height" | "inset" | "left" | "margin" | "marginBottom" | "marginLeft" | "marginRight" | "marginTop" | "maxWidth" | "maxHeight" | "minWidth" | "minHeight" | "offsetDistance" | "opacity" | "order" | "outlineWidth" | "padding" | "paddingTop" | "paddingBottom" | "paddingLeft" | "paddingRight" | "right" | "rowGap" | "scrollMargin" | "scrollMarginBlock" | "scrollMarginBlockEnd" | "scrollMarginBlockStart" | "scrollMarginBottom" | "scrollMarginInline" | "scrollMarginInlineEnd" | "scrollMarginInlineStart" | "scrollMarginLeft" | "scrollMarginRight" | "scrollMarginTop" | "scrollPadding" | "scrollPaddingBlock" | "scrollPaddingBlockEnd" | "scrollPaddingBlockStart" | "scrollPaddingBottom" | "scrollPaddingInline" | "scrollPaddingInlineEnd" | "scrollPaddingInlineStart" | "scrollPaddingLeft" | "scrollPaddingRight" | "scrollPaddingTop" | "stopOpacity" | "strokeWidth" | "strokeOpacity" | "tabIndex" | "tabSize" | "top" | "width" | "zIndex";
+type CSSPropertyNamesNumeric = "animationIterationCount" | "aspectRatio" | "backgroundSize" | "blockSize" | "borderWidth" | "borderBlockEndWidth" | "borderBlockStartWidth" | "borderBlockWidth" | "borderBottomWidth" | "borderImageOutset" | "borderImageSlice" | "borderImageWidth" | "borderInlineEndWidth" | "borderInlineStartWidth" | "borderInlineWidth" | "borderLeftWidth" | "borderRightWidth" | "borderSpacing" | "borderTopWidth" | "bottom" | "columnCount" | "columnGap" | "columnRuleWidth" | "columnWidth" | "flexBasis" | "flexGrow" | "flexShrink" | "fontSizeAdjust" | "fontWeight" | "gap" | "gridColumn" | "gridColumnEnd" | "gridColumnGap" | "gridColumnStart" | "gridRowEnd" | "gridRowGap" | "gridRowStart" | "height" | "initialLetter" | "inlineSize" | "inset" | "insetBlock" | "insetBlockStart" | "insetBlockEnd" | "insetInline" | "insetInlineStart" | "insetInlineEnd" | "left" | "letterSpacing" | "lineHeight" | "margin" | "marginBlock" | "marginBlockEnd" | "marginBlockStart" | "marginBottom" | "marginInline" | "marginInlineEnd" | "marginInlineStart" | "marginLeft" | "marginRight" | "marginTop" | "maskSize" | "maxBlockSize" | "maxHeight" | "maxInlineSize" | "maxWidth" | "minBlockSize" | "minHeight" | "minInlineSize" | "minWidth" | "objectPosition" | "offsetDistance" | "opacity" | "order" | "orphans" | "outlineOffset" | "outlineWidth" | "padding" | "paddingBottom" | "paddingBlock" | "paddingBlockEnd" | "paddingBlockStart" | "paddingInline" | "paddingInlineStart" | "paddingInlineEnd" | "paddingLeft" | "paddingRight" | "paddingTop" | "perspective" | "perspectiveOrigin" | "right" | "rowGap" | "scale" | "scrollMargin" | "scrollMarginBlock" | "scrollMarginBlockEnd" | "scrollMarginBlockStart" | "scrollMarginBottom" | "scrollMarginInline" | "scrollMarginInlineEnd" | "scrollMarginInlineStart" | "scrollMarginLeft" | "scrollMarginRight" | "scrollMarginTop" | "scrollPadding" | "scrollPaddingBlock" | "scrollPaddingBlockEnd" | "scrollPaddingBlockStart" | "scrollPaddingBottom" | "scrollPaddingInline" | "scrollPaddingInlineEnd" | "scrollPaddingInlineStart" | "scrollPaddingLeft" | "scrollPaddingRight" | "scrollPaddingTop" | "stopOpacity" | "strokeWidth" | "strokeOpacity" | "tabIndex" | "tabSize" | "textUnderlineOffset" | "textUnderlinePosition" | "textDecorationThickness" | "textIndent" | "top" | "widows" | "width" | "wordSpacing" | "zIndex" | "zoom";
+/** Common string properties. */
+type CSSPropertyNamesString = string & keyof Omit<CSSStyleDeclaration, GetMethodKeys<CSSStyleDeclaration> | CSSPropertyNamesNumeric | CSSPropertyNamesColor | number>;
+/** CSS timing function. Used for "animationTimingFunction" and "transitionTimingFunction". */
+type CSSTimingFunction = "linear" | "ease" | "ease-in" | "ease-out" | "ease-in-out" | "step-start" | "step-end" | "steps(int,start|end)" | "cubic-bezier(n,n,n,n)";
+/** Hints for CSS transforms. */
+type CSSTransformHints = "matrix(n,n,n,n,n,n)" | "matrix3d(n,n,n,n,n,n,n,n,n,n,n,n,n,n,n,n)" | "translate(x,y)" | "translate3d(x,y,z)" | "translateX(x)" | "translateY(y)" | "translateZ(z)" | "scale(x,y)" | "scale3d(x,y,z)" | "scaleX(x)" | "scaleY(y)" | "scaleZ(z)" | "rotate(angle)" | "rotate3d(x,y,z,angle)" | "rotateX(angle)" | "rotateY(angle)" | "rotateZ(angle)" | "skew(x-angle,y-angle)" | "skewX(angle)" | "skewY(angle)" | "perspective(n)";
 
 type GlobalEventHandler = EventListener;
 /** All listener attributes (matching GlobalEventHandlers + couple more) with native keys referring. Values are event handler types. */
@@ -221,13 +580,13 @@ interface ARIAAttributes extends ARIAMixin {
 /** Matches somewhere around 95% with ARIAMixin values - this has a couple of more keys. See [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes) */
 interface ARIAAttributes_native {
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles) */
-    "role": ARIARole | OrString;
+    "role": ARIARole | AnyString;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-activedescendant) */
     "aria-activedescendant": string;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-atomic) */
     "aria-atomic": BoolOrStr;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-autocomplete) */
-    "aria-autocomplete": "none" | "inline" | "list" | "both" | OrString;
+    "aria-autocomplete": "none" | "inline" | "list" | "both" | AnyString;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-braillelabel) */
     "aria-braillelabel": string;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-brailleroledescription) */
@@ -235,7 +594,7 @@ interface ARIAAttributes_native {
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-busy) */
     "aria-busy": BoolOrStr;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-checked) */
-    "aria-checked": boolean | "false" | "mixed" | "true" | OrString;
+    "aria-checked": boolean | "false" | "mixed" | "true" | AnyString;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-colcount) */
     "aria-colcount": number;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-colindex) */
@@ -245,7 +604,7 @@ interface ARIAAttributes_native {
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-controls) */
     "aria-controls": string;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-current) */
-    "aria-current": boolean | "false" | "true" | "page" | "step" | "location" | "date" | "time" | OrString;
+    "aria-current": boolean | "false" | "true" | "page" | "step" | "location" | "date" | "time" | AnyString;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-description) */
     "aria-description": string;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-describedby) */
@@ -255,7 +614,7 @@ interface ARIAAttributes_native {
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-disabled) */
     "aria-disabled": BoolOrStr;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-dropeffect) */
-    "aria-dropeffect": "none" | "copy" | "execute" | "link" | "move" | "popup" | OrString;
+    "aria-dropeffect": "none" | "copy" | "execute" | "link" | "move" | "popup" | AnyString;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-errormessage) */
     "aria-errormessage": string;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-expanded) */
@@ -265,11 +624,11 @@ interface ARIAAttributes_native {
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-grabbed) */
     "aria-grabbed": BoolOrStr;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-haspopup) */
-    "aria-haspopup": boolean | "false" | "true" | "menu" | "listbox" | "tree" | "grid" | "dialog" | OrString;
+    "aria-haspopup": boolean | "false" | "true" | "menu" | "listbox" | "tree" | "grid" | "dialog" | AnyString;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden) */
     "aria-hidden": BoolOrStr;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-invalid) */
-    "aria-invalid": boolean | "false" | "true" | "grammar" | "spelling" | OrString;
+    "aria-invalid": boolean | "false" | "true" | "grammar" | "spelling" | AnyString;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-keyshortcuts) */
     "aria-keyshortcuts": string;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label) */
@@ -279,7 +638,7 @@ interface ARIAAttributes_native {
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-level) */
     "aria-level": number;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-live) */
-    "aria-live": "off" | "assertive" | "polite" | OrString;
+    "aria-live": "off" | "assertive" | "polite" | AnyString;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-modal) */
     "aria-modal": BoolOrStr;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-multiline) */
@@ -287,7 +646,7 @@ interface ARIAAttributes_native {
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-multiselectable) */
     "aria-multiselectable": BoolOrStr;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-orientation) */
-    "aria-orientation": "horizontal" | "vertical" | OrString;
+    "aria-orientation": "horizontal" | "vertical" | AnyString;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-owns) */
     "aria-owns": string;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-placeholder) */
@@ -295,11 +654,11 @@ interface ARIAAttributes_native {
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-posinset) */
     "aria-posinset": number;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-pressed) */
-    "aria-pressed": boolean | "false" | "mixed" | "true" | OrString;
+    "aria-pressed": boolean | "false" | "mixed" | "true" | AnyString;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-readonly) */
     "aria-readonly": BoolOrStr;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-relevant) */
-    "aria-relevant": "additions" | "additions removals" | "additions text" | "all" | "removals" | "removals additions" | "removals text" | "text" | "text additions" | "text removals" | OrString;
+    "aria-relevant": "additions" | "additions removals" | "additions text" | "all" | "removals" | "removals additions" | "removals text" | "text" | "text additions" | "text removals" | AnyString;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-required) */
     "aria-required": BoolOrStr;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-roledescription) */
@@ -315,7 +674,7 @@ interface ARIAAttributes_native {
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-setsize) */
     "aria-setsize": number;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-sort) */
-    "aria-sort": "none" | "ascending" | "descending" | "other" | OrString;
+    "aria-sort": "none" | "ascending" | "descending" | "other" | AnyString;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-valuemax) */
     "aria-valuemax": number;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-valuemin) */
@@ -345,13 +704,13 @@ type HTMLAttributesBy_native = {
     [Tag in HTMLTags]: HTMLAttributes_native<Tag>;
 };
 interface HTMLGlobalAttributes extends Partial<DataAttributes>, Omit<HTMLGlobalAttributes_native, "autocapitalize" | "autofocus" | "contenteditable" | "enterkeyhint" | "exportparts" | "inputmode" | "itemid" | "itemprop" | "itemref" | "itemscope" | "itemtype" | "popover" | "spellcheck" | "tabindex" | "virtualkeyboardpolicy" | "writingsuggestions"> {
-    autoCapitalize: "none" | "off" | "sentences" | "on" | "words" | "characters" | OrString;
+    autoCapitalize: "none" | "off" | "sentences" | "on" | "words" | "characters" | AnyString;
     autoFocus: boolean | null;
     className: string;
     contentEditable: BoolOrStr;
     enterKeyHint: string;
     exportParts: string;
-    inputMode: "none" | "text" | "decimal" | "numeric" | "tel" | "search" | "email" | "url" | OrString;
+    inputMode: "none" | "text" | "decimal" | "numeric" | "tel" | "search" | "email" | "url" | AnyString;
     itemId: string;
     itemProp: string;
     itemRef: string | string[];
@@ -360,17 +719,17 @@ interface HTMLGlobalAttributes extends Partial<DataAttributes>, Omit<HTMLGlobalA
     popOver: string;
     spellCheck: BoolOrStr;
     tabIndex: string | number;
-    virtualKeyboardPolicy: "auto" | "manual" | OrString;
+    virtualKeyboardPolicy: "auto" | "manual" | AnyString;
     writingSuggestions: BoolOrStr;
 }
 interface HTMLGlobalAttributes_native extends Partial<DataAttributes> {
     accesskey: string;
     anchor: string;
-    autocapitalize: "none" | "off" | "sentences" | "on" | "words" | "characters" | OrString;
+    autocapitalize: "none" | "off" | "sentences" | "on" | "words" | "characters" | AnyString;
     autofocus: boolean | null;
     class: string;
     contenteditable: BoolOrStr;
-    dir: "ltr" | "rtl" | "auto" | OrString;
+    dir: "ltr" | "rtl" | "auto" | AnyString;
     data: Record<string, any>;
     draggable: BoolOrStr;
     enterkeyhint: string;
@@ -378,7 +737,7 @@ interface HTMLGlobalAttributes_native extends Partial<DataAttributes> {
     hidden: BoolOrStr;
     id: string;
     insert: BoolOrStr;
-    inputmode: "none" | "text" | "decimal" | "numeric" | "tel" | "search" | "email" | "url" | OrString;
+    inputmode: "none" | "text" | "decimal" | "numeric" | "tel" | "search" | "email" | "url" | AnyString;
     itemid: string;
     itemprop: string;
     itemref: string | string[];
@@ -388,14 +747,14 @@ interface HTMLGlobalAttributes_native extends Partial<DataAttributes> {
     nonce: string;
     part: string;
     popover: string;
-    role: ARIARole | OrString;
+    role: ARIARole | AnyString;
     slot: string;
     spellcheck: BoolOrStr;
     style: string | CSSProperties;
     tabindex: string | number;
     title: string;
-    translate: "yes" | "no" | OrString;
-    virtualkeyboardpolicy: "auto" | "manual" | OrString;
+    translate: "yes" | "no" | AnyString;
+    virtualkeyboardpolicy: "auto" | "manual" | AnyString;
     writingsuggestions: BoolOrStr;
 }
 /** All attributes that are specific to tags in native case - excluding HTMLGlobalAttributes. */
@@ -434,17 +793,17 @@ interface HTMLOtherAttributes_native {
     "accept": string;
     "accept-charset": string;
     "action": string;
-    "align": "left" | "top" | "right" | "bottom" | OrString;
+    "align": "left" | "top" | "right" | "bottom" | AnyString;
     "allow": string;
     "alt": string;
-    "as": "audio" | "document" | "embed" | "fetch" | "font" | "image" | "object" | "script" | "style" | "track" | "video" | "worker" | OrString;
+    "as": "audio" | "document" | "embed" | "fetch" | "font" | "image" | "object" | "script" | "style" | "track" | "video" | "worker" | AnyString;
     "async": BoolOrStr;
     "autocomplete": BoolOrStr;
     "autoplay": BoolOrStr;
     "background": string;
     "bgcolor": string;
     "border": string;
-    "capture": "user" | "environment" | OrString;
+    "capture": "user" | "environment" | AnyString;
     "charset": string;
     "checked": BoolOrStr;
     "cite": string;
@@ -454,7 +813,7 @@ interface HTMLOtherAttributes_native {
     "content": string | number;
     "controls": BoolOrStr;
     "coords": string;
-    "crossorigin": "anonymous" | "use-credentials" | "" | OrString;
+    "crossorigin": "anonymous" | "use-credentials" | "" | AnyString;
     "csp": string;
     "data": string;
     "datetime": string;
@@ -464,7 +823,7 @@ interface HTMLOtherAttributes_native {
     "dirname": string;
     "disabled": BoolOrStr;
     "download": string;
-    "enctype": "application/x-www-form-urlencoded" | "multipart/form-data" | "text/plain" | OrString;
+    "enctype": "application/x-www-form-urlencoded" | "multipart/form-data" | "text/plain" | AnyString;
     "for": string;
     "form": string;
     "formaction": string;
@@ -480,10 +839,10 @@ interface HTMLOtherAttributes_native {
     "http-equiv": string;
     "integrity": string;
     "ismap": BoolOrStr;
-    "kind": "subtitles" | "captions" | "chapters" | "metadata" | OrString;
+    "kind": "subtitles" | "captions" | "chapters" | "metadata" | AnyString;
     "label": string;
     "language": string;
-    "loading": "lazy" | "eager" | OrString;
+    "loading": "lazy" | "eager" | AnyString;
     "list": string;
     "loop": BoolOrStr;
     "low": string | number;
@@ -507,14 +866,14 @@ interface HTMLOtherAttributes_native {
     "preload": string;
     "readonly": string;
     "referrerpolicy": string;
-    "rel": "alternate" | "author" | "bookmark" | "canonical" | "dns-prefetch" | "external" | "expect" | "help" | "icon" | "license" | "manifest" | "me" | "modulepreload" | "next" | "nofollow" | "noopener" | "noreferrer" | "opener" | "pingback" | "preconnect" | "prefetch" | "preload" | "prerender" | "prey" | "privacy-policy" | "search" | "stylesheet" | "tag" | "terms-of-service" | OrString;
+    "rel": "alternate" | "author" | "bookmark" | "canonical" | "dns-prefetch" | "external" | "expect" | "help" | "icon" | "license" | "manifest" | "me" | "modulepreload" | "next" | "nofollow" | "noopener" | "noreferrer" | "opener" | "pingback" | "preconnect" | "prefetch" | "preload" | "prerender" | "prey" | "privacy-policy" | "search" | "stylesheet" | "tag" | "terms-of-service" | AnyString;
     "required": BoolOrStr;
     "reversed": BoolOrStr;
-    "role": ARIARole | OrString;
+    "role": ARIARole | AnyString;
     "rows": string | number;
     "rowspan": string | number;
-    "sandbox": "allow-downloads" | "allow-forms" | "allow-modals" | "allow-orientation-lock" | "allow-pointer-lock" | "allow-popups" | "allow-popups-to-escape-sandbox" | "allow-presentation" | "allow-same-origin" | "allow-scripts" | "allow-storage-access-by-user-activation" | "allow-top-navigation" | "allow-top-navigation-by-user-activation" | "allow-top-navigation-to-custom-protocols" | OrString;
-    "scope": "row" | "col" | "rowgroup" | "colgroup" | OrString;
+    "sandbox": "allow-downloads" | "allow-forms" | "allow-modals" | "allow-orientation-lock" | "allow-pointer-lock" | "allow-popups" | "allow-popups-to-escape-sandbox" | "allow-presentation" | "allow-same-origin" | "allow-scripts" | "allow-storage-access-by-user-activation" | "allow-top-navigation" | "allow-top-navigation-by-user-activation" | "allow-top-navigation-to-custom-protocols" | AnyString;
+    "scope": "row" | "col" | "rowgroup" | "colgroup" | AnyString;
     "selected": BoolOrStr;
     "shape": string;
     "size": string | number;
@@ -532,7 +891,7 @@ interface HTMLOtherAttributes_native {
     "usemap": string;
     "value": string | number;
     "width": string | number;
-    "wrap": "hard" | "soft" | "off" | OrString;
+    "wrap": "hard" | "soft" | "off" | AnyString;
 }
 /** HTML attributes by tags in camelCase. */
 interface HTMLNativeAttributesBy {
@@ -871,13 +1230,13 @@ interface AnimationTimingAttributes {
     "end": string | number;
     "min": string | number;
     "max": string | number;
-    "restart": "always" | "whenNotActive" | "never" | OrString;
-    "repeatCount": "indefinite" | OrString | number;
+    "restart": "always" | "whenNotActive" | "never" | AnyString;
+    "repeatCount": "indefinite" | AnyString | number;
     "repeatDur": string | number;
-    "fill": "freeze" | "remove" | CSSColorNames | OrString;
+    "fill": "freeze" | "remove" | CSSColorNames | AnyString;
 }
 interface AnimationValueAttributes {
-    "calcMode": "discrete" | "linear" | "paced" | "spline" | OrString;
+    "calcMode": "discrete" | "linear" | "paced" | "spline" | AnyString;
     "values": string | number;
     "keyTimes": string | number;
     "keySplines": string;
@@ -886,8 +1245,8 @@ interface AnimationValueAttributes {
     "by": string | number;
 }
 interface AnimationAdditionAttributes {
-    "additive": "replace" | "sum" | OrString;
-    "accumulate": "none" | "sum" | OrString;
+    "additive": "replace" | "sum" | AnyString;
+    "accumulate": "none" | "sum" | AnyString;
 }
 /** Note: All SVG presentation attributes in camel case. They can also be used as CSS properties. */
 interface SVGPresentationAttributes extends Pick<SVGOtherAttributes, "alignmentBaseline" | "baselineShift" | "clip" | "clipPath" | "clipRule" | "color" | "colorInterpolation" | "colorInterpolationFilters" | "colorRendering" | "cursor" | "d" | "direction" | "display" | "dominantBaseline" | "fill" | "fillOpacity" | "fillRule" | "filter" | "floodColor" | "floodOpacity" | "fontFamily" | "fontSize" | "fontSizeAdjust" | "fontStretch" | "fontStyle" | "fontVariant" | "fontWeight" | "glyphOrientationHorizontal" | "glyphOrientationVertical" | "imageRendering" | "letterSpacing" | "letterSpacing" | "markerEnd" | "markerMid" | "markerStart" | "opacity" | "overflow" | "pointerEvents" | "shapeRendering" | "stopColor" | "stopColor" | "stroke" | "strokeDashArray" | "strokeDashOffset" | "strokeLineCap" | "strokeLineJoin" | "strokeMiterLimit" | "strokeOpacity" | "strokeWidth" | "textAnchor" | "textDecoration" | "textRendering" | "transform" | "transformOrigin" | "unicodeBidi" | "vectorEffect" | "visibility" | "wordSpacing" | "writingMode"> {
@@ -977,11 +1336,11 @@ interface SVGOtherAttributes extends Omit<SVGOtherAttributes_native, "accent-hei
 /** All attributes that are specific to tags in native case - excluding SVGGlobalAttributes_native. */
 interface SVGOtherAttributes_native {
     "accent-height": string | number;
-    "alignment-baseline": "auto" | "baseline" | "before-edge" | "text-before-edge" | "middle" | "central" | "after-edge" | "text-after-edge" | "ideographic" | "alphabetic" | "hanging" | "mathematical" | "inherit" | OrString;
-    "allow-reorder": "no" | "yes" | OrString;
+    "alignment-baseline": "auto" | "baseline" | "before-edge" | "text-before-edge" | "middle" | "central" | "after-edge" | "text-after-edge" | "ideographic" | "alphabetic" | "hanging" | "mathematical" | "inherit" | AnyString;
+    "allow-reorder": "no" | "yes" | AnyString;
     "alphabetic": string | number;
     "amplitude": string | number;
-    "arabic-form": "initial" | "medial" | "terminal" | "isolated" | OrString;
+    "arabic-form": "initial" | "medial" | "terminal" | "isolated" | AnyString;
     "ascent": string | number;
     "autoReverse": string | number;
     "azimuth": string | number;
@@ -996,8 +1355,8 @@ interface SVGOtherAttributes_native {
     "clip-rule": string | number;
     "clipPathUnits": string | number;
     "color": string;
-    "color-interpolation": "auto" | "sRGB" | "linearRGB" | "inherit" | OrString;
-    "color-interpolation-filters": "auto" | "sRGB" | "linearRGB" | "inherit" | OrString;
+    "color-interpolation": "auto" | "sRGB" | "linearRGB" | "inherit" | AnyString;
+    "color-interpolation-filters": "auto" | "sRGB" | "linearRGB" | "inherit" | AnyString;
     "color-rendering": string | number;
     "crossorigin": string;
     "cursor": string;
@@ -1008,7 +1367,7 @@ interface SVGOtherAttributes_native {
     "decoding": string;
     "descent": string | number;
     "diffuseConstant": string | number;
-    "direction": "ltr" | "rtl" | OrString;
+    "direction": "ltr" | "rtl" | AnyString;
     "display": string;
     "divisor": string | number;
     "dominant-baseline": string;
@@ -1017,7 +1376,7 @@ interface SVGOtherAttributes_native {
     "edgeMode": string | number;
     "elevation": string | number;
     "exponent": string | number;
-    "fill": CSSColorNames | OrString;
+    "fill": CSSColorNames | AnyString;
     "fill-opacity": string | number;
     "fill-rule": "nonzero" | "evenodd" | "inherit";
     "filter": string;
@@ -1027,11 +1386,11 @@ interface SVGOtherAttributes_native {
     "flood-opacity": string | number;
     "font-family": string;
     "font-size": string | number;
-    "font-size-adjust": "none" | OrString | number;
-    "font-stretch": "normal" | "semi-condensed" | "condensed" | "extra-condensed" | "ultra-condensed" | "semi-expanded" | "expanded" | "extra-expanded" | "ultra-expanded" | OrString | number;
-    "font-style": "normal" | "italic" | "oblique" | OrString;
-    "font-variant": "normal" | "none" | OrString;
-    "font-weight": "normal" | "bold" | "bolder" | "lighter" | OrString | number;
+    "font-size-adjust": "none" | AnyString | number;
+    "font-stretch": "normal" | "semi-condensed" | "condensed" | "extra-condensed" | "ultra-condensed" | "semi-expanded" | "expanded" | "extra-expanded" | "ultra-expanded" | AnyString | number;
+    "font-style": "normal" | "italic" | "oblique" | AnyString;
+    "font-variant": "normal" | "none" | AnyString;
+    "font-weight": "normal" | "bold" | "bolder" | "lighter" | AnyString | number;
     "format": string;
     "fr": string | number;
     "fx": string | number;
@@ -1043,7 +1402,7 @@ interface SVGOtherAttributes_native {
     "glyph-orientation-vertical": string | number;
     "glyphRef": string | number;
     "gradientTransform": string;
-    "gradientUnits": "userSpaceOnUse" | "objectBoundingBox" | OrString;
+    "gradientUnits": "userSpaceOnUse" | "objectBoundingBox" | AnyString;
     "hanging": string | number;
     "height": string | number;
     "href": string;
@@ -1053,8 +1412,8 @@ interface SVGOtherAttributes_native {
     "id": string | number;
     "ideographic": string | number;
     "image-rendering": string;
-    "in": "SourceGraphic" | "SourceAlpha" | "BackgroundImage" | "BackgroundAlpha" | "FillPaint" | "StrokePaint" | OrString;
-    "in2": "SourceGraphic" | "SourceAlpha" | "BackgroundImage" | "BackgroundAlpha" | "FillPaint" | "StrokePaint" | OrString;
+    "in": "SourceGraphic" | "SourceAlpha" | "BackgroundImage" | "BackgroundAlpha" | "FillPaint" | "StrokePaint" | AnyString;
+    "in2": "SourceGraphic" | "SourceAlpha" | "BackgroundImage" | "BackgroundAlpha" | "FillPaint" | "StrokePaint" | AnyString;
     "intercept": string | number;
     "k": string | number;
     "k1": string | number;
@@ -1069,108 +1428,108 @@ interface SVGOtherAttributes_native {
     "limitingConeAngle": string | number;
     "lighting-color": string;
     "local": string;
-    "marker-end": "none" | OrString;
-    "marker-mid": "none" | OrString;
-    "marker-start": "none" | OrString;
+    "marker-end": "none" | AnyString;
+    "marker-mid": "none" | AnyString;
+    "marker-start": "none" | AnyString;
     "markerHeight": string | number;
     "markerUnits": string | number;
     "markerWidth": string | number;
     "mask": string;
-    "maskContentUnits": "userSpaceOnUse" | "strokeWidth" | OrString;
+    "maskContentUnits": "userSpaceOnUse" | "strokeWidth" | AnyString;
     "maskUnits": string | number;
     "mathematical": string | number;
     "media": string | number;
-    "method": "align" | "stretch" | OrString;
-    "mode": CSSBlendMode;
+    "method": "align" | "stretch" | AnyString;
+    "mode": CSSBlendMode | AnyString;
     "name": string;
     "numOctaves": string | number;
     "offset": string | number;
     "opacity": string | number;
-    "operator": "over" | "in" | "out" | "atop" | "xor" | "lighter" | "arithmetic" | OrString;
+    "operator": "over" | "in" | "out" | "atop" | "xor" | "lighter" | "arithmetic" | AnyString;
     "order": string | number;
-    "orient": "auto" | "auto-start-reverse" | OrString | number;
-    "orientation": "h" | "v" | OrString;
+    "orient": "auto" | "auto-start-reverse" | AnyString | number;
+    "orientation": "h" | "v" | AnyString;
     "origin": string;
-    "overflow": "visible" | "hidden" | "scroll" | "auto" | OrString;
+    "overflow": "visible" | "hidden" | "scroll" | "auto" | AnyString;
     "overline-position": string | number;
     "overline-thickness": string | number;
     "panose-1": string | number;
-    "paint-order": "normal" | "fill" | "stroke" | "markers" | OrString;
+    "paint-order": "normal" | "fill" | "stroke" | "markers" | AnyString;
     "path": string;
     "pathLength": string | number;
-    "patternContentUnits": "userSpaceOnUse" | "objectBoundingBox" | OrString;
+    "patternContentUnits": "userSpaceOnUse" | "objectBoundingBox" | AnyString;
     "patternTransform": "string";
-    "patternUnits": "userSpaceOnUse" | "objectBoundingBox" | OrString;
+    "patternUnits": "userSpaceOnUse" | "objectBoundingBox" | AnyString;
     "ping": string;
-    "pointer-events": "bounding-box" | "visiblePainted" | "visibleFill" | "visibleStroke" | "visible" | "painted" | "fill" | "stroke" | "all" | "none" | OrString;
+    "pointer-events": "bounding-box" | "visiblePainted" | "visibleFill" | "visibleStroke" | "visible" | "painted" | "fill" | "stroke" | "all" | "none" | AnyString;
     "points": string | number | string[] | number[];
     "pointsAtX": string | number;
     "pointsAtY": string | number;
     "pointsAtZ": string | number;
-    "preserveAlpha": "true" | "false" | OrString;
-    "preserveAspectRatio": "none" | "xMinYMin" | "xMidYMin" | "xMaxYMin" | "xMinYMid" | "xMidYMid" | "xMaxYMid" | "xMinYMax" | "xMidYMax" | "xMaxYMax" | "meet" | "slice" | OrString;
-    "primitiveUnits": "userSpaceOnUse" | "objectBoundingBox" | OrString;
+    "preserveAlpha": "true" | "false" | AnyString;
+    "preserveAspectRatio": "none" | "xMinYMin" | "xMidYMin" | "xMaxYMin" | "xMinYMid" | "xMidYMid" | "xMaxYMid" | "xMinYMax" | "xMidYMax" | "xMaxYMax" | "meet" | "slice" | AnyString;
+    "primitiveUnits": "userSpaceOnUse" | "objectBoundingBox" | AnyString;
     "r": string | number;
     "radius": string | number;
-    "referrerPolicy": "no-referrer" | "no-referrer-when-downgrade" | "same-origin" | "origin" | "strict-origin" | "origin-when-cross-origin" | "strict-origin-when-cross-origin" | "unsafe-url" | OrString;
-    "refX": "left" | "center" | "right" | OrString | number;
-    "refY": "left" | "center" | "right" | OrString | number;
+    "referrerPolicy": "no-referrer" | "no-referrer-when-downgrade" | "same-origin" | "origin" | "strict-origin" | "origin-when-cross-origin" | "strict-origin-when-cross-origin" | "unsafe-url" | AnyString;
+    "refX": "left" | "center" | "right" | AnyString | number;
+    "refY": "left" | "center" | "right" | AnyString | number;
     "rel": string;
     "requiredExtensions": string;
     "requiredFeatures": string;
     "result": string;
-    "rotate": "auto" | "auto-reverse" | OrString | number;
+    "rotate": "auto" | "auto-reverse" | AnyString | number;
     "rx": string | number;
     "ry": string | number;
     "scale": string | number;
     "seed": string | number;
-    "shape-rendering": "auto" | "optimizeSpeed" | "crispEdges" | "geometricPrecision" | OrString;
-    "side": "left" | "right" | OrString;
+    "shape-rendering": "auto" | "optimizeSpeed" | "crispEdges" | "geometricPrecision" | AnyString;
+    "side": "left" | "right" | AnyString;
     "slope": string | number;
-    "spacing": "auto" | "exact" | OrString;
+    "spacing": "auto" | "exact" | AnyString;
     "specularConstant": string | number;
     "specularExponent": string | number;
     "speed": string | number;
-    "spreadMethod": "pad" | "reflect" | "repeat" | OrString;
+    "spreadMethod": "pad" | "reflect" | "repeat" | AnyString;
     "startOffset": string | number;
     "stdDeviation": string | number;
     "stemh": string | number;
     "stemv": string | number;
-    "stitchTiles": "noStitch" | "stitch" | OrString;
+    "stitchTiles": "noStitch" | "stitch" | AnyString;
     "stop-color"?: CSSColorNames;
     "stop-opacity"?: string | number;
     "strikethrough-position": string | number;
     "strikethrough-thickness": string | number;
     "string": string | boolean | number;
-    "stroke": CSSColorNames | OrString;
+    "stroke": CSSColorNames | AnyString;
     "stroke-dasharray": string | number;
     "stroke-dashoffset": string | number;
-    "stroke-linecap": "butt" | "round" | "square" | "inherit" | OrString;
-    "stroke-linejoin": "butt" | "round" | "square" | "inherit" | OrString;
+    "stroke-linecap": "butt" | "round" | "square" | "inherit" | AnyString;
+    "stroke-linejoin": "butt" | "round" | "square" | "inherit" | AnyString;
     "stroke-miterlimit": string | number;
     "stroke-opacity": string | number;
     "stroke-width": string | number;
     "surfaceScale": string | number;
     "systemLanguage": string;
     "tableValues": string | string | number[] | number[];
-    "target": "_self" | "_parent" | "_top" | "_blank" | OrString;
+    "target": "_self" | "_parent" | "_top" | "_blank" | AnyString;
     "targetX": string | number;
     "targetY": string | number;
-    "text-anchor": "start" | "middle" | "end" | OrString;
+    "text-anchor": "start" | "middle" | "end" | AnyString;
     "text-decoration": string;
-    "text-rendering": "auto" | "optimizeSpeed" | "optimizeLegibility" | "geometricPrecision" | OrString;
+    "text-rendering": "auto" | "optimizeSpeed" | "optimizeLegibility" | "geometricPrecision" | AnyString;
     "textLength": string | number;
     "title": string;
     "to": string | number;
     "transform": string;
     "transform-origin": string;
-    "type": "translate" | "scale" | "rotate" | "skewX" | "skewY" | "matrix" | "saturate" | "hueRotate" | "luminanceToAlpha" | "identity" | "table" | "discrete" | "linear" | "gamma" | "fractalNoise" | "turbulence" | OrString;
+    "type": "translate" | "scale" | "rotate" | "skewX" | "skewY" | "matrix" | "saturate" | "hueRotate" | "luminanceToAlpha" | "identity" | "table" | "discrete" | "linear" | "gamma" | "fractalNoise" | "turbulence" | AnyString;
     "u1": string;
     "u2": string;
     "underline-position": string | number;
     "underline-thickness": string | number;
     "unicode": string;
-    "unicode-bidi": "normal" | "embed" | "bidi-override" | "isolate" | "isolate-override" | "plaintext" | OrString;
+    "unicode-bidi": "normal" | "embed" | "bidi-override" | "isolate" | "isolate-override" | "plaintext" | AnyString;
     "unicode-range": string | number;
     "units-per-em": string | number;
     "v-alphabetic": string | number;
@@ -1178,22 +1537,22 @@ interface SVGOtherAttributes_native {
     "v-ideographic": string | number;
     "v-mathematical": string | number;
     "values": string | number;
-    "vector-effect": "none" | "non-scaling-stroke" | "non-scaling-size" | "non-rotation" | "fixed-position" | OrString;
+    "vector-effect": "none" | "non-scaling-stroke" | "non-scaling-size" | "non-rotation" | "fixed-position" | AnyString;
     "version": string;
     "vert-adv-y": string | number;
     "vert-origin-x": string | number;
     "vert-origin-y": string | number;
     "viewBox": string;
     "viewTarget": string | number;
-    "visibility": "visible" | "hidden" | "collapse" | OrString;
+    "visibility": "visible" | "hidden" | "collapse" | AnyString;
     "width": string | number;
     "widths": string | number;
-    "word-spacing": "normal" | OrString | number;
-    "writing-mode": "horizontal-tb" | "vertical-rl" | "vertical-lr" | OrString;
+    "word-spacing": "normal" | AnyString | number;
+    "writing-mode": "horizontal-tb" | "vertical-rl" | "vertical-lr" | AnyString;
     "x1": string | number;
     "x2": string | number;
     "x": string | number;
-    "xChannelSelector": "R" | "G" | "B" | "A" | OrString;
+    "xChannelSelector": "R" | "G" | "B" | "A" | AnyString;
     "xHeight": string | number;
     "xlink:actuate": string;
     "xlink:arcrole": string;
@@ -1205,9 +1564,9 @@ interface SVGOtherAttributes_native {
     "y1": string | number;
     "y2": string | number;
     "y": string | number;
-    "yChannelSelector": "R" | "G" | "B" | "A" | OrString;
+    "yChannelSelector": "R" | "G" | "B" | "A" | AnyString;
     "z": string | number;
-    "zoomAndPan": "disable" | "magnify" | OrString;
+    "zoomAndPan": "disable" | "magnify" | AnyString;
 }
 /** SVG attributes by tags in camelCase. Might allow some more than should. */
 interface SVGNativeAttributesBy {
@@ -1393,7 +1752,7 @@ interface DOMCleanProps {
     /** Each value is in stringified form. None should be undefined, but if is, simply don't apply. */
     attributes?: Partial<Record<keyof DOMAttributesAny & string, string | undefined>>;
     /** Each value is a callback. None should be undefined, but if is, simply don't apply. */
-    listeners?: Partial<Record<keyof GlobalEventHandlersEventMap & string | OrString, GlobalEventHandler | undefined>>;
+    listeners?: Partial<Record<keyof GlobalEventHandlersEventMap & string | AnyString, GlobalEventHandler | undefined>>;
 }
 /** Type for differences in the props. Should apply them to the existing element.
  * - All values are dictionaries.
@@ -1656,7 +2015,7 @@ declare function equalSubDictionaries<Prop extends string>(a: Partial<Record<Pro
 declare function createDOMElement(tag: "svg", checkSVGByParentNode?: boolean | Node | null | undefined, namespaceURI?: string): SVGSVGElement;
 declare function createDOMElement<Tag extends string>(tag: Tag, checkSVGByParentNode: true | SVGElement, namespaceURI?: string): Tag extends keyof SVGElementTagNameMap ? SVGElementTagNameMap[Tag] : SVGElement;
 declare function createDOMElement<Tag extends string>(tag: Tag, checkSVGByParentNode?: false | null | undefined | HTMLElement, namespaceURI?: string): Tag extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[Tag] : HTMLElement;
-declare function createDOMElement(tag: DOMTags | OrString, checkSVGByParentNode?: boolean | Node | null | undefined, namespaceURI?: string): HTMLElement | SVGElement;
+declare function createDOMElement(tag: DOMTags | AnyString, checkSVGByParentNode?: boolean | Node | null | undefined, namespaceURI?: string): HTMLElement | SVGElement;
 /** Check if a node is SVG using "ownerSVGElement" property on the SVGElement: if undefined, not an SVG (otherwise null or an element).
  * - For simple known cases, the answer is already known on the TS side, in case the node is HTMLElement or SVGElement.
  */
@@ -1710,4 +2069,4 @@ declare function applyDOMProps(domElement: HTMLElement | SVGElement | Element | 
  */
 declare function readDOMString(tag: string, domProps?: DOMCleanProps | null, childrenContent?: string | null | boolean, readFromNode?: Node | null, skipAttrs?: Record<string, any>): string;
 
-export { BoolOrStr, CSSBlendMode, CSSColorNames, CSSNumericPropertyNames, CSSProperties, ClassNameInput, DOMAttributes, DOMAttributesAny, DOMAttributesAny_native, DOMAttributesBy, DOMAttributesBy_native, DOMAttributes_native, DOMCleanProps, DOMDiffProps, DOMElement, DOMTags, DOMUncleanProps, DataAttributes, FalseLike, GetMethodKeys, GlobalEventHandler, GlobalListeners, GlobalListeners_native, HTMLAttributes, HTMLAttributesAny, HTMLAttributesAny_native, HTMLAttributesBy, HTMLAttributesBy_native, HTMLAttributes_native, HTMLGlobalAttributes, HTMLGlobalAttributes_native, HTMLTags, InheritInitial, InheritInitialRevUnset, IsReadOnlyKey, IterableValues, NameValidator, OrString, SVGAttributes, SVGAttributesAny, SVGAttributesAny_native, SVGAttributesBy, SVGAttributesBy_native, SVGAttributes_native, SVGGlobalAttributes, SVGGlobalAttributes_native, SVGTags, Split, SplitArr, ValidateNames, applyDOMProps, camelCaseStr, classNames, cleanDOMProps, cleanNames, collectKeysTo, createDOMElement, domListenerProps, domRenamedAttributes, domSkipAttributes, equalDOMProps, equalSubDictionaries, getDictionaryDiffs, getNameDiffs, isNodeSVG, lowerCaseStr, parseDOMStyle, readDOMProps, readDOMString };
+export { AnyString, BoolOrStr, CSSBaselineAlignment, CSSBlendMode, CSSBorderStyle, CSSBreakMode, CSSColorNames, CSSCursor, CSSDisplayMode, CSSListStyleType, CSSOverflowMode, CSSPaintOrderString, CSSPositionString, CSSPositionX, CSSPositionY, CSSProperties, CSSPropertyNamesColor, CSSPropertyNamesNumeric, CSSPropertyNamesString, CSSTimingFunction, CSSTransformHints, ClassNameInput, DOMAttributes, DOMAttributesAny, DOMAttributesAny_native, DOMAttributesBy, DOMAttributesBy_native, DOMAttributes_native, DOMCleanProps, DOMDiffProps, DOMElement, DOMTags, DOMUncleanProps, DataAttributes, FalseLike, GetMethodKeys, GlobalEventHandler, GlobalListeners, GlobalListeners_native, HTMLAttributes, HTMLAttributesAny, HTMLAttributesAny_native, HTMLAttributesBy, HTMLAttributesBy_native, HTMLAttributes_native, HTMLGlobalAttributes, HTMLGlobalAttributes_native, HTMLTags, InheritInitial, IsReadOnlyKey, IterableValues, NameValidator, SVGAttributes, SVGAttributesAny, SVGAttributesAny_native, SVGAttributesBy, SVGAttributesBy_native, SVGAttributes_native, SVGGlobalAttributes, SVGGlobalAttributes_native, SVGTags, Split, SplitArr, ValidateNames, applyDOMProps, camelCaseStr, classNames, cleanDOMProps, cleanNames, collectKeysTo, createDOMElement, domListenerProps, domRenamedAttributes, domSkipAttributes, equalDOMProps, equalSubDictionaries, getDictionaryDiffs, getNameDiffs, isNodeSVG, lowerCaseStr, parseDOMStyle, readDOMProps, readDOMString };

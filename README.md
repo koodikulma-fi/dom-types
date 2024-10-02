@@ -105,7 +105,7 @@ type MyInputTests = [
     MyInput["onFocus"],     // ((this: GlobalEventHandlers, ev: FocusEvent) => any) | null | undefined
     MyInput["style"],       // string | CSSProperties | undefined
     MyInput["disabled"],    // BoolOrStr | undefined  =  "true" | "false" | boolean | string & {} | undefined
-    MyInput["virtualKeyboardPolicy"], // OrString | "auto" | "manual" | undefined
+    MyInput["virtualKeyboardPolicy"], // AnyString | "auto" | "manual" | undefined
 ];
 
 // HTMLAttributes for "input" in native case.
@@ -116,7 +116,7 @@ type MyInputTests_native = [
     MyInput_native["class"],    // string | undefined
     MyInput_native["style"],    // string | CSSProperties | undefined
     MyInput_native["disabled"], // BoolOrStr | undefined  =  "true" | "false" | boolean | string & {} | undefined
-    MyInput_native["virtualkeyboardpolicy"], // OrString | "auto" | "manual" | undefined
+    MyInput_native["virtualkeyboardpolicy"], // AnyString | "auto" | "manual" | undefined
     // Failures.
     MyInput_native["className"], // string | undefined
 ];
@@ -226,14 +226,43 @@ type MyTests = [
 
 ### 1.3. CSS properties
 
-- The CSS properties are available as camelCase dictionary. For example: `{ "backgroundColor": "#000" }`
-    * This is because it works nicely with the Element's style, eg. `el.style["backgroundColor"] = "#000"`.
-    * Actually both forms are supported by browsers through the syle: `el.style["background-color"] = "#000"`.
-* All values are `string` in type, though some also support `number` reflecting what the major browsers support.
+- The CSS properties are available as a camelCase interface, for example: `{ "backgroundColor": "#000" }`
+- This form works nicely with the Element's style, eg. `el.style["backgroundColor"] = "#000"`.
+    * Actually both cases are supported by browsers through the syle: `el.style["background-color"] = "#000"`.
+* All values are `string` in type, though some also support `number` or just `0` reflecting what the major browsers support.
     - For example: `{ width: 50 }` -> `el.style.width = 50` -> `50` = `50px`.
-* Currently (at v1.0.0) there's no suggestions for values (except for `"position"`), but more coming later.
+    - Supporting only `0` is relative common, eg. `{ inset: 0, gap: 0, margin: 0 }`.
+        * Basically, it's supported for all values that could take number with a unit, eg. `{ margin: "5px" }`.
 
 ```typescript
+
+// All properties have some suggestions.
+const myStyles: CSSProperties = {
+    // Some common ones.
+    display: "flex",
+    flexDirection: "column-reverse",
+    overflow: "auto",
+    overflowBehavior: "contain",
+    position: "sticky",
+    // For colors, type suggests "currentcolor" | "currentColor" | "transparent" | "inherit" | "initial" and allows any string.
+    backgroundColor: "currentColor",
+    color: "inherit",
+    textEmphasisColor: "transparent",
+    // Test numeric.
+    animationIterationCount: 5,
+    flexGrow: .1,
+    flexShrink: 100,
+    opacity: .5,
+    width: 100,
+    // Test half-numeric: only supports 0. Any other number fails.
+    borderBlockEndWidth: 0,
+    columnWidth: 0,
+    gap: 0,
+    inset: 0,
+    left: 0,
+    maxInlineSize: 0,
+    rowGap: 0,
+};
 
 
 ```

@@ -1,7 +1,7 @@
 
 // - Imports - //
 
-import { BoolOrStr, OrString } from "./common";
+import { BoolOrStr, AnyString } from "./common";
 
 
 // - Basic attributes - //
@@ -89,20 +89,20 @@ export type ARIARole =
     | "treeitem"
     | "widget"
     | "window"
-    ; // | OrString;
+    ; // | AnyString;
 
 export interface ARIAAttributes extends ARIAMixin {}
 
 /** Matches somewhere around 95% with ARIAMixin values - this has a couple of more keys. See [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes) */
 export interface ARIAAttributes_native {
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles) */
-    "role": ARIARole | OrString;
+    "role": ARIARole | AnyString;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-activedescendant) */
     "aria-activedescendant": string;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-atomic) */
     "aria-atomic": BoolOrStr;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-autocomplete) */
-    "aria-autocomplete": "none" | "inline" | "list" | "both" | OrString;
+    "aria-autocomplete": "none" | "inline" | "list" | "both" | AnyString;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-braillelabel) */
     "aria-braillelabel": string;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-brailleroledescription) */
@@ -110,7 +110,7 @@ export interface ARIAAttributes_native {
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-busy) */
     "aria-busy": BoolOrStr;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-checked) */
-    "aria-checked": boolean | "false" | "mixed" | "true" | OrString;
+    "aria-checked": boolean | "false" | "mixed" | "true" | AnyString;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-colcount) */
     "aria-colcount": number;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-colindex) */
@@ -120,7 +120,7 @@ export interface ARIAAttributes_native {
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-controls) */
     "aria-controls": string;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-current) */
-    "aria-current": boolean | "false" | "true" | "page" | "step" | "location" | "date" | "time" | OrString;
+    "aria-current": boolean | "false" | "true" | "page" | "step" | "location" | "date" | "time" | AnyString;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-description) */
     "aria-description": string;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-describedby) */
@@ -130,7 +130,7 @@ export interface ARIAAttributes_native {
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-disabled) */
     "aria-disabled": BoolOrStr;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-dropeffect) */
-    "aria-dropeffect": "none" | "copy" | "execute" | "link" | "move" | "popup" | OrString;
+    "aria-dropeffect": "none" | "copy" | "execute" | "link" | "move" | "popup" | AnyString;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-errormessage) */
     "aria-errormessage": string;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-expanded) */
@@ -140,11 +140,11 @@ export interface ARIAAttributes_native {
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-grabbed) */
     "aria-grabbed": BoolOrStr;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-haspopup) */
-    "aria-haspopup": boolean | "false" | "true" | "menu" | "listbox" | "tree" | "grid" | "dialog" | OrString;
+    "aria-haspopup": boolean | "false" | "true" | "menu" | "listbox" | "tree" | "grid" | "dialog" | AnyString;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden) */
     "aria-hidden": BoolOrStr;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-invalid) */
-    "aria-invalid": boolean | "false" | "true" | "grammar" | "spelling" | OrString;
+    "aria-invalid": boolean | "false" | "true" | "grammar" | "spelling" | AnyString;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-keyshortcuts) */
     "aria-keyshortcuts": string;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-label) */
@@ -154,7 +154,7 @@ export interface ARIAAttributes_native {
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-level) */
     "aria-level": number;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-live) */
-    "aria-live": "off" | "assertive" | "polite" | OrString;
+    "aria-live": "off" | "assertive" | "polite" | AnyString;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-modal) */
     "aria-modal": BoolOrStr;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-multiline) */
@@ -162,7 +162,7 @@ export interface ARIAAttributes_native {
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-multiselectable) */
     "aria-multiselectable": BoolOrStr;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-orientation) */
-    "aria-orientation": "horizontal" | "vertical" | OrString;
+    "aria-orientation": "horizontal" | "vertical" | AnyString;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-owns) */
     "aria-owns": string;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-placeholder) */
@@ -170,11 +170,11 @@ export interface ARIAAttributes_native {
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-posinset) */
     "aria-posinset": number;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-pressed) */
-    "aria-pressed": boolean | "false" | "mixed" | "true" | OrString;
+    "aria-pressed": boolean | "false" | "mixed" | "true" | AnyString;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-readonly) */
     "aria-readonly": BoolOrStr;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-relevant) */
-    "aria-relevant": "additions" | "additions removals" | "additions text" | "all" | "removals" | "removals additions" | "removals text" | "text" | "text additions" | "text removals" | OrString;
+    "aria-relevant": "additions" | "additions removals" | "additions text" | "all" | "removals" | "removals additions" | "removals text" | "text" | "text additions" | "text removals" | AnyString;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-required) */
     "aria-required": BoolOrStr;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-roledescription) */
@@ -190,7 +190,7 @@ export interface ARIAAttributes_native {
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-setsize) */
     "aria-setsize": number;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-sort) */
-    "aria-sort": "none" | "ascending" | "descending" | "other" | OrString;
+    "aria-sort": "none" | "ascending" | "descending" | "other" | AnyString;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-valuemax) */
     "aria-valuemax": number;
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-valuemin) */
