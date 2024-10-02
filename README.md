@@ -235,7 +235,7 @@ type MyTests = [
     * Actually both are supported by browsers through style: `el.style["background-color"] = "#000"`.
 * All values are `string`, though some support `number` or just `0` reflecting what the major browsers support.
     - For example: `{ width: 50 }` -> `el.style.width = 50` -> `50` = `50px`.
-    - Supporting only `0` is relative common, eg. `{ inset: 0, gap: 0, margin: 0 }`.
+    - Supporting only `0` is relatively common, eg. `{ inset: 0, gap: 0, margin: 0 }`.
         * Basically, all properties that could take number with a unit support 0, eg. `{ margin: "5px" }`.
 
 ```typescript
@@ -248,7 +248,8 @@ const myStyles: CSSProperties = {
     overflow: "auto",
     overflowBehavior: "contain",
     position: "sticky",
-    // For colors, type suggests "currentcolor" | "currentColor" | "transparent" | "inherit" | "initial" and allows any string.
+    // For colors, type suggests some but allows any string. Suggestions are:
+    // "currentcolor" | "currentColor" | "transparent" | "inherit" | "initial"
     backgroundColor: "currentColor",
     color: "inherit",
     textEmphasisColor: "transparent",
@@ -358,9 +359,8 @@ const domListenerAttributes = {
 
 #### library - method: `readDOMString(tag, domProps?, childrenContent?, readFromNode?, skipAttrs?)`
 
-- The methods converts the tag, domProps and childrenContent to a string.
-- Also supports reading tag and domProps from the readFromNode.
-- Skips any listener attributes.
+- The method converts the tag, domProps and childrenContent to a string.
+- Supports reading tag and domProps from the readFromNode. Skips any listener attributes.
 
 ```typescript
 
