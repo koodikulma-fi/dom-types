@@ -264,7 +264,9 @@ const myStyles: CSSProperties = {
     gap: 0,
     inset: 0,
     left: 0,
+    margin: 0,
     maxInlineSize: 0,
+    padding: 0,
     rowGap: 0,
 };
 
