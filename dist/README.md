@@ -271,6 +271,10 @@ const myStyles: CSSProperties = {
     rowGap: 0,
 };
 
+// There are more helper types for specific values.
+const myColor: CSSColorNamesAll = "Black"; // All (133) color names in PascalCase.
+const myBorderStyle: CSSBorderStyle = "double";
+
 
 ```
 
