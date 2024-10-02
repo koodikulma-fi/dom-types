@@ -73,9 +73,7 @@ Core methods behind the scenes:
     * `DOMAttributesAny_native`: All possible attributes (for any tag) in native case.
     * `SVGAttributesBy_native: Record<Tag, SVGAttributes<Tag>>`: SVG dictionary in native case.
 
----
-
-### 1.2. HTML examples
+#### 1.1.1. HTML examples
 
 ```typescript
 
@@ -126,9 +124,7 @@ type MyInputTests_native = [
 
 ```
 
----
-
-### 1.3. SVG examples
+#### 1.1.2. SVG examples
 
 ```typescript
 
@@ -156,9 +152,7 @@ type MyCircleTests_native = [
 
 ```
 
----
-
-### 1.4. DOM examples and tag unions
+#### 1.1.3. DOM examples and tag unions
 
 - You can also define a union of tags for `DOMAttributes<Tag>` (or HTML or SVG).
     * However, it's typically not recommended, and just easier to use the Any type variant.
@@ -198,7 +192,7 @@ type MyTests = [
 
 ---
 
-### 1.5. Global listeners and ARIA attributes
+### 1.2. Global listeners and ARIA attributes
 
 - The global listeners and ARIA attributes are included in the main declarations, but can be used separately.
 - Accordingly, the global listeners are provided as native and camelCase interfaces:
@@ -232,7 +226,7 @@ type MyTests = [
 
 ---
 
-### 1.6. CSS properties
+### 1.3. CSS properties
 
 - The CSS properties are available as a camelCase interface, for example: `{ "backgroundColor": "#000" }`
 - This form works nicely with the Element's style, eg. `el.style["backgroundColor"] = "#000"`.
