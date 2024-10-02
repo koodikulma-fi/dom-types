@@ -14,8 +14,6 @@ interface DataAttributes {
 
 /** False like JS values. */
 type FalseLike = "" | 0 | false | null | undefined | void;
-/** Collect values of an iterable. */
-type IterableValues<T, Fallback = never> = T extends Iterable<infer R> ? R : Fallback;
 /** Split a string into a typed array.
  * - Use with PropType to validate and get deep value types with, say, dotted strings.
  */
@@ -46,7 +44,7 @@ type NameValidator<Valid extends any, Input> = [
     Input
 ] extends [Array<any> | Readonly<Array<any>>] ? Input extends Valid[] ? Valid[] : SplitArr<Input, " "> extends Valid[] ? any : never : [
     Input
-] extends [Iterable<any> | Readonly<Iterable<any>>] ? Input extends Iterable<Valid> ? Iterable<Valid> : Split<IterableValues<Input> & string, " "> extends Iterable<Valid> ? any : never : [
+] extends [Iterable<any> | Readonly<Iterable<any>>] ? Input extends Iterable<Valid> ? any : (Input extends Iterable<infer R> ? Split<R & string, " "> : {}) extends Iterable<Valid> ? any : never : [
     Input
 ] extends [object] ? keyof Input extends Valid ? any : Split<keyof Input & string, " "> extends Valid[] ? any : never : any;
 /** Helper to validate class names (paired with a javascript function that actually supports handling: (...params: any[]) => string;
@@ -87,7 +85,7 @@ type NameValidator<Valid extends any, Input> = [
  * validate("a", "a b", undefined, "FAIL", ["a", false]);
  * validate("a", "a b", undefined, ["a", "FAIL", false]);
  * validate(["a", "b", "a b", "FAIL", false]);
- * validate("a", "a b", false, ["a"], ["b a", ""], undefined, {"a": true, "b a": false, "FAIL": true});
+ * validate("a", "a b", false, ["a"], ["b a", ""], undefined, {"a": true, "FAIL": true, "b a": false});
  * validate("a", "FAIL", "a b", false, ["a"], ["b a", ""], undefined, {"a": true, "b a": false});
  * validate("a", "a b", false, ["a", "FAIL"], ["b a", ""], undefined, {"a": true, "b a": false});
  *
@@ -2150,4 +2148,4 @@ declare function applyDOMProps(domElement: HTMLElement | SVGElement | Element | 
  */
 declare function readDOMString(tag: string, domProps?: DOMCleanProps | null, childrenContent?: string | null | boolean, readFromNode?: Node | null, skipAttrs?: Record<string, any>): string;
 
-export { AnyString, BoolOrStr, CSSBaselineAlignment, CSSBlendMode, CSSBorderStyle, CSSBreakMode, CSSColorNames, CSSColorNamesAll, CSSCursor, CSSDisplayMode, CSSListStyleType, CSSOverflowMode, CSSPaintOrderString, CSSPositionString, CSSPositionX, CSSPositionY, CSSProperties, CSSPropertyNamesColor, CSSPropertyNamesNumeric, CSSPropertyNamesString, CSSTimingFunction, CSSTransformHints, ClassNameInput, DOMAttributes, DOMAttributesAny, DOMAttributesAny_native, DOMAttributesBy, DOMAttributesBy_native, DOMAttributes_native, DOMCleanProps, DOMDiffProps, DOMElement, DOMTags, DOMUncleanProps, DataAttributes, FalseLike, GetMethodKeys, GlobalEventHandler, GlobalListeners, GlobalListeners_native, HTMLAttributes, HTMLAttributesAny, HTMLAttributesAny_native, HTMLAttributesBy, HTMLAttributesBy_native, HTMLAttributes_native, HTMLGlobalAttributes, HTMLGlobalAttributes_native, HTMLTags, InheritInitial, IsReadOnlyKey, IterableValues, NameValidator, SVGAttributes, SVGAttributesAny, SVGAttributesAny_native, SVGAttributesBy, SVGAttributesBy_native, SVGAttributes_native, SVGGlobalAttributes, SVGGlobalAttributes_native, SVGTags, Split, SplitArr, ValidateNames, applyDOMProps, camelCaseStr, classNames, cleanDOMProps, cleanNames, collectKeysTo, createDOMElement, domListenerProps, domRenamedAttributes, domSkipAttributes, equalDOMProps, equalSubDictionaries, getDictionaryDiffs, getNameDiffs, isNodeSVG, lowerCaseStr, parseDOMStyle, readDOMProps, readDOMString };
+export { AnyString, BoolOrStr, CSSBaselineAlignment, CSSBlendMode, CSSBorderStyle, CSSBreakMode, CSSColorNames, CSSColorNamesAll, CSSCursor, CSSDisplayMode, CSSListStyleType, CSSOverflowMode, CSSPaintOrderString, CSSPositionString, CSSPositionX, CSSPositionY, CSSProperties, CSSPropertyNamesColor, CSSPropertyNamesNumeric, CSSPropertyNamesString, CSSTimingFunction, CSSTransformHints, ClassNameInput, DOMAttributes, DOMAttributesAny, DOMAttributesAny_native, DOMAttributesBy, DOMAttributesBy_native, DOMAttributes_native, DOMCleanProps, DOMDiffProps, DOMElement, DOMTags, DOMUncleanProps, DataAttributes, FalseLike, GetMethodKeys, GlobalEventHandler, GlobalListeners, GlobalListeners_native, HTMLAttributes, HTMLAttributesAny, HTMLAttributesAny_native, HTMLAttributesBy, HTMLAttributesBy_native, HTMLAttributes_native, HTMLGlobalAttributes, HTMLGlobalAttributes_native, HTMLTags, InheritInitial, IsReadOnlyKey, NameValidator, SVGAttributes, SVGAttributesAny, SVGAttributesAny_native, SVGAttributesBy, SVGAttributesBy_native, SVGAttributes_native, SVGGlobalAttributes, SVGGlobalAttributes_native, SVGTags, Split, SplitArr, ValidateNames, applyDOMProps, camelCaseStr, classNames, cleanDOMProps, cleanNames, collectKeysTo, createDOMElement, domListenerProps, domRenamedAttributes, domSkipAttributes, equalDOMProps, equalSubDictionaries, getDictionaryDiffs, getNameDiffs, isNodeSVG, lowerCaseStr, parseDOMStyle, readDOMProps, readDOMString };

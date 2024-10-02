@@ -3,8 +3,6 @@
 
 /** False like JS values. */
 export type FalseLike = "" | 0 | false | null | undefined | void;
-/** Collect values of an iterable. */
-export type IterableValues<T, Fallback = never> = T extends Iterable<infer R> ? R : Fallback;
 // Thanks to: https://github.com/microsoft/TypeScript/pull/40336
 /** Split a string into a typed array.
  * - Use with PropType to validate and get deep value types with, say, dotted strings.
@@ -12,6 +10,8 @@ export type IterableValues<T, Fallback = never> = T extends Iterable<infer R> ? 
 export type Split<S extends string, D extends string> = string extends S ? string[] : S extends '' ? [] : S extends `${infer T}${D}${infer U}` ? [T, ...Split<U, D>] : [S];
 /** Split a string array by a string. */
 export type SplitArr<S extends string[] | readonly string[], D extends string> = Split<S[number] & string, D>;
+// /** Collect values of an iterable. */
+// export type IterableValues<T, Fallback = never> = T extends Iterable<infer R> ? R : Fallback;
 
 
 // - Simple validation - //
@@ -44,7 +44,7 @@ export type NameValidator<Valid extends any, Input> =
     // Array - check each STRING VALUE inside and split it and check if extends Valid[]. (Other types are ignored.)
     [Input] extends [Array<any> | Readonly<Array<any>>] ? Input extends Valid[] ? Valid[] : SplitArr<Input, " "> extends Valid[] ? any : never :
     // Other iterables.
-    [Input] extends [Iterable<any> | Readonly<Iterable<any>>] ? Input extends Iterable<Valid> ? Iterable<Valid> : Split<IterableValues<Input> & string, " "> extends Iterable<Valid> ? any : never :
+    [Input] extends [Iterable<any> | Readonly<Iterable<any>>] ? Input extends Iterable<Valid> ? any : (Input extends Iterable<infer R> ? Split<R & string, " "> : {}) extends Iterable<Valid> ? any : never :
     // Object - check each STRING KEY inside and split it and check if extends Valid[].
     [Input] extends [object] ? keyof Input extends Valid ? any : Split<keyof Input & string, " "> extends Valid[] ? any : never :
     // Otherwise allow anything.
@@ -88,7 +88,7 @@ export type NameValidator<Valid extends any, Input> =
  * validate("a", "a b", undefined, "FAIL", ["a", false]);
  * validate("a", "a b", undefined, ["a", "FAIL", false]);
  * validate(["a", "b", "a b", "FAIL", false]);
- * validate("a", "a b", false, ["a"], ["b a", ""], undefined, {"a": true, "b a": false, "FAIL": true});
+ * validate("a", "a b", false, ["a"], ["b a", ""], undefined, {"a": true, "FAIL": true, "b a": false});
  * validate("a", "FAIL", "a b", false, ["a"], ["b a", ""], undefined, {"a": true, "b a": false});
  * validate("a", "a b", false, ["a", "FAIL"], ["b a", ""], undefined, {"a": true, "b a": false});
  * 
