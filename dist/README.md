@@ -765,10 +765,10 @@ equalSubDictionaries(a, b, "set1", "set2"); // false, because "set1" returns fal
 
 #### library - method: `getNameDiffs(origName, newName, splitter = " ")`
 
-- Get name diffs as: `Record<string, boolean>`, where `true` means added, `false` removed, otherwise not included.
+- Get name diffs as: `Record<string, boolean>`, where `true` means added and `false` removed.
 - The names are splitted from each given string using the splitter - defaults to " ".
     * If no splitter is defined, won't split them, but just compare the two words as such.
-- Note that the method does not care about the order, just whether the names are present or not. Skips empty "".
+- The method ignores order: just checks whether the names are present or not. Skips empty "".
 
 ```typescript
 
