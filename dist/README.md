@@ -18,9 +18,11 @@ There are 2 kinds of tools available.
 Declarations for common attributes:
 - Tag based (and tagless) SVG and HTML attributes (combined as DOM) in native and camelCase naming.
     * The attributes include global listeners and ARIA attributes.
+- The global listeners and ARIA attributes (also in HTML/SVG attributes) in native and camelCase naming.
 - CSS properties as an interface with camelCase keys. For example: `{ "backgroundColor": "#000" }`
     * Some properties support `number` or `0` values, eg. `{ width: 50, opacity: .5, inset: 0 }`.
     * All properties have typing suggestions while always allowing any string value.
+    * In addition a bunch of value names for some common CSS features, eg. `CSSBorderStyle`.
 
 ### [2. JS TOOLS](#2-js-tools-doc)
 
