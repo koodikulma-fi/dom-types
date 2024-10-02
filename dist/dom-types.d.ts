@@ -577,7 +577,86 @@ interface GlobalListeners {
 
 /** Collected from https://www.w3.org/TR/wai-aria-1.1/#role_definitions */
 type ARIARole = "alert" | "alertdialog" | "application" | "article" | "banner" | "button" | "cell" | "checkbox" | "columnheader" | "combobox" | "command" | "complementary" | "composite" | "contentinfo" | "definition" | "dialog" | "directory" | "document" | "feed" | "figure" | "form" | "grid" | "gridcell" | "group" | "heading" | "img" | "input" | "landmark" | "link" | "list" | "listbox" | "listitem" | "log" | "main" | "marquee" | "math" | "menu" | "menubar" | "menuitem" | "menuitemcheckbox" | "menuitemradio" | "navigation" | "none" | "note" | "option" | "presentation" | "progressbar" | "radio" | "radiogroup" | "range" | "region" | "roletype" | "row" | "rowgroup" | "rowheader" | "scrollbar" | "search" | "searchbox" | "section" | "sectionhead" | "select" | "separator" | "slider" | "spinbutton" | "status" | "structure" | "switch" | "tab" | "table" | "tablist" | "tabpanel" | "term" | "textbox" | "timer" | "toolbar" | "tooltip" | "tree" | "treegrid" | "treeitem" | "widget" | "window";
-interface ARIAAttributes extends ARIAMixin {
+interface ARIAAttributes {
+    /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles) */
+    role: ARIARole | null;
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/ariaAtomic) */
+    ariaAtomic: string | null;
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/ariaAutoComplete) */
+    ariaAutoComplete: string | null;
+    ariaBrailleLabel: string | null;
+    ariaBrailleRoleDescription: string | null;
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/ariaBusy) */
+    ariaBusy: string | null;
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/ariaChecked) */
+    ariaChecked: string | null;
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/ariaColCount) */
+    ariaColCount: string | null;
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/ariaColIndex) */
+    ariaColIndex: string | null;
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/ariaColSpan) */
+    ariaColSpan: string | null;
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/ariaCurrent) */
+    ariaCurrent: string | null;
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/ariaDescription) */
+    ariaDescription: string | null;
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/ariaDisabled) */
+    ariaDisabled: string | null;
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/ariaExpanded) */
+    ariaExpanded: string | null;
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/ariaHasPopup) */
+    ariaHasPopup: string | null;
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/ariaHidden) */
+    ariaHidden: string | null;
+    ariaInvalid: string | null;
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/ariaKeyShortcuts) */
+    ariaKeyShortcuts: string | null;
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/ariaLabel) */
+    ariaLabel: string | null;
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/ariaLevel) */
+    ariaLevel: string | null;
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/ariaLive) */
+    ariaLive: string | null;
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/ariaModal) */
+    ariaModal: string | null;
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/ariaMultiLine) */
+    ariaMultiLine: string | null;
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/ariaMultiSelectable) */
+    ariaMultiSelectable: string | null;
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/ariaOrientation) */
+    ariaOrientation: string | null;
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/ariaPlaceholder) */
+    ariaPlaceholder: string | null;
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/ariaPosInSet) */
+    ariaPosInSet: string | null;
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/ariaPressed) */
+    ariaPressed: string | null;
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/ariaReadOnly) */
+    ariaReadOnly: string | null;
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/ariaRequired) */
+    ariaRequired: string | null;
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/ariaRoleDescription) */
+    ariaRoleDescription: string | null;
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/ariaRowCount) */
+    ariaRowCount: string | null;
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/ariaRowIndex) */
+    ariaRowIndex: string | null;
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/ariaRowSpan) */
+    ariaRowSpan: string | null;
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/ariaSelected) */
+    ariaSelected: string | null;
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/ariaSetSize) */
+    ariaSetSize: string | null;
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/ariaSort) */
+    ariaSort: string | null;
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/ariaValueMax) */
+    ariaValueMax: string | null;
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/ariaValueMin) */
+    ariaValueMin: string | null;
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/ariaValueNow) */
+    ariaValueNow: string | null;
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/ariaValueText) */
+    ariaValueText: string | null;
 }
 /** Matches somewhere around 95% with ARIAMixin values - this has a couple of more keys. See [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes) */
 interface ARIAAttributes_native {
@@ -1235,7 +1314,7 @@ interface AnimationTimingAttributes {
     "restart": "always" | "whenNotActive" | "never" | AnyString;
     "repeatCount": "indefinite" | AnyString | number;
     "repeatDur": string | number;
-    "fill": "freeze" | "remove" | CSSColorNames | AnyString;
+    "fill": "freeze" | "remove" | CSSColorNames;
 }
 interface AnimationValueAttributes {
     "calcMode": "discrete" | "linear" | "paced" | "spline" | AnyString;
@@ -1378,7 +1457,7 @@ interface SVGOtherAttributes_native {
     "edgeMode": string | number;
     "elevation": string | number;
     "exponent": string | number;
-    "fill": CSSColorNames | AnyString;
+    "fill": CSSColorNames;
     "fill-opacity": string | number;
     "fill-rule": "nonzero" | "evenodd" | "inherit";
     "filter": string;
@@ -1503,9 +1582,9 @@ interface SVGOtherAttributes_native {
     "strikethrough-position": string | number;
     "strikethrough-thickness": string | number;
     "string": string | boolean | number;
-    "stroke": CSSColorNames | AnyString;
-    "stroke-dasharray": string | number;
-    "stroke-dashoffset": string | number;
+    "stroke": CSSColorNames;
+    "stroke-dasharray": string | number | number[];
+    "stroke-dashoffset": string | number | number[];
     "stroke-linecap": "butt" | "round" | "square" | "inherit" | AnyString;
     "stroke-linejoin": "butt" | "round" | "square" | "inherit" | AnyString;
     "stroke-miterlimit": string | number;

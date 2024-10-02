@@ -101,7 +101,7 @@ interface AnimationTimingAttributes {
     "restart": "always" | "whenNotActive" | "never" | AnyString;
     "repeatCount": "indefinite" | AnyString | number;
     "repeatDur": string | number;
-    "fill": "freeze" | "remove" | CSSColorNames | AnyString;
+    "fill": "freeze" | "remove" | CSSColorNames;
 }
 interface AnimationValueAttributes {
     "calcMode": "discrete" | "linear" | "paced" | "spline" | AnyString;
@@ -445,7 +445,7 @@ interface SVGOtherAttributes_native {
     "edgeMode": string | number;
     "elevation": string | number;
     "exponent": string | number;
-    "fill": CSSColorNames | AnyString; // Also others.
+    "fill": CSSColorNames;
     "fill-opacity": string | number;
     "fill-rule": "nonzero" | "evenodd" | "inherit";
     "filter": string;
@@ -570,9 +570,9 @@ interface SVGOtherAttributes_native {
     "strikethrough-position": string | number;
     "strikethrough-thickness": string | number;
     "string": string | boolean | number;
-    "stroke": CSSColorNames | AnyString; // Also others.
-    "stroke-dasharray": string | number;
-    "stroke-dashoffset": string | number;
+    "stroke": CSSColorNames;
+    "stroke-dasharray": string | number | number[];
+    "stroke-dashoffset": string | number | number[];
     "stroke-linecap": "butt" | "round" | "square" | "inherit" | AnyString;
     "stroke-linejoin": "butt" | "round" | "square" | "inherit" | AnyString;
     "stroke-miterlimit": string | number;

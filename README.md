@@ -139,7 +139,7 @@ type MyCircleTests = [
     MyCircle["onFocus"],    // ((this: GlobalEventHandlers, ev: FocusEvent) => any) | null | undefined
     MyCircle["style"],      // string | CSSProperties | undefined
     MyCircle["fill"],       // CSSColorNames | undefined
-    MyCircle["strokeDashArray"], // CSSColorNames | undefined
+    MyCircle["strokeDashArray"], // string | number | number[] | undefined
     MyCircle["ariaBrailleRoleDescription"], // string | null | undefined
 ];
 
@@ -150,7 +150,7 @@ type MyCircleTests_native = [
     MyCircle_native["onfocus"], // ((this: GlobalEventHandlers, ev: FocusEvent) => any) | null | undefined
     MyCircle_native["style"],   // string | CSSProperties | undefined
     MyCircle_native["fill"],    // CSSColorNames | undefined
-    MyCircle_native["stroke-dasharray"], // CSSColorNames | undefined
+    MyCircle_native["stroke-dasharray"], // string | number | number[] | undefined
     MyCircle_native["aria-brailleroledescription"], // string | null | undefined
 ];
 
