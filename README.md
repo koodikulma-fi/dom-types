@@ -27,7 +27,7 @@ Declarations for common attributes:
 ### [2. JS TOOLS](#2-js-tools-doc)
 
 A couple of (mutable) constants for enforcing the naming:
-- (domSkipAttributes)[#library---constant-domskipattributes]: Always skips these attributes (eg. "innerHTML" and such).
+- [`domSkipAttributes`](#library---constant-domskipattributes): Always skips these attributes (eg. "innerHTML" and such).
 - `domRenamedAttributes`: To convert from clean camelCase to native attributes.
 - `domListenerProps`: The known listener properties - applied as event listeners.
 
