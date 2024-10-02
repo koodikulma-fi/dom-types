@@ -33,25 +33,25 @@ A couple of (mutable) constants for enforcing the naming:
 
 A couple of helper methods for reading and applying the type suggested features into/from DOM:
 - [`readDOMString`](#library---method-readdomstringtag-domprops-childrencontent-readfromnode-skipattrs)`(tag, domProps?, childrenContent?, readFromNode?, skipAttrs?): string`
-- [`readDOMProps(node): DOMCleanProps`](#library---method-readdompropsnode)
-- [`cleanDOMProps(uncleanProps, listenerProps?, renamedAttrs?): DOMCleanProps`](#library---method-cleandompropsuncleanprops-listenerprops-renamedattrs)
-- [`equalDOMProps(aDomProps, bDomProps): boolean`](#library---method-equaldompropsadomprops-bdomprops)
-- [`applyDOMProps(element, newProps, oldProps = {}, logWarnings = true, skipAttrs?): DOMDiffProps | null`](#library---method-applydompropselement-newprops-oldprops---logwarnings--true-skipattrs)
+- [`readDOMProps`](#library---method-readdompropsnode)`(node): DOMCleanProps`
+- [`cleanDOMProps`](#library---method-cleandompropsuncleanprops-listenerprops-renamedattrs)`(uncleanProps, listenerProps?, renamedAttrs?): DOMCleanProps`
+- [`equalDOMProps`](#library---method-equaldompropsadomprops-bdomprops)`(aDomProps, bDomProps): boolean`
+- [`applyDOMProps`](#library---method-applydompropselement-newprops-oldprops---logwarnings--true-skipattrs)`(element, newProps, oldProps = {}, logWarnings = true, skipAttrs?): DOMDiffProps | null`
 
 Other general DOM helpers:
-- [`createDOMElement(tag, checkSVGByParentNode?, namespaceURI?): HTMLElement | SVGElement`](#library---method-createdomelementtag-checksvgbyparentnode-namespaceuri)
-- [`isNodeSVG(node): boolean`](#library---method-isnodesvgnode-node--null--undefined-boolean)
-- [`classNames(...namesStrArrOrDictionary)`](#library---method-classnamesstrlikes)
-- [`cleanNames(...namesStrArrOrDictionary)`](#library---method-cleannamesstrlikes)
-- [`parseDOMStyle(styleString): CSSProperties`](#library---method-parsedomstylestr)
+- [`createDOMElement`](#library---method-createdomelementtag-checksvgbyparentnode-namespaceuri)`(tag, checkSVGByParentNode?, namespaceURI?): HTMLElement | SVGElement`
+- [`isNodeSVG`](#library---method-isnodesvgnode-node--null--undefined-boolean)`(node): boolean`
+- [`classNames`](#library---method-classnamesstrlikes)`(...namesStrArrOrDictionary)`
+- [`cleanNames`](#library---method-cleannamesstrlikes)`(...namesStrArrOrDictionary)`
+- [`parseDOMStyle`](#library---method-parsedomstylestr)`(styleString): CSSProperties`
 
 Core methods behind the scenes:
-- [`getDictionaryDiffs(orig, updated): Record<string, any>`](#library---method-getdictionarydiffsorig-updated)
-- [`equalSubDictionaries(a, b, ...props): boolean`](#library---method-equalsubdictionariesa-b-props)
-- [`getNameDiffs(origName, newName): Record<string, boolean> | null`](#library---method-getnamediffsorigname-newname)
-- [`collectKeysTo(record, keyLikes, splitter = ""): Record<string, true>`](#library---method-collectkeystorecord-keylikes-stringsplitter--)
-- [`lowerCaseStr(str, delimiter = "-"): string`](#library---method-lowercasestrstr-delimiter---)
-- [`camelCaseStr(str, splitter = "-"): string`](#library---method-camelcasestrstr-splitter---)
+- [`getDictionaryDiffs`](#library---method-getdictionarydiffsorig-updated)`(orig, updated): Record<string, any>`
+- [`equalSubDictionaries`](#library---method-equalsubdictionariesa-b-props)`(a, b, ...props): boolean`
+- [`getNameDiffs`](#library---method-getnamediffsorigname-newname)`(origName, newName): Record<string, boolean> | null`
+- [`collectKeysTo`](#library---method-collectkeystorecord-keylikes-stringsplitter--)`(record, keyLikes, splitter = ""): Record<string, true>`
+- [`lowerCaseStr`](#library---method-lowercasestrstr-delimiter---)`(str, delimiter = "-"): string`
+- [`camelCaseStr`](#library---method-camelcasestrstr-splitter---)`(str, splitter = "-"): string`
 
 ---
 
