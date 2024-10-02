@@ -16,10 +16,10 @@ There are 2 kinds of tools available.
 ### [1. TS DECLARATIONS](#1-ts-declarations-doc)
 
 Declarations for common attributes:
-- Tag based (and tagless) SVG and HTML attributes (combined as DOM) in native and camelCase naming.
+- Tag based (and tagless) [attributes](#11-attribute-declarations) for [HTML](#111-html-examples) and [SVG](#112-svg-examples) (combined as [DOM](#113-dom-examples-and-tag-unions)) in native and camelCase naming.
     * The attributes include global listeners and ARIA attributes.
-- The global listeners and ARIA attributes (also in HTML/SVG attributes) in native and camelCase naming.
-- CSS properties as an interface with camelCase keys. For example: `{ "backgroundColor": "#000" }`
+- The [global listeners and ARIA attributes](#12-global-listeners-and-aria-attributes) (also in HTML/SVG attributes) in native and camelCase naming.
+- [CSS properties](#13-css-properties) as an interface with camelCase keys. For example: `{ "backgroundColor": "#000" }`
     * Some properties support `number` or `0` values, eg. `{ width: 50, opacity: .5, inset: 0 }`.
     * All properties have typing suggestions while always allowing any string value.
     * In addition a bunch of value names for some common CSS features, eg. `CSSBorderStyle`.
@@ -28,30 +28,30 @@ Declarations for common attributes:
 
 A couple of (mutable) constants for enforcing the naming:
 - [`domSkipAttributes`](#library---constant-domskipattributes): Always skips these attributes (eg. "innerHTML" and such).
-- `domRenamedAttributes`: To convert from clean camelCase to native attributes.
-- `domListenerProps`: The known listener properties - applied as event listeners.
+- [`domRenamedAttributes`](#library---constant-domrenamedattributes): To convert from clean camelCase to native attributes.
+- [`domListenerProps`](#library---constant-domlistenerprops): The known listener properties - applied as event listeners.
 
 A couple of helper methods for reading and applying the type suggested features into/from DOM:
-- `readDOMString(tag, domProps?, childrenContent?, readFromNode?, skipAttrs?): string`
-- `readDOMProps(node): DOMCleanProps`
-- `cleanDOMProps(uncleanProps, listenerProps?, renamedAttrs?): DOMCleanProps`
-- `equalDOMProps(aDomProps, bDomProps): boolean`
-- `applyDOMProps(element, newProps, oldProps = {}, logWarnings = true, skipAttrs?): DOMDiffProps | null`
+- [`readDOMString(tag, domProps?, childrenContent?, readFromNode?, skipAttrs?): string`](#library---method-readdomstringtag-domprops-childrencontent-readfromnode-skipattrs)
+- [`readDOMProps(node): DOMCleanProps`](#library---method-readdompropsnode)
+- [`cleanDOMProps(uncleanProps, listenerProps?, renamedAttrs?): DOMCleanProps`](#library---method-cleandompropsuncleanprops-listenerprops-renamedattrs)
+- [`equalDOMProps(aDomProps, bDomProps): boolean`](#library---method-equaldompropsadomprops-bdomprops)
+- [`applyDOMProps(element, newProps, oldProps = {}, logWarnings = true, skipAttrs?): DOMDiffProps | null`](#library---method-applydompropselement-newprops-oldprops---logwarnings--true-skipattrs)
 
 Other general DOM helpers:
-- `createDOMElement(tag, checkSVGByParentNode?, namespaceURI?): HTMLElement | SVGElement`
-- `isNodeSVG(node): boolean`
-- `classNames(...namesStrArrOrDictionary)`
-- `cleanNames(...namesStrArrOrDictionary)`
-- `parseDOMStyle(styleString): CSSProperties`
+- [`createDOMElement(tag, checkSVGByParentNode?, namespaceURI?): HTMLElement | SVGElement`](#library---method-createdomelementtag-checksvgbyparentnode-namespaceuri)
+- [`isNodeSVG(node): boolean`](#library---method-isnodesvgnode-node--null--undefined-boolean)
+- [`classNames(...namesStrArrOrDictionary)`](#library---method-classnamesstrlikes)
+- [`cleanNames(...namesStrArrOrDictionary)`](#library---method-cleannamesstrlikes)
+- [`parseDOMStyle(styleString): CSSProperties`](#library---method-parsedomstylestr)
 
 Core methods behind the scenes:
-- `getDictionaryDiffs(orig, updated): Record<string, any>`
-- `equalSubDictionaries(a, b, ...props): boolean`
-- `getNameDiffs(origName, newName): Record<string, boolean> | null`
-- `collectKeysTo(record, keyLikes, splitter = ""): Record<string, true>`
-- `lowerCaseStr(str, delimiter = "-"): string`
-- `camelCaseStr(str, splitter = "-"): string`
+- [`getDictionaryDiffs(orig, updated): Record<string, any>`](#library---method-getdictionarydiffsorig-updated)
+- [`equalSubDictionaries(a, b, ...props): boolean`](#library---method-equalsubdictionariesa-b-props)
+- [`getNameDiffs(origName, newName): Record<string, boolean> | null`](#library---method-getnamediffsorigname-newname)
+- [`collectKeysTo(record, keyLikes, splitter = ""): Record<string, true>`](#library---method-collectkeystorecord-keylikes-stringsplitter--)
+- [`lowerCaseStr(str, delimiter = "-"): string`](#library---method-lowercasestrstr-delimiter---)
+- [`camelCaseStr(str, splitter = "-"): string`](#library---method-camelcasestrstr-splitter---)
 
 ---
 
