@@ -3,7 +3,7 @@
 
 `dom-types` is a light weight library containing typing for HTML & SVG attributes and CSS properties, and a few related JS methods.
 
-The types are provided in native naming as well as camelCase naming, the JS side works for both.
+The types are provided in native as well as camelCase naming, while the JS side works for both.
 
 The npm package can be found with: [dom-types](https://www.npmjs.com/package/dom-types). Contribute in GitHub: [koodikulma-fi/dom-types.git](https://github.com/koodikulma-fi/dom-types.git)
 
@@ -27,7 +27,7 @@ Declarations for common attributes:
 ### [2. JS TOOLS](#2-js-tools-doc)
 
 A couple of (mutable) constants for enforcing the naming:
-- `domSkipAttributes`: Always skips these attributes (eg. "innerHTML" and such).
+- (domSkipAttributes)[#library---constant-domskipattributes]: Always skips these attributes (eg. "innerHTML" and such).
 - `domRenamedAttributes`: To convert from clean camelCase to native attributes.
 - `domListenerProps`: The known listener properties - applied as event listeners.
 
