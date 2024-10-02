@@ -32,7 +32,7 @@ A couple of (mutable) constants for enforcing the naming:
 - [`domListenerProps`](#library---constant-domlistenerprops): The known listener properties - applied as event listeners.
 
 A couple of helper methods for reading and applying the type suggested features into/from DOM:
-- [`readDOMString(tag, domProps?, childrenContent?, readFromNode?, skipAttrs?): string`](#library---method-readdomstringtag-domprops-childrencontent-readfromnode-skipattrs)
+- [`readDOMString`](#library---method-readdomstringtag-domprops-childrencontent-readfromnode-skipattrs)`(tag, domProps?, childrenContent?, readFromNode?, skipAttrs?): string`
 - [`readDOMProps(node): DOMCleanProps`](#library---method-readdompropsnode)
 - [`cleanDOMProps(uncleanProps, listenerProps?, renamedAttrs?): DOMCleanProps`](#library---method-cleandompropsuncleanprops-listenerprops-renamedattrs)
 - [`equalDOMProps(aDomProps, bDomProps): boolean`](#library---method-equaldompropsadomprops-bdomprops)
