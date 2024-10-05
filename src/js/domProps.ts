@@ -292,7 +292,7 @@ export function readDOMString(tag: string, domProps?: DOMCleanProps | null, chil
     if (style) {
         let s = "";
         for (const prop in style)
-            s += prop + ": " + style[prop] + ";";
+            s += (s ? " " : "") + lowerCaseStr(prop) + ": " + style[prop] + ";";
         if (s)
             dom += ' style="' + s + '"';
     }
