@@ -2166,6 +2166,20 @@ declare function applyDOMProps(domElement: HTMLElement | SVGElement | Element | 
  * @param childrenContent String for the children content to insert inside, or `true` to force a separate opening and closing tag in any case.
  * @param readFromNode If provided, then sets the tag (if not given) and extends the domProps by reading from the element. If a node, then just the textContent.
  * @param skipAttrs Which attributes should always be ignored. Defaults to domSkipAttributes constant.
+ *
+ * ```
+ *
+ * // Returns: "<div style='background-color: #fff'><span>some text</span></div>"
+ * readDOMString("div", { style: { backgroundColor: "#fff" }, }, "<span>some text</span>");
+ *
+ * // Returns: "<div></div>", we use `true` as childrenContent to use a closing tag without content.
+ * readDOMString("div", null, true);
+ *
+ * // Returns: "<img src='pics/my_image.jpg' class='image' />"
+ * readDOMString("img", { className: "image", attributes: { src: "pics/my_image.jpg" }});
+ *
+ * ```
+ *
  */
 declare function readDOMString(tag: string, domProps?: DOMCleanProps | null, childrenContent?: string | null | boolean, readFromNode?: Node | null, skipAttrs?: Record<string, any>): string;
 
