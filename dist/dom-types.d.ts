@@ -965,7 +965,7 @@ interface HTMLOtherAttributes_native {
     "start": string | number;
     "step": string | number;
     "summary": string;
-    "target": string;
+    "target": "_blank" | "_self" | "_parent" | "_top" | AnyString;
     "type": string;
     "usemap": string;
     "value": string | number;

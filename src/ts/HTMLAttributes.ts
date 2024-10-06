@@ -280,7 +280,7 @@ interface HTMLOtherAttributes_native {
     "start": string | number;
     "step": string | number;
     "summary": string;
-    "target": string;
+    "target": "_blank" | "_self" | "_parent" | "_top" | AnyString;
     "type": string; // "button" | "checkbox" | "color" | "date" | "datetime-local" | "email" | "file" | "hidden" | "image" | "month" | "number" | "password" | "radio" | "range" | "reset" | "search" | "submit" | "tel" | "text" | "time" | "url" | "week";
     "usemap": string;
     "value": string | number;
