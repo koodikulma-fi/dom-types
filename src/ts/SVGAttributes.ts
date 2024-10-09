@@ -447,7 +447,7 @@ interface SVGOtherAttributes_native {
     "exponent": string | number;
     "fill": CSSColorNames;
     "fill-opacity": string | number;
-    "fill-rule": "nonzero" | "evenodd" | "inherit";
+    "fill-rule": "nonzero" | "evenodd" | "inherit" | AnyString;
     "filter": string;
     "filterRes": string | number;
     "filterUnits": string | number;
