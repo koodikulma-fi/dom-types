@@ -131,13 +131,13 @@ import { HTMLAttributes } from "dom-types/native";
 type MyInput = HTMLAttributes<"input">;
 type MyInputTests = [
     // Correct.
-    MyInput_native["onfocus"],  // ((this: GlobalEventHandlers, ev: FocusEvent) => any) | null | undefined
-    MyInput_native["class"],    // string | undefined
-    MyInput_native["style"],    // string | CSSProperties | undefined
-    MyInput_native["disabled"], // BoolOrStr | undefined  =  "true" | "false" | boolean | string & {} | undefined
-    MyInput_native["virtualkeyboardpolicy"], // AnyString | "auto" | "manual" | undefined
+    MyInput["onfocus"],  // ((this: GlobalEventHandlers, ev: FocusEvent) => any) | null | undefined
+    MyInput["class"],    // string | undefined
+    MyInput["style"],    // string | CSSProperties | undefined
+    MyInput["disabled"], // BoolOrStr | undefined  =  "true" | "false" | boolean | string & {} | undefined
+    MyInput["virtualkeyboardpolicy"], // AnyString | "auto" | "manual" | undefined
     // Failures.
-    MyInput_native["className"], // string | undefined
+    MyInput["className"], // string | undefined
 ];
 
 ```
@@ -184,7 +184,7 @@ type MyCircleTests_native = [
 ```typescript
 
 // Imports.
-import { DOMAttributes } from "dom-types/camelCase";
+import { DOMAttributes, SVGAttributes } from "dom-types/camelCase";
 
 // DOMAttributes.
 type MySVGPathOrSVG = DOMAttributes<"path" | "svg">;    // Same as `SVGAttributes<"path" | "svg">`
@@ -268,8 +268,8 @@ type MyTests = [
 
 ```typescript
 
-// Imports.
-import { CSSProperties } from "dom-types"; // Same under /core, /native and /camelCase.
+// Imports - same for "dom-types/core", "/native" and "/camelCase".
+import { CSSProperties, CSSColorNamesAll, CSSBorderStyle } from "dom-types";
 
 // All properties have some suggestions.
 const myStyles: CSSProperties = {
@@ -305,7 +305,6 @@ const myStyles: CSSProperties = {
 // There are more helper types for specific values.
 const myColor: CSSColorNamesAll = "Black"; // All (133) color names in PascalCase.
 const myBorderStyle: CSSBorderStyle = "double";
-
 
 ```
 
@@ -420,7 +419,7 @@ readDOMString("img", { className: "image", attributes: { src: "pics/my_image.jpg
 ```typescript
 
 // Imports.
-import { DOMCleanProps } from "dom-types";
+import { readDOMProps } from "dom-types";
 
 // Create an element and set it up.
 const input = document.createElement("input");
@@ -615,7 +614,7 @@ isNodeSVG(a_html);  // false
 
 // - Imports - //
 
-import { classNames, validNames, ValidateNames } from "dom-types";
+import { classNames, ValidateNames } from "dom-types";
 
 
 // - Basic usage - //
@@ -680,7 +679,7 @@ validNames("a", "a b", false, ["a", "FAIL"], ["b a", ""], undefined, {"a": true,
 
 // - Imports - //
 
-import { cleanNames, validNames, ValidateNames } from "dom-types";
+import { cleanNames, ValidateNames } from "dom-types";
 
 
 // - Basic JS usage - //
@@ -788,13 +787,13 @@ el.style["font-size"]       // "12px"
 import { getDictionaryDiffs } from "dom-types";
 
 // Returns: { a: true, c: undefined }
-const myDiffs = getDictionaryDiffs({ a: true, b: "test", c: 0 }, { a: false, b: "test" });
+const myDiffs1 = getDictionaryDiffs({ a: true, b: "test", c: 0 }, { a: false, b: "test" });
 
 // Returns: null.
-const myDiffs = getDictionaryDiffs({ a: true }, { a: true });
+const myDiffs2 = getDictionaryDiffs({ a: true }, { a: true });
 
 // Note that for the purposes of getDictionaryDiffs, `undefined` is the same as not found.
-const myDiffs = getDictionaryDiffs({ a: undefined }, {}); // Returns null.
+const myDiffs3 = getDictionaryDiffs({ a: undefined }, {}); // Returns null.
 
 ```
 
@@ -811,7 +810,7 @@ import { equalSubDictionaries } from "dom-types";
 interface MyObj {
     set1?: { test: boolean; deep: Record<string, any>; };
     set2?: { test: boolean; deep: Record<string, any>; };
-    other?: { more: boolean; }
+    other?: { more?: boolean; }
     another?: Record<string, any>;
 }
 // Prepare two somewhat similar objects.
@@ -822,7 +821,7 @@ const a: MyObj = {
 };
 const b: MyObj = {
     set1: { test: true, deep: { state: true } },
-    set2: { test: true, deep: a.set2.deep },
+    set2: { test: true, deep: a.set2!.deep },
     other: { more: true },
     another: {}
 };
@@ -874,15 +873,22 @@ import { collectKeysTo } from "dom-types";
 // Prepare a collection.
 const collection: Record<string, true> = {};
 
-// Use it with a string splitter for " ".
-// .. Adds to collection: { a: true, b: true, c: true, d: true, e: true }
-collectKeysTo(collection, "a b", ["b c"], { "c d": true, e: true, f: false}, " ");
+// Let's use it with a string splitter for " ".
+const splitter = " ";
+collectKeysTo(collection, "a b", splitter);     // Adds { a: true, b: true }
+collectKeysTo(collection, ["b c"], splitter);   // Adds { c: true }
+collectKeysTo(collection, {                     // Adds { d: true, e: true }
+    "c d": true,
+    e: true,
+    f: false
+}, splitter);
 // .. Testing empty. Won't add anything - regardless of what the keySplitter is.
-collectKeysTo(collection, "", [""], { "": true });
+collectKeysTo(collection, "");
+collectKeysTo(collection, [""], " ");
+collectKeysTo(collection, {"": true}, "");
 
 // Test the claims.
-collection // { a: true, b: true, c: true, d: true, e: true }
-
+collection;  // { a: true, b: true, c: true, d: true, e: true }
 
 ```
 

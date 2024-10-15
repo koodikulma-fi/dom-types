@@ -330,12 +330,22 @@ export function getNameDiffs(origName?: string, newName?: string, splitter: stri
  * // Prepare a collection.
  * const collection: Record<string, true> = {};
  * 
- * // Use it with a string splitter for " ".
- * // .. Adds to collection: { a: true, b: true, c: true, d: true, e: true }
- * collectKeysTo(collection, "a b", ["b c"], { "c d": true, e: true, f: false}, " ");
+ * // Let's use it with a string splitter for " ".
+ * const splitter = " ";
+ * collectKeysTo(collection, "a b", splitter);     // Adds { a: true, b: true }
+ * collectKeysTo(collection, ["b c"], splitter);   // Adds { c: true }
+ * collectKeysTo(collection, {                     // Adds { d: true, e: true }
+ *      "c d": true,
+ *      e: true,
+ *      f: false
+ * }, splitter);
+ * // .. Testing empty. Won't add anything - regardless of what the keySplitter is.
+ * collectKeysTo(collection, "");
+ * collectKeysTo(collection, [""], " ");
+ * collectKeysTo(collection, {"": true}, "");
  * 
- * // .. Testing empty. Won't add anything - regardless of what the stringSplitter is.
- * collectKeysTo(collection, "", [""], { "": true });
+ * // Test the claims.
+ * collection;  // { a: true, b: true, c: true, d: true, e: true }
  * 
  * ```
  */
