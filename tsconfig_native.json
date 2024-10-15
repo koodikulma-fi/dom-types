@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "es2017",
+    "esModuleInterop": false,
+    "module": "es6",
+    "outDir": "./dist/native",
+    "moduleResolution": "node",
+    "noEmitOnError": true,
+    "declaration": true,
+    "declarationDir": "./dist/native/dts",
+    "strictNullChecks": true
+  },
+  "include": ["src/ts/index_native.ts"],
+  "exclude": ["node_modules"]
+}

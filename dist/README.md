@@ -17,12 +17,14 @@ There are 2 kinds of tools available.
 
 Declarations for common attributes:
 - Tag based (and tagless) [attributes](#11-attribute-declarations) for [HTML](#111-html-examples) and [SVG](#112-svg-examples) (combined as [DOM](#113-dom-examples-and-tag-unions)) in native and camelCase naming.
-    * The attributes include global listeners and ARIA attributes.
+    * The attributes include global listeners and ARIA attributes (which are also exported separately).
 - The [global listeners and ARIA attributes](#12-global-listeners-and-aria-attributes) (also in HTML/SVG attributes) in native and camelCase naming.
 - [CSS properties](#13-css-properties) as an interface with camelCase keys. For example: `{ "backgroundColor": "#000" }`
     * Some properties support `number` or `0` values, eg. `{ width: 50, opacity: .5, inset: 0 }`.
     * All properties have typing suggestions while always allowing any string value.
     * In addition a bunch of value names for some common CSS features, eg. `CSSBorderStyle`.
+- All attribute related types (except CSSProperties) are available in two spellings: native and camelCase.
+    * To choose the spelling use sub module "/native" or "/camelCase" in the import: eg. `import { HTMLAttributes } from "dom-types/camelCase";`
 
 ### [2. JS TOOLS](#2-js-tools-doc)
 
@@ -64,20 +66,26 @@ Core methods behind the scenes:
 - There are 3 similar collections: HTML, SVG and DOM (combining HTML & SVG).
 - The collections follow similar typing and naming to each other. For example:
     * `HTMLAttributes<Tag extends string, Fallback = HTMLAttributesAny>`: Only HTML attributes.
-    * `SVGAttributes<Tag extends string, Fallback = HTMLAttributesAny>`: Only SVG attributes.
-    * `DOMAttributes<Tag extends string, Fallback = HTMLAttributesAny>`: Combines HTML & SVG.
+    * `SVGAttributes<Tag extends string, Fallback = SVGAttributesAny>`: Only SVG attributes.
+    * `DOMAttributes<Tag extends string, Fallback = DOMAttributesAny>`: Combines HTML & SVG.
 - The available forms are the following, shown with DOM prefix here:
     * `DOMAttributes<Tag extends string, Fallback = DOMAttributesAny>`: Tag based attributes.
     * `DOMAttributesAny`: All possible attributes for any tag. As it's DOM, includes HTML and SVG.
     * `DOMAttributesBy: Record<Tag, DOMAttributes<Tag>>`: Tag based attributes as a dictionary.
-- In addition, the same ones are available in native case using `_native` suffix. For example:
-    * `HTMLAttributes_native<Tag, Fallback = HTMLAttributesAny>`: HTML tag based in native case.
-    * `DOMAttributesAny_native`: All possible attributes (for any tag) in native case.
-    * `SVGAttributesBy_native: Record<Tag, SVGAttributes<Tag>>`: SVG dictionary in native case.
+- All attributes are available in two alternative spellings: in native and camelCase case.
+    * Specify which you want to use by referring to the sub module under "dom-types" upon importing.
+        - For example, `import { HTMLAttributes } from "dom-types/native"`, or `from "dom-types/camelCase"`.
+    * The default main module has both available but with `_native` and `_camelCase` suffix.
+        - For example, `import { HTMLAttributes_native, SVGAttributes_camelCase } from "dom-types"`.
+    * The sub modules "core", "native" and "camelCase" only refer to typing - they have no JS side.
+    * Conversely, the "js" sub module only has typing for the JS methods and the JS side (for "import" and "require").
 
 #### 1.1.1. HTML examples
 
 ```typescript
+
+// Imports - using camelCase.
+import { HTMLAttributes, HTMLAttributesBy, HTMLAttributesAny } from "dom-types/camelCase";
 
 // HTMLAttributes for "div" in camelCase.
 type MyDiv = HTMLAttributes<"div">;
@@ -111,9 +119,17 @@ type MyInputTests = [
     MyInput["virtualKeyboardPolicy"], // AnyString | "auto" | "manual" | undefined
 ];
 
+```
+
+
+```typescript
+
+// Imports - using native.
+import { HTMLAttributes } from "dom-types/native";
+
 // HTMLAttributes for "input" in native case.
-type MyInput_native = HTMLAttributes_native<"input">;
-type MyInputTests_native = [
+type MyInput = HTMLAttributes<"input">;
+type MyInputTests = [
     // Correct.
     MyInput_native["onfocus"],  // ((this: GlobalEventHandlers, ev: FocusEvent) => any) | null | undefined
     MyInput_native["class"],    // string | undefined
@@ -130,8 +146,11 @@ type MyInputTests_native = [
 
 ```typescript
 
+// Imports.
+import { SVGAttributes_camelCase, SVGAttributesBy_native } from "dom-types";
+
 // SVGAttributes for "circle" in camelCase.
-type MyCircle = SVGAttributes<"circle">;
+type MyCircle = SVGAttributes_camelCase<"circle">;
 type MyCircleTests = [
     // Correct.
     MyCircle["onFocus"],    // ((this: GlobalEventHandlers, ev: FocusEvent) => any) | null | undefined
@@ -163,6 +182,9 @@ type MyCircleTests_native = [
     * For example: `DOMAttributes<"div" | "svg">` results in `HTMLAttributesAny & SVGAttributesAny`.
 
 ```typescript
+
+// Imports.
+import { DOMAttributes } from "dom-types/camelCase";
 
 // DOMAttributes.
 type MySVGPathOrSVG = DOMAttributes<"path" | "svg">;    // Same as `SVGAttributes<"path" | "svg">`
@@ -206,20 +228,26 @@ type MyTests = [
 
 ```typescript
 
+// Imports.
+import {
+    GlobalListeners_camelCase, ARIAAttributes_camelCase,
+    GlobalListeners_native, ARIAAttributes_native
+} from "dom-types";
+
 // Just showcasing.
 type MyTests = [
     // Correctly found.
-    GlobalListeners["onClick"],
+    GlobalListeners_camelCase["onClick"],
     GlobalListeners_native["onclick"],
-    ARIAAttributes["ariaAtomic"],
-    ARIAAttributes["ariaValueMin"],
+    ARIAAttributes_camelCase["ariaAtomic"],
+    ARIAAttributes_camelCase["ariaValueMin"],
     ARIAAttributes_native["aria-atomic"],
     ARIAAttributes_native["aria-valuemin"],
     // Failures - mismatching cases.
-    GlobalListeners["onclick"],
+    GlobalListeners_camelCase["onclick"],
     GlobalListeners_native["onClick"],
-    ARIAAttributes["aria-atomic"],
-    ARIAAttributes["aria-valuemin"],
+    ARIAAttributes_camelCase["aria-atomic"],
+    ARIAAttributes_camelCase["aria-valuemin"],
     ARIAAttributes_native["ariaAtomic"],
     ARIAAttributes_native["ariaValueMin"],
 ];
@@ -239,6 +267,9 @@ type MyTests = [
         * Basically, all properties that could take number with a unit support 0, eg. `{ margin: "5px" }`.
 
 ```typescript
+
+// Imports.
+import { CSSProperties } from "dom-types"; // Same under /core, /native and /camelCase.
 
 // All properties have some suggestions.
 const myStyles: CSSProperties = {
@@ -368,6 +399,9 @@ const domListenerAttributes = {
 
 ```typescript
 
+// Imports.
+import { readDOMString } from "dom-types";
+
 // Returns: "<div style='background-color: #fff'><span>some text</span></div>"
 readDOMString("div", { style: { backgroundColor: "#fff" }, }, "<span>some text</span>");
 
@@ -384,6 +418,9 @@ readDOMString("img", { className: "image", attributes: { src: "pics/my_image.jpg
 - The methods reads the `DOMCleanProps` type information from the given node.
 
 ```typescript
+
+// Imports.
+import { DOMCleanProps } from "dom-types";
 
 // Create an element and set it up.
 const input = document.createElement("input");
@@ -407,7 +444,8 @@ readDOMProps(input);
 
 ```typescript
 
-// - Do some test - //
+// Imports.
+import { cleanDOMProps } from "dom-types";
 
 // Returns: { className: "test me" }
 cleanDOMProps({ class: "test", className: "me" });
@@ -431,6 +469,9 @@ cleanDOMProps({ unknownThing: 5 });
 - The method is useful to determine whether needs to apply anything to the DOM or not.
 
 ```typescript
+
+// Imports.
+import { equalDOMProps } from "dom-types";
 
 // True like tests.
 equalDOMProps({ className: undefined }, {}); // true
@@ -463,6 +504,9 @@ equalDOMProps(
 - Returns info for changes (`DOMDiffProps`), or `null` if didn't apply any.
 
 ```typescript
+
+// Imports.
+import { applyDOMProps, cleanDOMProps, createDOMElement } from "dom-types";
 
 // Create an element and apply props.
 const el = createDOMElement("div");
@@ -502,6 +546,9 @@ applyDOMProps(el, {...props3}, props3);
 
 ```typescript
 
+// Imports.
+import { createDOMElement } from "dom-types";
+
 // By default all are HTML, except "svg" tag.
 const div = createDOMElement("div");        // HTMLDivElement
 const input = createDOMElement("input");    // HTMLInputElement
@@ -538,6 +585,9 @@ group.appendChild(a_svg);
 
 ```typescript
 
+// Imports.
+import { createDOMElement, isNodeSVG } from "dom-types";
+
 // Create some elements.
 const div = createDOMElement("div");
 const svg = createDOMElement("svg");
@@ -562,6 +612,11 @@ isNodeSVG(a_html);  // false
 - Note. For optimal nested processing (eg. in a component structure), it's recommended to use `classNames` on the extending layers and `cleanNames` only at the last step.
 
 ```typescript
+
+// - Imports - //
+
+import { classNames, validNames, ValidateNames } from "dom-types";
+
 
 // - Basic usage - //
 
@@ -622,6 +677,11 @@ validNames("a", "a b", false, ["a", "FAIL"], ["b a", ""], undefined, {"a": true,
 - Typically used right before applying to DOM (to keep DOM clean).
 
 ```typescript
+
+// - Imports - //
+
+import { cleanNames, validNames, ValidateNames } from "dom-types";
+
 
 // - Basic JS usage - //
 
@@ -686,6 +746,9 @@ validNames("a", "a b", false, ["a", "FAIL"], ["b a", ""], undefined, {"a": true,
 
 ```typescript
 
+// Imports.
+import { parseDOMStyle } from "dom-types";
+
 // Returns: { borderColor: "#ccc", width: "50px" }
 parseDOMStyle("border-color: #ccc; width: 50px");
 
@@ -721,6 +784,9 @@ el.style["font-size"]       // "12px"
 
 ```typescript
 
+// Imports.
+import { getDictionaryDiffs } from "dom-types";
+
 // Returns: { a: true, c: undefined }
 const myDiffs = getDictionaryDiffs({ a: true, b: "test", c: 0 }, { a: false, b: "test" });
 
@@ -737,6 +803,9 @@ const myDiffs = getDictionaryDiffs({ a: undefined }, {}); // Returns null.
 - In case one has an empty dictionary and the other nothing (or false-like), then regards them as equal.
 
 ```typescript
+
+// Imports.
+import { equalSubDictionaries } from "dom-types";
 
 // Prepare type.
 interface MyObj {
@@ -776,6 +845,9 @@ equalSubDictionaries(a, b, "set1", "set2"); // false, because "set1" returns fal
 
 ```typescript
 
+// Imports.
+import { getNameDiffs } from "dom-types";
+
 // Common usage with " " as splitter.
 getNameDiffs("", "a")           // { a: true }
 getNameDiffs("a", "")           // { a: false }
@@ -795,6 +867,9 @@ getNameDiffs("a", "b c", "");       // { a: false, "b c": true }
 - This is the core method for the `cleanNames` method.
 
 ```typescript
+
+// Imports.
+import { collectKeysTo } from "dom-types";
 
 // Prepare a collection.
 const collection: Record<string, true> = {};
@@ -817,6 +892,9 @@ collection // { a: true, b: true, c: true, d: true, e: true }
 
 ```typescript
 
+// Imports.
+import { lowerCaseStr } from "dom-types";
+
 // Simple tests.
 lowerCaseStr("myLife");     // "my-life"
 lowerCaseStr("MyLife");     // "-my-life"
@@ -831,6 +909,9 @@ lowerCaseStr("TEST", "");   // "test"
 - This method is useful with the native Element's `dataset` feature.
 
 ```typescript
+
+// Imports.
+import { camelCaseStr } from "dom-types";
 
 // Simple tests.
 camelCaseStr("my-life");        // "myLife"

@@ -1,5 +1,5 @@
 
 // - Export all - //
 
-export * from "./ts/index.js";
+// Only method and their declarations.
 export * from "./js/index.js";

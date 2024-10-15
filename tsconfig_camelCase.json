@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "es2017",
+    "esModuleInterop": false,
+    "module": "es6",
+    "outDir": "./dist/camelCase",
+    "moduleResolution": "node",
+    "noEmitOnError": true,
+    "declaration": true,
+    "declarationDir": "./dist/camelCase/dts",
+    "strictNullChecks": true
+  },
+  "include": ["src/ts/index_camelCase.ts"],
+  "exclude": ["node_modules"]
+}

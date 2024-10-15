@@ -1,6 +1,6 @@
 {
     "name": "dom-types",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "description": "Typing helpers for DOM attributes (HTML, SVG, CSS).",
     "keywords": [
       "DomTypes",
@@ -28,9 +28,23 @@
     "exports": {
       ".": {
         "import": "./dom-types.module.js",
-        "require": "./dom-types.js"
+        "require": "./dom-types.js",
+        "types": "./dom-types.d.ts"
       },
-      "./package.json": "./package.json"
+      "./package.json": "./package.json",
+      "./js": {
+        "import": "./dom-types.module.js",
+        "require": "./dom-types.js",
+        "types": "./js.d.ts"
+      },
+      "./core": {
+        "types": "./core.d.ts"
+      },
+      "./native": {
+        "types": "./native.d.ts"
+      },
+      "./camelCase": {
+        "types": "./camelCase.d.ts"
+      }
     }
 }
-  

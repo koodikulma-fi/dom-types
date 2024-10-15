@@ -1,6 +1,6 @@
 {
   "name": "dom-types",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Typing helpers for DOM attributes (HTML, SVG, CSS).",
   "keywords": [
     "DomTypes",
@@ -28,9 +28,24 @@
   "exports": {
     ".": {
       "import": "./dist/dom-types.module.js",
-      "require": "./dist/dom-types.js"
+      "require": "./dist/dom-types.js",
+      "types": "./dist/dom-types.d.ts"
     },
-    "./package.json": "./package.json"
+    "./package.json": "./dist/package.json",
+    "./js": {
+      "import": "./dist/dom-types.module.js",
+      "require": "./dist/dom-types.js",
+      "types": "./dist/js.d.ts"
+    },
+    "./core": {
+      "types": "./dist/core.d.ts"
+    },
+    "./native": {
+      "types": "./dist/native.d.ts"
+    },
+    "./camelCase": {
+      "types": "./dist/camelCase.d.ts"
+    }
   },
   "files": [
     "dist",
@@ -38,10 +53,15 @@
   ],
   "scripts": {
     "tsc": "tsc -p tsconfig.json",
-    "build": "tsc && rollup -c rollup.config.js"
+    "tsc_core": "tsc -p tsconfig_core.json",
+    "tsc_native": "tsc -p tsconfig_native.json",
+    "tsc_camelCase": "tsc -p tsconfig_camelCase.json",
+    "rollup": "rollup -c rollup.config.js",
+    "build": "tsc && npm run tsc_core && npm run tsc_native && npm run tsc_camelCase && rollup -c rollup.config.js"
   },
   "devDependencies": {
     "rollup": "^2.77.2",
+    "rollup-plugin-copy": "^3.5.0",
     "rollup-plugin-delete": "^2.0.0",
     "rollup-plugin-dts": "^4.2.2",
     "rollup-plugin-terser": "^7.0.2",

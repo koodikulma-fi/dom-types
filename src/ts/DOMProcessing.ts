@@ -2,10 +2,9 @@
 // - Imports - //
 
 // Local.
-import { AnyString } from "./common";
+import { AnyString } from "./helpers";
+import { GlobalEventHandler } from "./core/commonDOM";
 import { CSSProperties } from "./CSSProperties";
-import { GlobalEventHandler } from "./GlobalListeners";
-import { DOMAttributesAny } from "./DOMAttributes";
 
 
 // - DOM processing props - //
@@ -32,8 +31,8 @@ export interface DOMCleanProps {
     className?: string;
     /** Data to be set with `element.dataset[prop] = value`. For example: `element.dataset.myKey = true` -> `<... data-my-key="true" />` */
     data?: Record<string, any>;
-    /** Each value is in stringified form. None should be undefined, but if is, simply don't apply. */
-    attributes?: Partial<Record<keyof DOMAttributesAny & string, string | undefined>>;
+    /** Each value is in stringified form. None should be undefined, but if is, simply don't apply it (= same as if wasn't there at all). */
+    attributes?: Partial<Record<string, string | undefined>>;
     /** Each value is a callback. None should be undefined, but if is, simply don't apply. */
     listeners?: Partial<Record<keyof GlobalEventHandlersEventMap & string | AnyString, GlobalEventHandler | undefined>>;
 }

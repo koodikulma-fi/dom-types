@@ -1,5 +1,5 @@
 
-// - Common values - //
+// - Common helpers - //
 
 // Used for many attributes.
 export type BoolOrStr = boolean | "true" | "false";
@@ -15,5 +15,3 @@ export type IsReadOnlyKey<T, Key extends keyof T> = (<G>() => G extends Pick<T, 
 // Helpers.
 /** Exclude methods and property functions from an object like. */
 export type GetMethodKeys<T> = {[Key in keyof T]: T[Key] extends Function ? Key : never; }[keyof T];
-/** Each value gets stringified when applied to `element.dataset`, but we can allow inputting numbers and booleans. (Could even allow arrays but perhaps it'd just be misleading.) */
-export interface DataAttributes { [dataKey: `data-${string}`]: string | number | boolean | null | undefined; }
