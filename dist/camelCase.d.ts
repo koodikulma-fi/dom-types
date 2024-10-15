@@ -227,7 +227,7 @@ export interface HTMLGlobalAttributes extends Omit<HTMLGlobalAttributes_core, "a
     writingSuggestions: HTMLGlobalAttributes_core["writingsuggestions"];
 }
 /** All attributes that are specific to tags in camelCase - excluding HTMLGlobalAttributes. */
-export interface HTMLCommonAttributes extends Omit<HTMLCommonAttributes_core, "accept-charset" | "autocomplete" | "bgcolor" | "colspan" | "crossorigin" | "datetime" | "dirname" | "enctype" | "enterkeyhint" | "formaction" | "formenctype" | "formmethod" | "formnovalidate" | "formtarget" | "hreflang" | "http-equiv" | "ismap" | "maxlength" | "minlength" | "novalidate" | "playsinline" | "readonly" | "referrerpolicy" | "rowspan" | "srcdoc" | "srclang" | "srcset" | "usemap"> {
+interface HTMLCommonAttributes extends Omit<HTMLCommonAttributes_core, "accept-charset" | "autocomplete" | "bgcolor" | "colspan" | "crossorigin" | "datetime" | "dirname" | "enctype" | "enterkeyhint" | "formaction" | "formenctype" | "formmethod" | "formnovalidate" | "formtarget" | "hreflang" | "http-equiv" | "ismap" | "maxlength" | "minlength" | "novalidate" | "playsinline" | "readonly" | "referrerpolicy" | "rowspan" | "srcdoc" | "srclang" | "srcset" | "usemap"> {
     "acceptCharset": HTMLCommonAttributes_core["accept-charset"];
     "autoComplete": HTMLCommonAttributes_core["autocomplete"];
     "autoPlay": HTMLCommonAttributes_core["autoplay"];

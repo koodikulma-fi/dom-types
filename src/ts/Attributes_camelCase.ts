@@ -282,7 +282,7 @@ export interface HTMLGlobalAttributes extends Omit<HTMLGlobalAttributes_core,
 // - HTML common attributes (tag specific) - //
 
 /** All attributes that are specific to tags in camelCase - excluding HTMLGlobalAttributes. */
-export interface HTMLCommonAttributes extends Omit<HTMLCommonAttributes_core,
+interface HTMLCommonAttributes extends Omit<HTMLCommonAttributes_core,
     | "accept-charset"
     | "autocomplete"
     | "bgcolor"
