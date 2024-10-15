@@ -25,6 +25,7 @@ Declarations for common attributes:
     * In addition a bunch of value names for some common CSS features, eg. `CSSBorderStyle`.
 - All attribute related types (except CSSProperties) are available in two spellings: native and camelCase.
     * To choose the spelling use sub module "/native" or "/camelCase" in the import: eg. `import { HTMLAttributes } from "dom-types/camelCase";`
+    * Typically a rendering engine imports (JS and TS) utilities from "dom-types", while specific end user projects use "/native" or "/camelCase".
 
 ### [2. JS TOOLS](#2-js-tools-doc)
 
