@@ -119,7 +119,7 @@ export interface GlobalListeners extends GlobalEventHandlers {
     onunload: GlobalEventHandler;
 }
 /** HTML element attributes by tag name with native case listener and aria attributes. */
-export type HTMLAttributes<Tag extends string, Fallback = HTMLAttributesAny> = [Tag] extends [HTMLTags] ? Partial<HTMLNativeAttributesBy[Tag] & HTMLGlobalAttributes & GlobalListeners & ARIAAttributes> : Fallback;
+export type HTMLAttributes<Tag extends string, Fallback = HTMLAttributesAny> = [Tag] extends [HTMLTags] ? Partial<HTMLOwnAttributesBy[Tag] & HTMLGlobalAttributes & GlobalListeners & ARIAAttributes> : Fallback;
 /** The all possible attributes that HTML elements can have - in native case. */
 export type HTMLAttributesAny = Partial<HTMLCommonAttributes_core & HTMLGlobalAttributes & GlobalListeners & ARIAAttributes>;
 /** Dictionary of HTML attributes by tag in native case. */
@@ -129,8 +129,8 @@ export type HTMLAttributesBy = {
 /** HTML attributes in native case available on all HTML elements. */
 export interface HTMLGlobalAttributes extends HTMLGlobalAttributes_core {
 }
-/** HTML attributes by tags in native case. */
-interface HTMLNativeAttributesBy {
+/** HTML attributes by tags in native case - without global attributes, listeners nor aria. */
+export interface HTMLOwnAttributesBy {
     a: Pick<HTMLCommonAttributes_core, "download" | "href" | "hreflang" | "media" | "ping" | "referrerpolicy" | "rel" | "shape" | "target">;
     abbr: {};
     acronym: {};
@@ -266,7 +266,7 @@ interface HTMLNativeAttributesBy {
     xmp: {};
 }
 /** SVG element attributes by tag name with lowercase listener and aria attributes. */
-export type SVGAttributes<Tag extends string, Fallback = SVGAttributesAny> = [Tag] extends [SVGTags] ? Partial<SVGNativeAttributesBy[Tag] & SVGGlobalAttributes & GlobalListeners & ARIAAttributes> : Fallback;
+export type SVGAttributes<Tag extends string, Fallback = SVGAttributesAny> = [Tag] extends [SVGTags] ? Partial<SVGOwnAttributesBy[Tag] & SVGGlobalAttributes & GlobalListeners & ARIAAttributes> : Fallback;
 /** The all possible attributes that SVG elements can have - in native case. */
 export type SVGAttributesAny = Partial<SVGCommonAttributes & SVGGlobalAttributes & GlobalListeners & ARIAAttributes>;
 /** Dictionary of SVG attributes by tag in native case. */
@@ -280,10 +280,10 @@ export interface SVGGlobalAttributes extends SVGGlobalAttributes_core {
 export interface SVGPresentationAttributes extends Pick<SVGCommonAttributes_core, "alignment-baseline" | "baseline-shift" | "clip" | "clip-path" | "clip-rule" | "color" | "color-interpolation" | "color-interpolation-filters" | "color-rendering" | "cursor" | "d" | "direction" | "display" | "dominant-baseline" | "fill" | "fill-opacity" | "fill-rule" | "filter" | "flood-color" | "flood-opacity" | "font-family" | "font-size" | "font-size-adjust" | "font-stretch" | "font-style" | "font-variant" | "font-weight" | "glyph-orientation-horizontal" | "glyph-orientation-vertical" | "image-rendering" | "letter-spacing" | "letter-spacing" | "marker-end" | "marker-mid" | "marker-start" | "opacity" | "overflow" | "pointer-events" | "shape-rendering" | "stop-color" | "stop-color" | "stroke" | "stroke-dasharray" | "stroke-dashoffset" | "stroke-linecap" | "stroke-linejoin" | "stroke-miterlimit" | "stroke-opacity" | "stroke-width" | "text-anchor" | "text-decoration" | "text-rendering" | "transform" | "transform-origin" | "unicode-bidi" | "vector-effect" | "visibility" | "word-spacing" | "writing-mode"> {
 }
 /** All attributes that are specific to tags in native case - excluding SVGGlobalAttributes. */
-interface SVGCommonAttributes extends SVGCommonAttributes_core {
+export interface SVGCommonAttributes extends SVGCommonAttributes_core {
 }
-/** SVG attributes by tags in native case. Might allow some more than should. */
-interface SVGNativeAttributesBy {
+/** SVG attributes by tags in native case - without global attributes, listeners nor aria. Might allow some more than should. */
+export interface SVGOwnAttributesBy {
     a: Pick<HTMLAttributes<"a">, "download" | "href" | "hreflang" | "ping" | "referrerpolicy" | "rel" | "target"> & Pick<SVGCommonAttributes, "type" | "xlink:href">;
     animate: SVGAnimationAttributes_core;
     animateMotion: {
@@ -360,4 +360,4 @@ export type DOMAttributesAny = HTMLAttributesAny & SVGAttributesAny;
 /** Dictionary of DOM attributes by tag in native case. */
 export type DOMAttributesBy = {
     [Tag in DOMTags]: DOMAttributes<Tag>;
-};export * from "./core";
+};

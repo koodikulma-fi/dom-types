@@ -1,5 +1,9 @@
 # CHANGES
 
+## v1.1.1
+
+- Exported a few internal types to allow smoother building process in certain cases.
+
 ## v1.1.0
 
 ### Reorganized bundling

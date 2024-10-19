@@ -1,6 +1,6 @@
 {
   "name": "dom-types",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Typing and JavaScript helpers for DOM attributes (HTML, SVG, CSS).",
   "keywords": [
     "DomTypes",

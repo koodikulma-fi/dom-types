@@ -199,7 +199,7 @@ export interface GlobalListeners {
     onWheel: GlobalEventHandlers["onwheel"];
 }
 /** HTML element attributes by tag name with camelCase listener and aria attributes. */
-export type HTMLAttributes<Tag extends string, Fallback = HTMLAttributesAny> = [Tag] extends [HTMLTags] ? Partial<HTMLNativeAttributesBy[Tag] & HTMLGlobalAttributes & GlobalListeners & ARIAAttributes> : Fallback;
+export type HTMLAttributes<Tag extends string, Fallback = HTMLAttributesAny> = [Tag] extends [HTMLTags] ? Partial<HTMLOwnAttributesBy[Tag] & HTMLGlobalAttributes & GlobalListeners & ARIAAttributes> : Fallback;
 /** The all possible attributes that HTML elements can have - in camelCase. */
 export type HTMLAttributesAny = Partial<HTMLCommonAttributes & HTMLGlobalAttributes & GlobalListeners & ARIAAttributes>;
 /** Dictionary of HTML attributes by tag in camelCase. */
@@ -227,7 +227,7 @@ export interface HTMLGlobalAttributes extends Omit<HTMLGlobalAttributes_core, "a
     writingSuggestions: HTMLGlobalAttributes_core["writingsuggestions"];
 }
 /** All attributes that are specific to tags in camelCase - excluding HTMLGlobalAttributes. */
-interface HTMLCommonAttributes extends Omit<HTMLCommonAttributes_core, "accept-charset" | "autocomplete" | "bgcolor" | "colspan" | "crossorigin" | "datetime" | "dirname" | "enctype" | "enterkeyhint" | "formaction" | "formenctype" | "formmethod" | "formnovalidate" | "formtarget" | "hreflang" | "http-equiv" | "ismap" | "maxlength" | "minlength" | "novalidate" | "playsinline" | "readonly" | "referrerpolicy" | "rowspan" | "srcdoc" | "srclang" | "srcset" | "usemap"> {
+export interface HTMLCommonAttributes extends Omit<HTMLCommonAttributes_core, "accept-charset" | "autocomplete" | "bgcolor" | "colspan" | "crossorigin" | "datetime" | "dirname" | "enctype" | "enterkeyhint" | "formaction" | "formenctype" | "formmethod" | "formnovalidate" | "formtarget" | "hreflang" | "http-equiv" | "ismap" | "maxlength" | "minlength" | "novalidate" | "playsinline" | "readonly" | "referrerpolicy" | "rowspan" | "srcdoc" | "srclang" | "srcset" | "usemap"> {
     "acceptCharset": HTMLCommonAttributes_core["accept-charset"];
     "autoComplete": HTMLCommonAttributes_core["autocomplete"];
     "autoPlay": HTMLCommonAttributes_core["autoplay"];
@@ -257,8 +257,8 @@ interface HTMLCommonAttributes extends Omit<HTMLCommonAttributes_core, "accept-c
     "srcSet": HTMLCommonAttributes_core["srcset"];
     "useMap": HTMLCommonAttributes_core["usemap"];
 }
-/** HTML attributes by tags in camelCase. */
-interface HTMLNativeAttributesBy {
+/** HTML attributes by tags in camelCase - without global attributes, listeners nor aria. */
+export interface HTMLOwnAttributesBy {
     a: Pick<HTMLCommonAttributes, "download" | "href" | "hrefLang" | "media" | "ping" | "referrerPolicy" | "rel" | "shape" | "target" | "type">;
     abbr: {};
     acronym: {};
@@ -394,7 +394,7 @@ interface HTMLNativeAttributesBy {
     xmp: {};
 }
 /** SVG element attributes by tag name with camelCase listener and aria attributes. */
-export type SVGAttributes<Tag extends string, Fallback = SVGAttributesAny> = [Tag] extends [SVGTags] ? Partial<SVGNativeAttributesBy[Tag] & SVGGlobalAttributes & GlobalListeners & ARIAAttributes> : Fallback;
+export type SVGAttributes<Tag extends string, Fallback = SVGAttributesAny> = [Tag] extends [SVGTags] ? Partial<SVGOwnAttributesBy[Tag] & SVGGlobalAttributes & GlobalListeners & ARIAAttributes> : Fallback;
 /** The all possible attributes that SVG elements can have - in camelCase. */
 export type SVGAttributesAny = Partial<SVGCommonAttributes & SVGGlobalAttributes & GlobalListeners & ARIAAttributes>;
 /** Dictionary of SVG attributes by tag in camelCase. */
@@ -417,10 +417,10 @@ export interface SVGGlobalAttributes extends Omit<SVGGlobalAttributes_core, "tab
     "xmlnsXlink": string;
 }
 /** All SVG presentation attributes in camelCase. They can also be used as CSS properties. */
-interface SVGPresentationAttributes extends Pick<SVGCommonAttributes, "alignmentBaseline" | "baselineShift" | "clip" | "clipPath" | "clipRule" | "color" | "colorInterpolation" | "colorInterpolationFilters" | "colorRendering" | "cursor" | "d" | "direction" | "display" | "dominantBaseline" | "fill" | "fillOpacity" | "fillRule" | "filter" | "floodColor" | "floodOpacity" | "fontFamily" | "fontSize" | "fontSizeAdjust" | "fontStretch" | "fontStyle" | "fontVariant" | "fontWeight" | "glyphOrientationHorizontal" | "glyphOrientationVertical" | "imageRendering" | "letterSpacing" | "letterSpacing" | "markerEnd" | "markerMid" | "markerStart" | "opacity" | "overflow" | "pointerEvents" | "shapeRendering" | "stopColor" | "stopColor" | "stroke" | "strokeDashArray" | "strokeDashOffset" | "strokeLineCap" | "strokeLineJoin" | "strokeMiterLimit" | "strokeOpacity" | "strokeWidth" | "textAnchor" | "textDecoration" | "textRendering" | "transform" | "transformOrigin" | "unicodeBidi" | "vectorEffect" | "visibility" | "wordSpacing" | "writingMode"> {
+export interface SVGPresentationAttributes extends Pick<SVGCommonAttributes, "alignmentBaseline" | "baselineShift" | "clip" | "clipPath" | "clipRule" | "color" | "colorInterpolation" | "colorInterpolationFilters" | "colorRendering" | "cursor" | "d" | "direction" | "display" | "dominantBaseline" | "fill" | "fillOpacity" | "fillRule" | "filter" | "floodColor" | "floodOpacity" | "fontFamily" | "fontSize" | "fontSizeAdjust" | "fontStretch" | "fontStyle" | "fontVariant" | "fontWeight" | "glyphOrientationHorizontal" | "glyphOrientationVertical" | "imageRendering" | "letterSpacing" | "letterSpacing" | "markerEnd" | "markerMid" | "markerStart" | "opacity" | "overflow" | "pointerEvents" | "shapeRendering" | "stopColor" | "stopColor" | "stroke" | "strokeDashArray" | "strokeDashOffset" | "strokeLineCap" | "strokeLineJoin" | "strokeMiterLimit" | "strokeOpacity" | "strokeWidth" | "textAnchor" | "textDecoration" | "textRendering" | "transform" | "transformOrigin" | "unicodeBidi" | "vectorEffect" | "visibility" | "wordSpacing" | "writingMode"> {
 }
 /** All attributes that are specific to tags in camelCase - excluding SVGGlobalAttributes. */
-interface SVGCommonAttributes extends Omit<SVGCommonAttributes_core, "accent-height" | "alignment-baseline" | "allow-reorder" | "arabic-form" | "baseline-shift" | "color-interpolation" | "color-interpolation-filters" | "color-rendering" | "crossorigin" | "dominant-baseline" | "fill-opacity" | "fill-rule" | "flood-color" | "flood-opacity" | "font-family" | "font-size" | "font-size-adjust" | "font-style" | "font-variant" | "font-weight" | "glyph-name" | "glyph-orientation-horizontal" | "glyph-orientation-vertical" | "horiz-adv-x" | "horiz-origin-x" | "horiz-origin-y" | "image-rendering" | "letter-spacing" | "lighting-color" | "marker-end" | "marker-mid" | "marker-start" | "overline-position" | "overline-thickness" | "paint-order" | "pointer-events" | "shape-rendering" | "stop-color" | "stop-opacity" | "stroke-dasharray" | "stroke-dashoffset" | "stroke-linecap" | "stroke-linejoin" | "stroke-miterlimit" | "stroke-opacity" | "stroke-width" | "text-anchor" | "text-decoration" | "text-rendering" | "transform-origin" | "underline-position" | "underline-thickness" | "unicode-bidi" | "unicode-range" | "units-per-em" | "v-alphabetic" | "v-hanging" | "v-ideographic" | "v-mathematical" | "vector-effect" | "vert-adv-y" | "vert-origin-x" | "vert-origin-y" | "word-spacing" | "writing-mode" | "xlink:actuate" | "xlink:arcrole" | "xlink:href" | "xlink:role" | "xlink:show" | "xlink:title" | "xlink:type"> {
+export interface SVGCommonAttributes extends Omit<SVGCommonAttributes_core, "accent-height" | "alignment-baseline" | "allow-reorder" | "arabic-form" | "baseline-shift" | "color-interpolation" | "color-interpolation-filters" | "color-rendering" | "crossorigin" | "dominant-baseline" | "fill-opacity" | "fill-rule" | "flood-color" | "flood-opacity" | "font-family" | "font-size" | "font-size-adjust" | "font-style" | "font-variant" | "font-weight" | "glyph-name" | "glyph-orientation-horizontal" | "glyph-orientation-vertical" | "horiz-adv-x" | "horiz-origin-x" | "horiz-origin-y" | "image-rendering" | "letter-spacing" | "lighting-color" | "marker-end" | "marker-mid" | "marker-start" | "overline-position" | "overline-thickness" | "paint-order" | "pointer-events" | "shape-rendering" | "stop-color" | "stop-opacity" | "stroke-dasharray" | "stroke-dashoffset" | "stroke-linecap" | "stroke-linejoin" | "stroke-miterlimit" | "stroke-opacity" | "stroke-width" | "text-anchor" | "text-decoration" | "text-rendering" | "transform-origin" | "underline-position" | "underline-thickness" | "unicode-bidi" | "unicode-range" | "units-per-em" | "v-alphabetic" | "v-hanging" | "v-ideographic" | "v-mathematical" | "vector-effect" | "vert-adv-y" | "vert-origin-x" | "vert-origin-y" | "word-spacing" | "writing-mode" | "xlink:actuate" | "xlink:arcrole" | "xlink:href" | "xlink:role" | "xlink:show" | "xlink:title" | "xlink:type"> {
     "accentHeight": SVGCommonAttributes_core["accent-height"];
     "alignmentBaseline": SVGCommonAttributes_core["alignment-baseline"];
     "allowReorder": SVGCommonAttributes_core["allow-reorder"];
@@ -498,8 +498,8 @@ interface SVGCommonAttributes extends Omit<SVGCommonAttributes_core, "accent-hei
     "xlinkTitle": SVGCommonAttributes_core["xlink:title"];
     "xlinkType": SVGCommonAttributes_core["xlink:type"];
 }
-/** SVG attributes by tags in camelCase. Might allow some more than should. */
-interface SVGNativeAttributesBy {
+/** SVG attributes by tags in camelCase - without global attributes, listeners nor aria. Might allow some more than should. */
+export interface SVGOwnAttributesBy {
     a: Pick<HTMLAttributes<"a">, "download" | "href" | "hrefLang" | "ping" | "referrerPolicy" | "rel" | "target"> & Pick<SVGCommonAttributes, "type" | "xlinkHref">;
     animate: SVGAnimationAttributes_core;
     animateMotion: {
@@ -574,4 +574,4 @@ export type DOMAttributesAny = HTMLAttributesAny & SVGAttributesAny;
 /** Dictionary of DOM attributes by tag in camelCase. */
 export type DOMAttributesBy = {
     [Tag in DOMTags]: DOMAttributes<Tag>;
-};export * from "./core";
+};

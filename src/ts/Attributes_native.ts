@@ -141,7 +141,7 @@ export interface GlobalListeners extends GlobalEventHandlers {
 
 // Attributes with tag arg.
 /** HTML element attributes by tag name with native case listener and aria attributes. */
-export type HTMLAttributes<Tag extends string, Fallback = HTMLAttributesAny> = [Tag] extends [HTMLTags] ? Partial<HTMLNativeAttributesBy[Tag] & HTMLGlobalAttributes & GlobalListeners & ARIAAttributes> : Fallback;
+export type HTMLAttributes<Tag extends string, Fallback = HTMLAttributesAny> = [Tag] extends [HTMLTags] ? Partial<HTMLOwnAttributesBy[Tag] & HTMLGlobalAttributes & GlobalListeners & ARIAAttributes> : Fallback;
 
 // Attributes without tag.
 /** The all possible attributes that HTML elements can have - in native case. */
@@ -160,8 +160,8 @@ export interface HTMLGlobalAttributes extends HTMLGlobalAttributes_core {}
 
 // - HTML attributes by tag name - //
 
-/** HTML attributes by tags in native case. */
-interface HTMLNativeAttributesBy {
+/** HTML attributes by tags in native case - without global attributes, listeners nor aria. */
+export interface HTMLOwnAttributesBy {
     a: Pick<HTMLCommonAttributes_core, "download" | "href" | "hreflang" | "media" | "ping" | "referrerpolicy" | "rel" | "shape" | "target">;
     abbr: {};
     acronym: {};
@@ -345,14 +345,14 @@ interface HTMLNativeAttributesBy {
 };
 
 // Test.
-// type HasAllTags = HTMLNativeAttributesBy extends Record<HTMLTags, Record<string, any>> ? true : false;
+// type HasAllTags = HTMLOwnAttributesBy extends Record<HTMLTags, Record<string, any>> ? true : false;
 
 
 // - SVG related attributes - //
 
 // Attributes with tag arg.
 /** SVG element attributes by tag name with lowercase listener and aria attributes. */
-export type SVGAttributes<Tag extends string, Fallback = SVGAttributesAny> = [Tag] extends [SVGTags] ? Partial<SVGNativeAttributesBy[Tag] & SVGGlobalAttributes & GlobalListeners & ARIAAttributes> : Fallback;
+export type SVGAttributes<Tag extends string, Fallback = SVGAttributesAny> = [Tag] extends [SVGTags] ? Partial<SVGOwnAttributesBy[Tag] & SVGGlobalAttributes & GlobalListeners & ARIAAttributes> : Fallback;
 
 // Attributes without tag.
 /** The all possible attributes that SVG elements can have - in native case. */
@@ -432,13 +432,13 @@ export interface SVGPresentationAttributes extends Pick<SVGCommonAttributes_core
 > {}
 
 /** All attributes that are specific to tags in native case - excluding SVGGlobalAttributes. */
-interface SVGCommonAttributes extends SVGCommonAttributes_core {}
+export interface SVGCommonAttributes extends SVGCommonAttributes_core {}
 
 
 // - SVG attributes by tag name - //
 
-/** SVG attributes by tags in native case. Might allow some more than should. */
-interface SVGNativeAttributesBy {
+/** SVG attributes by tags in native case - without global attributes, listeners nor aria. Might allow some more than should. */
+export interface SVGOwnAttributesBy {
     a: Pick<HTMLAttributes<"a">, "download" | "href" | "hreflang" | "ping" | "referrerpolicy" | "rel" | "target"> & Pick<SVGCommonAttributes, "type" | "xlink:href">;
     animate: SVGAnimationAttributes_core;
     animateMotion: {

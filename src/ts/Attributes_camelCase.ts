@@ -226,7 +226,7 @@ export interface GlobalListeners {
 
 // Attributes with tag arg.
 /** HTML element attributes by tag name with camelCase listener and aria attributes. */
-export type HTMLAttributes<Tag extends string, Fallback = HTMLAttributesAny> = [Tag] extends [HTMLTags] ? Partial<HTMLNativeAttributesBy[Tag] & HTMLGlobalAttributes & GlobalListeners & ARIAAttributes> : Fallback;
+export type HTMLAttributes<Tag extends string, Fallback = HTMLAttributesAny> = [Tag] extends [HTMLTags] ? Partial<HTMLOwnAttributesBy[Tag] & HTMLGlobalAttributes & GlobalListeners & ARIAAttributes> : Fallback;
 
 // Attributes without tag.
 /** The all possible attributes that HTML elements can have - in camelCase. */
@@ -282,7 +282,7 @@ export interface HTMLGlobalAttributes extends Omit<HTMLGlobalAttributes_core,
 // - HTML common attributes (tag specific) - //
 
 /** All attributes that are specific to tags in camelCase - excluding HTMLGlobalAttributes. */
-interface HTMLCommonAttributes extends Omit<HTMLCommonAttributes_core,
+export interface HTMLCommonAttributes extends Omit<HTMLCommonAttributes_core,
     | "accept-charset"
     | "autocomplete"
     | "bgcolor"
@@ -347,8 +347,8 @@ interface HTMLCommonAttributes extends Omit<HTMLCommonAttributes_core,
 
 // - HTML attributes by tag name - //
 
-/** HTML attributes by tags in camelCase. */
-interface HTMLNativeAttributesBy {
+/** HTML attributes by tags in camelCase - without global attributes, listeners nor aria. */
+export interface HTMLOwnAttributesBy {
     a: Pick<HTMLCommonAttributes, "download" | "href" | "hrefLang" | "media" | "ping" | "referrerPolicy" | "rel" | "shape" | "target" | "type">;
     abbr: {};
     acronym: {};
@@ -532,14 +532,14 @@ interface HTMLNativeAttributesBy {
 };
 
 // Test.
-// type HasAllTags = HTMLNativeAttributesBy extends Record<HTMLTags, Record<string, any>> ? true : false;
+// type HasAllTags = HTMLOwnAttributesBy extends Record<HTMLTags, Record<string, any>> ? true : false;
 
 
 // - SVG related attributes - //
 
 // Attributes with tag arg.
 /** SVG element attributes by tag name with camelCase listener and aria attributes. */
-export type SVGAttributes<Tag extends string, Fallback = SVGAttributesAny> = [Tag] extends [SVGTags] ? Partial<SVGNativeAttributesBy[Tag] & SVGGlobalAttributes & GlobalListeners & ARIAAttributes> : Fallback;
+export type SVGAttributes<Tag extends string, Fallback = SVGAttributesAny> = [Tag] extends [SVGTags] ? Partial<SVGOwnAttributesBy[Tag] & SVGGlobalAttributes & GlobalListeners & ARIAAttributes> : Fallback;
 
 // Attributes without tag.
 /** The all possible attributes that SVG elements can have - in camelCase. */
@@ -572,7 +572,7 @@ export interface SVGGlobalAttributes extends Omit<SVGGlobalAttributes_core, "tab
 // - SVG presentation attributes - //
 
 /** All SVG presentation attributes in camelCase. They can also be used as CSS properties. */
-interface SVGPresentationAttributes extends Pick<SVGCommonAttributes, 
+export interface SVGPresentationAttributes extends Pick<SVGCommonAttributes, 
     | "alignmentBaseline"
     | "baselineShift"
     | "clip"
@@ -638,7 +638,7 @@ interface SVGPresentationAttributes extends Pick<SVGCommonAttributes,
 // - SVG common attributes (tag specific) - //
 
 /** All attributes that are specific to tags in camelCase - excluding SVGGlobalAttributes. */
-interface SVGCommonAttributes extends Omit<SVGCommonAttributes_core,
+export interface SVGCommonAttributes extends Omit<SVGCommonAttributes_core,
     | "accent-height"
     | "alignment-baseline"
     | "allow-reorder"
@@ -793,8 +793,8 @@ interface SVGCommonAttributes extends Omit<SVGCommonAttributes_core,
 
 // - SVG attributes by tag name - //
 
-/** SVG attributes by tags in camelCase. Might allow some more than should. */
-interface SVGNativeAttributesBy {
+/** SVG attributes by tags in camelCase - without global attributes, listeners nor aria. Might allow some more than should. */
+export interface SVGOwnAttributesBy {
     a: Pick<HTMLAttributes<"a">, "download" | "href" | "hrefLang" | "ping" | "referrerPolicy" | "rel" | "target"> & Pick<SVGCommonAttributes, "type" | "xlinkHref">;
     animate: SVGAnimationAttributes_core;
     animateMotion: {
