@@ -287,7 +287,7 @@ declare const domSkipAttributes: {
     outerText: boolean;
 };
 /** All the self closing tags. */
-declare const domSelfClosingTags: HTMLTags[];
+declare const domSelfClosingTags: DOMTags[];
 /** Contains all the attributes that cannot be directly translated.
  * - The key is the camelCase name, the value is the native name.
  * - Note that ones not found in here, are directly the same.

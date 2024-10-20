@@ -1,7 +1,7 @@
 
 // - Imports - //
 
-import { GlobalListeners_native, HTMLTags } from "../ts";
+import { GlobalListeners_native, DOMTags } from "../ts";
 
 
 // - DOM related constants (specific to our system here) - //
@@ -15,7 +15,7 @@ export const domSkipAttributes = {
 };
 
 /** All the self closing tags. */
-export const domSelfClosingTags: HTMLTags[] = ["area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "param", "source", "track", "wbr"];
+export const domSelfClosingTags: DOMTags[] = ["area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "param", "source", "track", "wbr"];
 
 /** Contains all the attributes that cannot be directly translated.
  * - The key is the camelCase name, the value is the native name.
