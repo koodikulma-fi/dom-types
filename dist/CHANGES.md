@@ -1,8 +1,9 @@
 # CHANGES
 
-## v1.1.1
+## v1.1.1 (2024-10-20)
 
 - Exported a few internal types to allow smoother building process in certain cases.
+- Added constant `domSelfClosingTags` (for external use).
 
 ---
 

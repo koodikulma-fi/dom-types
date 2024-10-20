@@ -236,6 +236,7 @@ export function applyDOMProps(domElement: HTMLElement | SVGElement | Element | n
  * @param tag The tag of the DOM element. If "", reads it from readFromNode if given, or assumes it's a text node like situation: just output the textContent.
  * @param domProps The cleaned dom props to apply.
  * @param childrenContent String for the children content to insert inside, or `true` to force a separate opening and closing tag in any case.
+ *      - Tip. You can utilize the `domSelfClosingTags` constant to detect against commonly known self closing tags.
  * @param readFromNode If provided, then sets the tag (if not given) and extends the domProps by reading from the element. If a node, then just the textContent.
  * @param skipAttrs Which attributes should always be ignored. Defaults to domSkipAttributes constant.
  * 
