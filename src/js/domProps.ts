@@ -314,14 +314,14 @@ export function readDOMString(tag: string, domProps?: DOMCleanProps | null, chil
     // .. Data.
     if (data) {
         for (const prop in data)
-            dom += ' data-' + lowerCaseStr(prop) + '="' + data[prop].toString() + '"';
+            dom += ' data-' + lowerCaseStr(prop) + '="' + data[prop].toString().replace(/"/g, "&quot").replace(/'/g, "&#39") + '"';
     }
     // .. Other attributes - skipping listeners and special.
     if (attributes) {
         for (let prop in attributes)
             // Just in case, check also domListenerProps here - if was fed externally.
             if (attributes[prop] && !skipAttrs[prop] && !domListenerProps[prop.toLowerCase()])
-                dom += ' ' + prop + '="' + attributes[prop]!.toString() + '"';
+                dom += ' ' + prop + '="' + attributes[prop]!.toString().replace(/"/g, "&quot").replace(/'/g, "&#39") + '"';
     }
 
     // Close the tag.
