@@ -1,7 +1,7 @@
 
 // - Imports - //
 
-import { AnyString, BoolOrStr, ARIARole, GlobalEventHandler, HTMLTags, SVGTags, DOMTags, HTMLCommonAttributes_core, HTMLGlobalAttributes_core, SVGAnimationAttributes_core, SVGCommonAttributes_core, SVGGlobalAttributes_core } from "./index_base";
+import { AnyString, BoolOrStr, ARIARole, GlobalEventHandler, HTMLTags, SVGTags, DOMTags, HTMLCommonAttributes_core, HTMLGlobalAttributes_core, SVGAnimationAttributes_core, SVGCommonAttributes_core, SVGGlobalAttributes_core, GlobalListeners_core } from "./index_base";
 
 
 // - Info sources (at around Q3 2024) - //
@@ -125,100 +125,354 @@ export interface ARIAAttributes { // extends ARIAMixin {}
 
 /** All listener attributes (matching GlobalEventHandlers + couple more) with camelCase keys. Values are event handler types. */
 export interface GlobalListeners {
-    onAbort: GlobalEventHandlers["onabort"];
-    onActivate: GlobalEventHandler;
-    onAnimationCancel: GlobalEventHandlers["onanimationcancel"];
-    onAnimationEnd: GlobalEventHandlers["onanimationend"];
-    onAnimationIteration: GlobalEventHandlers["onanimationiteration"];
-    onAnimationStart: GlobalEventHandlers["onanimationstart"];
-    onAuxClick: GlobalEventHandlers["onauxclick"];
-    onBegin: GlobalEventHandler;
-    onBlur: GlobalEventHandlers["onblur"];
-    // onCancel: Animation["oncancel"];
-    onCanPlay: GlobalEventHandlers["oncanplay"];
-    onCanPlayThrough: GlobalEventHandlers["oncanplaythrough"];
-    onChange: GlobalEventHandlers["onchange"];
-    onClick: GlobalEventHandlers["onclick"];
-    onClose: GlobalEventHandlers["onclose"];
-    onContextMenu: GlobalEventHandlers["oncontextmenu"];
-    onCueChange: GlobalEventHandlers["oncuechange"];
-    onDblClick: GlobalEventHandlers["ondblclick"];
-    onDrag: GlobalEventHandlers["ondrag"];
-    onDragEnd: GlobalEventHandlers["ondragend"];
-    onDragEnter: GlobalEventHandlers["ondragenter"];
-    // onDragExit: GlobalEventHandlers["ondragexit"];
-    onDragLeave: GlobalEventHandlers["ondragleave"];
-    onDragOver: GlobalEventHandlers["ondragover"];
-    onDragStart: GlobalEventHandlers["ondragstart"];
-    onDrop: GlobalEventHandlers["ondrop"];
-    onDurationChange: GlobalEventHandlers["ondurationchange"];
-    onEmptied: GlobalEventHandlers["onemptied"];
-    onEnded: GlobalEventHandlers["onended"];
-    onError: GlobalEventHandlers["onerror"];
-    onFocus: GlobalEventHandlers["onfocus"];
-    onFocusIn: GlobalEventHandler;
-    onFocusOut: GlobalEventHandler;
-    onGotPointerCapture: GlobalEventHandlers["ongotpointercapture"];
-    onInput: GlobalEventHandlers["oninput"];
-    onInvalid: GlobalEventHandlers["oninvalid"];
-    onKeyDown: GlobalEventHandlers["onkeydown"];
-    // Note, onkeypress is deprecated, but we need to support it nevertheless - for some while, at least.
-    // onKeyPress: GlobalEventHandlers["onkeypress"];
-    onKeyPress: ((this: GlobalEventHandlers, ev: KeyboardEvent) => any) | null;
-    onKeyUp: GlobalEventHandlers["onkeyup"];
-    onLoad: GlobalEventHandlers["onload"];
-    onLoadedData: GlobalEventHandlers["onloadeddata"];
-    onLoadedMetaData: GlobalEventHandlers["onloadedmetadata"];
-    // onLoadEnd: GlobalEventHandlers["onloadend"];
-    onLoadStart: GlobalEventHandlers["onloadstart"];
-    onLostPointerCapture: GlobalEventHandlers["onlostpointercapture"];
-    onMouseDown: GlobalEventHandlers["onmousedown"];
-    onMouseEnter: GlobalEventHandlers["onmouseenter"];
-    onMouseLeave: GlobalEventHandlers["onmouseleave"];
-    onMouseMove: GlobalEventHandlers["onmousemove"];
-    onMouseOut: GlobalEventHandlers["onmouseout"];
-    onMouseOver: GlobalEventHandlers["onmouseover"];
-    onMouseUp: GlobalEventHandlers["onmouseup"];
+    /** Fires when the user aborts the download.
+     * @param ev The event.
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLMediaElement/abort_event)
+     */
+    onAbort: GlobalListeners_core["onabort"];
+    /** @deprecated [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/DOMActivate_event) */
+    onActivate: GlobalListeners_core["onactivate"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/animationcancel_event) */
+    onAnimationCancel: GlobalListeners_core["onanimationcancel"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/animationend_event) */
+    onAnimationEnd: GlobalListeners_core["onanimationend"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/animationiteration_event) */
+    onAnimationIteration: GlobalListeners_core["onanimationiteration"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/animationstart_event) */
+    onAnimationStart: GlobalListeners_core["onanimationstart"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/auxclick_event) */
+    onAuxClick: GlobalListeners_core["onauxclick"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/beforeinput_event) */
+    onBeforeInput: GlobalListeners_core["onbeforeinput"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLElement/beforetoggle_event) */
+    onBeforeToggle: GlobalListeners_core["onbeforetoggle"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/SVGAnimationElement/beginEvent_event) */
+    onBegin: GlobalListeners_core["onbegin"];
+    /** Fires when the object loses the input focus.
+     * @param ev The focus event.
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/blur_event)
+     */
+    onBlur: GlobalListeners_core["onblur"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLElement/cancel_event) */
+    onCancel: GlobalListeners_core["oncancel"];
+    /** Occurs when playback is possible, but would require further buffering.
+     * @param ev The event.
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLMediaElement/canplay_event)
+     */
+    onCanPlay: GlobalListeners_core["oncanplay"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLMediaElement/canplaythrough_event) */
+    onCanPlayThrough: GlobalListeners_core["oncanplaythrough"];
+    /** Fires when the contents of the object or selection have changed.
+     * @param ev The event.
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLElement/change_event)
+     */
+    onChange: GlobalListeners_core["onchange"];
+    /** Fires when the user clicks the left mouse button on the object
+     * @param ev The mouse event.
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/click_event)
+     */
+    onClick: GlobalListeners_core["onclick"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLDialogElement/close_event) */
+    onClose: GlobalListeners_core["onclose"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLCanvasElement/webglcontextlost_event) */
+    onContextLost: GlobalListeners_core["oncontextlost"];
+    /** Fires when the user clicks the right mouse button in the client area, opening the context menu.
+     * @param ev The mouse event.
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/contextmenu_event)
+     */
+    onContextMenu: GlobalListeners_core["oncontextmenu"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLCanvasElement/contextrestored_event) */
+    onContextRestored: GlobalListeners_core["oncontextrestored"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/copy_event) */
+    onCopy: GlobalListeners_core["oncopy"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLTrackElement/cuechange_event) */
+    onCueChange: GlobalListeners_core["oncuechange"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/cut_event) */
+    onCut: GlobalListeners_core["oncut"];
+    /** Fires when the user double-clicks the object.
+     * @param ev The mouse event.
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/dblclick_event)
+     */
+    onDblClick: GlobalListeners_core["ondblclick"];
+    /** Fires on the source object continuously during a drag operation.
+     * @param ev The event.
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLElement/drag_event)
+     */
+    onDrag: GlobalListeners_core["ondrag"];
+    /** Fires on the source object when the user releases the mouse at the close of a drag operation.
+     * @param ev The event.
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLElement/dragend_event)
+     */
+    onDragEnd: GlobalListeners_core["ondragend"];
+    /** Fires on the target element when the user drags the object to a valid drop target.
+     * @param ev The drag event.
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLElement/dragenter_event)
+     */
+    onDragEnter: GlobalListeners_core["ondragenter"];
+    /** Fires on the target object when the user moves the mouse out of a valid drop target during a drag operation.
+     * @param ev The drag event.
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLElement/dragleave_event)
+     */
+    onDragLeave: GlobalListeners_core["ondragleave"];
+    /** Fires on the target element continuously while the user drags the object over a valid drop target.
+     * @param ev The event.
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLElement/dragover_event)
+     */
+    onDragOver: GlobalListeners_core["ondragover"];
+    /** Fires on the source object when the user starts to drag a text selection or selected object.
+     * @param ev The event.
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLElement/dragstart_event)
+     */
+    onDragStart: GlobalListeners_core["ondragstart"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLElement/drop_event) */
+    onDrop: GlobalListeners_core["ondrop"];
+    /** Occurs when the duration attribute is updated.
+     * @param ev The event.
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLMediaElement/durationchange_event)
+     */
+    onDurationChange: GlobalListeners_core["ondurationchange"];
+    /** Occurs when the media element is reset to its initial state.
+     * @param ev The event.
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLMediaElement/emptied_event)
+     */
+    onEmptied: GlobalListeners_core["onemptied"];
+    /** Occurs when the end of playback is reached.
+     * @param ev The event
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLMediaElement/ended_event)
+     */
+    onEnded: GlobalListeners_core["onended"];
+    /** Fires when an error occurs during object loading.
+     * @param ev The event.
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLElement/error_event)
+     */
+    onError: GlobalListeners_core["onerror"];
+    /** Fires when the object receives focus.
+     * @param ev The event.
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/focus_event)
+     */
+    onFocus: GlobalListeners_core["onfocus"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/focusin_event) */
+    onFocusIn: GlobalListeners_core["onfocusin"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/focusout_event) */
+    onFocusOut: GlobalListeners_core["onfocusout"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLFormElement/formdata_event) */
+    onFormData: GlobalListeners_core["onformdata"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/gotpointercapture_event) */
+    onGotPointerCapture: GlobalListeners_core["ongotpointercapture"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/input_event) */
+    onInput: GlobalListeners_core["oninput"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLInputElement/invalid_event) */
+    onInvalid: GlobalListeners_core["oninvalid"];
+    /** Fires when the user presses a key.
+     * @param ev The keyboard event
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/keydown_event)
+     */
+    onKeyDown: GlobalListeners_core["onkeydown"];
+    /** Fires when the user presses an alphanumeric key.
+     * @param ev The event.
+     * @deprecated
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/keypress_event)
+     */
+    onKeyPress: GlobalListeners_core["onkeypress"];
+    /** Fires when the user releases a key.
+     * @param ev The keyboard event
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/keyup_event)
+     */
+    onKeyUp: GlobalListeners_core["onkeyup"];
+    /** Fires immediately after the browser loads the object.
+     * @param ev The event.
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/SVGElement/load_event)
+     */
+    onLoad: GlobalListeners_core["onload"];
+    /** Occurs when media data is loaded at the current playback position.
+     * @param ev The event.
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLMediaElement/loadeddata_event)
+     */
+    onLoadedData: GlobalListeners_core["onloadeddata"];
+    /** Occurs when the duration and dimensions of the media have been determined.
+     * @param ev The event.
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLMediaElement/loadedmetadata_event)
+     */
+    onLoadedMetaData: GlobalListeners_core["onloadedmetadata"];
+    /** Occurs when Internet Explorer begins looking for media data.
+     * @param ev The event.
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLMediaElement/loadstart_event)
+     */
+    onLoadStart: GlobalListeners_core["onloadstart"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/lostpointercapture_event) */
+    onLostPointerCapture: GlobalListeners_core["onlostpointercapture"];
+    /** Fires when the user clicks the object with either mouse button.
+     * @param ev The mouse event.
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/mousedown_event)
+     */
+    onMouseDown: GlobalListeners_core["onmousedown"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/mouseenter_event) */
+    onMouseEnter: GlobalListeners_core["onmouseenter"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/mouseleave_event) */
+    onMouseLeave: GlobalListeners_core["onmouseleave"];
+    /** Fires when the user moves the mouse over the object.
+     * @param ev The mouse event.
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/mousemove_event)
+     */
+    onMouseMove: GlobalListeners_core["onmousemove"];
+    /** Fires when the user moves the mouse pointer outside the boundaries of the object.
+     * @param ev The mouse event.
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/mouseout_event)
+     */
+    onMouseOut: GlobalListeners_core["onmouseout"];
+    /** Fires when the user moves the mouse pointer into the object.
+     * @param ev The mouse event.
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/mouseover_event)
+     */
+    onMouseOver: GlobalListeners_core["onmouseover"];
+    /** Fires when the user releases a mouse button while the mouse is over the object.
+     * @param ev The mouse event.
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/mouseup_event)
+     */
+    onMouseUp: GlobalListeners_core["onmouseup"];
+    /** @deprecated [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/mousewheel_event) */
     onMouseWheel: GlobalEventHandler;
-    onPause: GlobalEventHandlers["onpause"];
-    onPlay: GlobalEventHandlers["onplay"];
-    onPlaying: GlobalEventHandlers["onplaying"];
-    onPointerCancel: GlobalEventHandlers["onpointercancel"];
-    onPointerDown: GlobalEventHandlers["onpointerdown"];
-    onPointerEnter: GlobalEventHandlers["onpointerenter"];
-    onPointerLeave: GlobalEventHandlers["onpointerleave"];
-    onPointerMove: GlobalEventHandlers["onpointermove"];
-    onPointerOut: GlobalEventHandlers["onpointerout"];
-    onPointerOver: GlobalEventHandlers["onpointerover"];
-    onPointerUp: GlobalEventHandlers["onpointerup"];
-    onProgress: GlobalEventHandlers["onprogress"];
-    onRateChange: GlobalEventHandlers["onratechange"];
-    onRepeat: GlobalEventHandler;
-    onReset: GlobalEventHandlers["onreset"];
-    onResize: GlobalEventHandlers["onresize"];
-    onScroll: GlobalEventHandlers["onscroll"];
-    onSecurityPolicyViolation: GlobalEventHandlers["onsecuritypolicyviolation"];
-    onSeeked: GlobalEventHandlers["onseeked"];
-    onSeeking: GlobalEventHandlers["onseeking"];
-    onSelect: GlobalEventHandlers["onselect"];
-    onShow: GlobalEventHandler;
-    onStalled: GlobalEventHandlers["onstalled"];
-    onSubmit: GlobalEventHandlers["onsubmit"];
-    onSuspend: GlobalEventHandlers["onsuspend"];
-    onTimeUpdate: GlobalEventHandlers["ontimeupdate"];
-    onToggle: GlobalEventHandlers["ontoggle"];
-    onTouchCancel: GlobalEventHandlers["ontouchcancel"];
-    onTouchEnd: GlobalEventHandlers["ontouchend"];
-    onTouchMove: GlobalEventHandlers["ontouchmove"];
-    onTouchStart: GlobalEventHandlers["ontouchstart"];
-    onTransitionCancel: GlobalEventHandlers["ontransitioncancel"];
-    onTransitionEnd: GlobalEventHandlers["ontransitionend"];
-    onTransitionRun: GlobalEventHandlers["ontransitionrun"];
-    onTransitionStart: GlobalEventHandlers["ontransitionstart"];
-    onUnload: GlobalEventHandler;
-    onVolumeChange: GlobalEventHandlers["onvolumechange"];
-    onWaiting: GlobalEventHandlers["onwaiting"];
-    onWheel: GlobalEventHandlers["onwheel"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/paste_event) */
+    onPaste: GlobalListeners_core["onpaste"];
+    /** Occurs when playback is paused.
+     * @param ev The event.
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLMediaElement/pause_event)
+     */
+    onPause: GlobalListeners_core["onpause"];
+    /** Occurs when the play method is requested.
+     * @param ev The event.
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLMediaElement/play_event)
+     */
+    onPlay: GlobalListeners_core["onplay"];
+    /** Occurs when the audio or video has started playing.
+     * @param ev The event.
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLMediaElement/playing_event)
+     */
+    onPlaying: GlobalListeners_core["onplaying"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointercancel_event) */
+    onPointerCancel: GlobalListeners_core["onpointercancel"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerdown_event) */
+    onPointerDown: GlobalListeners_core["onpointerdown"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerenter_event) */
+    onPointerEnter: GlobalListeners_core["onpointerenter"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerleave_event) */
+    onPointerLeave: GlobalListeners_core["onpointerleave"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointermove_event) */
+    onPointerMove: GlobalListeners_core["onpointermove"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerout_event) */
+    onPointerOut: GlobalListeners_core["onpointerout"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerover_event) */
+    onPointerOver: GlobalListeners_core["onpointerover"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/pointerup_event) */
+    onPointerUp: GlobalListeners_core["onpointerup"];
+    /** Occurs to indicate progress while downloading media data.
+     * @param ev The event.
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLMediaElement/progress_event)
+     */
+    onProgress: GlobalListeners_core["onprogress"];
+    /** Occurs when the playback rate is increased or decreased.
+     * @param ev The event.
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLMediaElement/ratechange_event)
+     */
+    onRateChange: GlobalListeners_core["onratechange"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/SVGAnimationElement/repeatEvent_event) */
+    onRepeat: GlobalListeners_core["onrepeat"];
+    /** Fires when the user resets a form.
+     * @param ev The event.
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLFormElement/reset_event)
+     */
+    onReset: GlobalListeners_core["onreset"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLVideoElement/resize_event) */
+    onResize: GlobalListeners_core["onresize"];
+    /** Fires when the user repositions the scroll box in the scroll bar on the object.
+     * @param ev The event.
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Document/scroll_event)
+     */
+    onScroll: GlobalListeners_core["onscroll"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Document/scrollend_event) */
+    onScrollEnd: GlobalListeners_core["onscrollend"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Document/securitypolicyviolation_event) */
+    onSecurityPolicyViolation: GlobalListeners_core["onsecuritypolicyviolation"];
+    /** Occurs when the seek operation ends.
+     * @param ev The event.
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLMediaElement/seeked_event)
+     */
+    onSeeked: GlobalListeners_core["onseeked"];
+    /** Occurs when the current playback position is moved.
+     * @param ev The event.
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLMediaElement/seeking_event)
+     */
+    onSeeking: GlobalListeners_core["onseeking"];
+    /** Fires when the current selection changes.
+     * @param ev The event.
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLInputElement/select_event)
+     */
+    onSelect: GlobalListeners_core["onselect"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Document/selectionchange_event) */
+    onSelectionChange: GlobalListeners_core["onselectionchange"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Node/selectstart_event) */
+    onSelectStart: GlobalListeners_core["onselectstart"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Notification/show_event) */
+    onShow: GlobalListeners_core["onshow"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLSlotElement/slotchange_event) */
+    onSlotChange: GlobalListeners_core["onslotchange"];
+    /** Occurs when the download has stopped.
+     * @param ev The event.
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLMediaElement/stalled_event)
+     */
+    onStalled: GlobalListeners_core["onstalled"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLFormElement/submit_event) */
+    onSubmit: GlobalListeners_core["onsubmit"];
+    /** Occurs if the load operation has been intentionally halted.
+     * @param ev The event.
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLMediaElement/suspend_event)
+     */
+    onSuspend: GlobalListeners_core["onsuspend"];
+    /** Occurs to indicate the current playback position.
+     * @param ev The event.
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLMediaElement/timeupdate_event)
+     */
+    onTimeUpdate: GlobalListeners_core["ontimeupdate"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLDetailsElement/toggle_event) */
+    onToggle: GlobalListeners_core["ontoggle"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/touchcancel_event) */
+    onTouchCancel: GlobalListeners_core["ontouchcancel"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/touchend_event) */
+    onTouchEnd: GlobalListeners_core["ontouchend"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/touchmove_event) */
+    onTouchMove: GlobalListeners_core["ontouchmove"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/touchstart_event) */
+    onTouchStart: GlobalListeners_core["ontouchstart"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/transitioncancel_event) */
+    onTransitionCancel: GlobalListeners_core["ontransitioncancel"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/transitionend_event) */
+    onTransitionEnd: GlobalListeners_core["ontransitionend"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/transitionrun_event) */
+    onTransitionRun: GlobalListeners_core["ontransitionrun"];
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/transitionstart_event) */
+    onTransitionStart: GlobalListeners_core["ontransitionstart"];
+    /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/API/Window/unload_event) */
+    onUnload: GlobalListeners_core["onunload"];
+    /** Occurs when the volume is changed, or playback is muted or unmuted.
+     * @param ev The event.
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLMediaElement/volumechange_event)
+     */
+    onVolumeChange: GlobalListeners_core["onvolumechange"];
+    /** Occurs when playback stops because the next frame of a video resource is not available.
+     * @param ev The event.
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/HTMLMediaElement/waiting_event)
+     */
+    onWaiting: GlobalListeners_core["onwaiting"];
+    /** @deprecated This is a legacy alias of `onanimationend`. [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/animationend_event)*/
+    onWebkitAnimationEnd: (ev: Event) => void;
+    /** @deprecated This is a legacy alias of `onanimationiteration`. [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/animationiteration_event) */
+    onWebkitAnimationIteration: (ev: Event) => void;
+    /** @deprecated This is a legacy alias of `onanimationstart`. [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/animationstart_event) */
+    onWebkitAnimationStart: (ev: Event) => void;
+    /** @deprecated This is a legacy alias of `ontransitionend`. [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/transitionend_event) */
+    onWebkitTransitionEnd: (ev: Event) => void;
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/wheel_event) */
+    onWheel: GlobalListeners_core["onwheel"];
 }
 
 

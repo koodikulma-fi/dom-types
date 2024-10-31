@@ -2,7 +2,7 @@
 // - Common DOM related helpers - //
 
 /** The common global event handler used in Element.addEventListener/removeEventListener flow. */
-export type GlobalEventHandler = EventListener;
+export type GlobalEventHandler = (event: Event) => void;
 
 /** Each value gets stringified when applied to `element.dataset`, but we can allow inputting numbers and booleans. (Could even allow arrays but perhaps it'd just be misleading.) */
 export interface DataAttributes { [dataKey: `data-${string}`]: string | number | boolean | null | undefined; }

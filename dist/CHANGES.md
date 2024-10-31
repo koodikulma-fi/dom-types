@@ -4,6 +4,7 @@
 
 - Exported a few internal types to allow smoother building process in certain cases.
 - Added constant `domSelfClosingTags` (for external use).
+- Adds a couple more listeners and refines listener typing.
 
 ---
 

@@ -1,7 +1,7 @@
 
 // - Imports - //
 
-import { AnyString, BoolOrStr, ARIARole, GlobalEventHandler, HTMLTags, SVGTags, DOMTags, HTMLCommonAttributes_core, HTMLGlobalAttributes_core, SVGAnimationAttributes_core, SVGCommonAttributes_core, SVGGlobalAttributes_core } from "./index_base";
+import { AnyString, BoolOrStr, ARIARole, GlobalEventHandler, HTMLTags, SVGTags, DOMTags, HTMLCommonAttributes_core, HTMLGlobalAttributes_core, SVGAnimationAttributes_core, SVGCommonAttributes_core, SVGGlobalAttributes_core, GlobalListeners_core } from "./index_base";
 
 
 // - Info sources (at around Q3 2024) - //
@@ -124,17 +124,7 @@ export interface ARIAAttributes {
 // - DOM listeners - //
 
 /** All listener attributes (matching GlobalEventHandlers + couple more) with native keys referring. Values are event handler types. */
-export interface GlobalListeners extends GlobalEventHandlers {
-    onactivate: GlobalEventHandler;
-    onbegin: GlobalEventHandler;
-    onend: GlobalEventHandler;
-    onfocusin: GlobalEventHandler;
-    onfocusout: GlobalEventHandler;
-    onmousewheel: GlobalEventHandler;
-    onrepeat: GlobalEventHandler;
-    onshow: GlobalEventHandler;
-    onunload: GlobalEventHandler;
-}
+export interface GlobalListeners extends GlobalListeners_core {}
 
 
 // - HTML related attributes - //
@@ -145,7 +135,7 @@ export type HTMLAttributes<Tag extends string, Fallback = HTMLAttributesAny> = T
 
 // Attributes without tag.
 /** The all possible attributes that HTML elements can have - in native case. */
-export type HTMLAttributesAny = Partial<HTMLCommonAttributes_core & HTMLGlobalAttributes & GlobalListeners & ARIAAttributes>;
+export type HTMLAttributesAny = Partial<HTMLCommonAttributes & HTMLGlobalAttributes & GlobalListeners & ARIAAttributes>;
 
 // Attributes dictionary.
 /** Dictionary of HTML attributes by tag in native case. */
@@ -158,53 +148,59 @@ export type HTMLAttributesBy = { [Tag in HTMLTags]: HTMLAttributes<Tag>; };
 export interface HTMLGlobalAttributes extends HTMLGlobalAttributes_core {}
 
 
+// - HTML common attributes (tag specific) - //
+
+/** All attributes that are specific to tags in camelCase - excluding HTMLGlobalAttributes. */
+export interface HTMLCommonAttributes extends HTMLCommonAttributes_core {}
+
+
 // - HTML attributes by tag name - //
 
 /** HTML attributes by tags in native case - without global attributes, listeners nor aria. */
 export interface HTMLOwnAttributesBy {
-    a: Pick<HTMLCommonAttributes_core, "download" | "href" | "hreflang" | "media" | "ping" | "referrerpolicy" | "rel" | "shape" | "target">;
+    a: Pick<HTMLCommonAttributes, "download" | "href" | "hreflang" | "media" | "ping" | "referrerpolicy" | "rel" | "shape" | "target">;
     abbr: {};
     acronym: {};
     address: {};
-    area: Pick<HTMLCommonAttributes_core, "alt" | "coords" | "download" | "href" | "media" | "ping" | "referrerpolicy" | "rel" | "shape" | "target">;
+    area: Pick<HTMLCommonAttributes, "alt" | "coords" | "download" | "href" | "media" | "ping" | "referrerpolicy" | "rel" | "shape" | "target">;
     article: {};
     aside: {};
-    audio: Pick<HTMLCommonAttributes_core, "autoplay" | "controls" | "crossorigin" | "loop" | "muted" | "preload" | "src">;
+    audio: Pick<HTMLCommonAttributes, "autoplay" | "controls" | "crossorigin" | "loop" | "muted" | "preload" | "src">;
     b: {};
-    base: Pick<HTMLCommonAttributes_core, "href" | "target">;
+    base: Pick<HTMLCommonAttributes, "href" | "target">;
     bdi: {};
     bdo: {};
     big: {};
-    blockquote: Pick<HTMLCommonAttributes_core, "cite">;
-    body: Pick<HTMLCommonAttributes_core, "background" | "bgcolor">;
+    blockquote: Pick<HTMLCommonAttributes, "cite">;
+    body: Pick<HTMLCommonAttributes, "background" | "bgcolor">;
     br: {};
-    button: Pick<HTMLCommonAttributes_core, "disabled" | "form" | "formaction" | "formenctype" | "formmethod" | "formnovalidate" | "formtarget" | "name" | "type" | "value">;
-    canvas: Pick<HTMLCommonAttributes_core, "height" | "width">;
-    caption: Pick<HTMLCommonAttributes_core, "align">;
+    button: Pick<HTMLCommonAttributes, "disabled" | "form" | "formaction" | "formenctype" | "formmethod" | "formnovalidate" | "formtarget" | "name" | "type" | "value">;
+    canvas: Pick<HTMLCommonAttributes, "height" | "width">;
+    caption: Pick<HTMLCommonAttributes, "align">;
     center: {};
     cite: {};
     code: {};
-    col: Pick<HTMLCommonAttributes_core, "align">;
-    colgroup: Pick<HTMLCommonAttributes_core, "align">;
-    data: Pick<HTMLCommonAttributes_core, "value">;
+    col: Pick<HTMLCommonAttributes, "align">;
+    colgroup: Pick<HTMLCommonAttributes, "align">;
+    data: Pick<HTMLCommonAttributes, "value">;
     datalist: {};
     dd: {};
-    del: Pick<HTMLCommonAttributes_core, "cite" | "datetime">;
-    details: Pick<HTMLCommonAttributes_core, "open">;
+    del: Pick<HTMLCommonAttributes, "cite" | "datetime">;
+    details: Pick<HTMLCommonAttributes, "open">;
     dfn: {};
-    dialog: Pick<HTMLCommonAttributes_core, "open">;
-    div: {}; // Pick<HTMLCommonAttributes_core, "height" | "width">; // Legacy
+    dialog: Pick<HTMLCommonAttributes, "open">;
+    div: {}; // Pick<HTMLCommonAttributes, "height" | "width">; // Legacy
     dl: {};
     dt: {};
     em: {};
-    embed: Pick<HTMLCommonAttributes_core, "height" | "src" | "type" | "width">;
+    embed: Pick<HTMLCommonAttributes, "height" | "src" | "type" | "width">;
     fencedframe: {};
-    fieldset: Pick<HTMLCommonAttributes_core, "disabled" | "form" | "name">;
+    fieldset: Pick<HTMLCommonAttributes, "disabled" | "form" | "name">;
     figcaption: {};
     figure: {};
-    font: Pick<HTMLCommonAttributes_core, "color">;
+    font: Pick<HTMLCommonAttributes, "color">;
     footer: {};
-    form: Pick<HTMLCommonAttributes_core, "accept" | "accept-charset" | "action">;
+    form: Pick<HTMLCommonAttributes, "accept" | "accept-charset" | "action">;
     frame: {};
     frameset: {};
     h1: {};
@@ -216,12 +212,12 @@ export interface HTMLOwnAttributesBy {
     head: {};
     header: {};
     hgroup: {};
-    hr: Pick<HTMLCommonAttributes_core, "color" | "align">;
+    hr: Pick<HTMLCommonAttributes, "color" | "align">;
     html: {};
     i: {};
-    iframe: Pick<HTMLCommonAttributes_core, "align" | "allow" | "csp" | "height" | "loading" | "name" | "referrerpolicy" | "sandbox" | "src" | "srcdoc" | "width">;
-    img: Pick<HTMLCommonAttributes_core, "align" | "alt" | "border" | "crossorigin" | "decoding" | "height" | "ismap" | "loading" | "referrerpolicy" | "sizes" | "src" | "srcset" | "usemap" | "width">; // | "intrinsicsize"
-    input: Pick<HTMLCommonAttributes_core,
+    iframe: Pick<HTMLCommonAttributes, "align" | "allow" | "csp" | "height" | "loading" | "name" | "referrerpolicy" | "sandbox" | "src" | "srcdoc" | "width">;
+    img: Pick<HTMLCommonAttributes, "align" | "alt" | "border" | "crossorigin" | "decoding" | "height" | "ismap" | "loading" | "referrerpolicy" | "sizes" | "src" | "srcset" | "usemap" | "width">; // | "intrinsicsize"
+    input: Pick<HTMLCommonAttributes,
         | "accept"
         | "alt"
         | "capture"
@@ -255,37 +251,37 @@ export interface HTMLOwnAttributesBy {
     > & {
         type: "button" | "checkbox" | "color" | "date" | "datetime-local" | "email" | "file" | "hidden" | "image" | "month" | "number" | "password" | "radio" | "range" | "reset" | "search" | "submit" | "tel" | "text" | "time" | "url" | "week";
     };
-    ins: Pick<HTMLCommonAttributes_core, "cite" | "datetime">;
+    ins: Pick<HTMLCommonAttributes, "cite" | "datetime">;
     kbd: {};
-    label: Pick<HTMLCommonAttributes_core, "for" | "form">;
+    label: Pick<HTMLCommonAttributes, "for" | "form">;
     legend: {};
-    li: Pick<HTMLCommonAttributes_core, "value">;
-    link: Pick<HTMLCommonAttributes_core, "as" | "crossorigin" | "href" | "hreflang" | "integrity" | "media" | "referrerpolicy" | "rel" | "sizes" | "type">;
+    li: Pick<HTMLCommonAttributes, "value">;
+    link: Pick<HTMLCommonAttributes, "as" | "crossorigin" | "href" | "hreflang" | "integrity" | "media" | "referrerpolicy" | "rel" | "sizes" | "type">;
     main: {};
-    map: Pick<HTMLCommonAttributes_core, "name">;
+    map: Pick<HTMLCommonAttributes, "name">;
     mark: {};
-    marquee: Pick<HTMLCommonAttributes_core, "bgcolor" | "loop">;
-    menu: Pick<HTMLCommonAttributes_core, "type">;
-    meta: Pick<HTMLCommonAttributes_core, "charset" | "content" | "http-equiv" | "name">;
-    meter: Pick<HTMLCommonAttributes_core, "form" | "high" | "low" | "max" | "min" | "optimum" | "value">;
+    marquee: Pick<HTMLCommonAttributes, "bgcolor" | "loop">;
+    menu: Pick<HTMLCommonAttributes, "type">;
+    meta: Pick<HTMLCommonAttributes, "charset" | "content" | "http-equiv" | "name">;
+    meter: Pick<HTMLCommonAttributes, "form" | "high" | "low" | "max" | "min" | "optimum" | "value">;
     nav: {};
     nobr: {};
     noembed: {};
     noframes: {};
     noscript: {};
-    object: Pick<HTMLCommonAttributes_core, "border" | "data" | "form" | "height" | "name" | "type" | "usemap" | "width">;
-    ol: Pick<HTMLCommonAttributes_core, "reversed" | "start" | "type">;
-    optgroup: Pick<HTMLCommonAttributes_core, "disabled" | "label">;
-    option: Pick<HTMLCommonAttributes_core, "disabled" | "label" | "selected" | "value">;
-    output: Pick<HTMLCommonAttributes_core, "for" | "form" | "name">;
+    object: Pick<HTMLCommonAttributes, "border" | "data" | "form" | "height" | "name" | "type" | "usemap" | "width">;
+    ol: Pick<HTMLCommonAttributes, "reversed" | "start" | "type">;
+    optgroup: Pick<HTMLCommonAttributes, "disabled" | "label">;
+    option: Pick<HTMLCommonAttributes, "disabled" | "label" | "selected" | "value">;
+    output: Pick<HTMLCommonAttributes, "for" | "form" | "name">;
     p: {};
-    param: Pick<HTMLCommonAttributes_core, "name" | "value">;
+    param: Pick<HTMLCommonAttributes, "name" | "value">;
     picture: {};
     plaintext: {};
     portal: {};
     pre: {};
-    progress: Pick<HTMLCommonAttributes_core, "form" | "max" | "value">;
-    q: Pick<HTMLCommonAttributes_core, "cite">;
+    progress: Pick<HTMLCommonAttributes, "form" | "max" | "value">;
+    q: Pick<HTMLCommonAttributes, "cite">;
     rb: {};
     rp: {};
     rt: {};
@@ -293,25 +289,25 @@ export interface HTMLOwnAttributesBy {
     ruby: {};
     s: {};
     samp: {};
-    script: Pick<HTMLCommonAttributes_core, "async" | "crossorigin" | "defer" | "integrity" | "language" | "referrerpolicy" | "src" | "type">;
+    script: Pick<HTMLCommonAttributes, "async" | "crossorigin" | "defer" | "integrity" | "language" | "referrerpolicy" | "src" | "type">;
     search: {};
     section: {};
-    select: Pick<HTMLCommonAttributes_core, "autocomplete" | "disabled" | "form" | "multiple" | "name" | "required" | "size">;
+    select: Pick<HTMLCommonAttributes, "autocomplete" | "disabled" | "form" | "multiple" | "name" | "required" | "size">;
     slot: {};
     small: {};
-    source: Pick<HTMLCommonAttributes_core, "media" | "sizes" | "src" | "srcset" | "type">;
+    source: Pick<HTMLCommonAttributes, "media" | "sizes" | "src" | "srcset" | "type">;
     span: {};
     strike: {};
     strong: {};
-    style: Pick<HTMLCommonAttributes_core, "media" | "type">; // "scoped"
+    style: Pick<HTMLCommonAttributes, "media" | "type">; // "scoped"
     sub: {};
     summary: {};
     sup: {};
-    table: Pick<HTMLCommonAttributes_core, "align" | "background" | "bgcolor" | "border" | "summary">;
-    tbody: Pick<HTMLCommonAttributes_core, "align" | "bgcolor">;
-    td: Pick<HTMLCommonAttributes_core, "align" | "background" | "bgcolor" | "colspan" | "headers" | "rowspan">;
+    table: Pick<HTMLCommonAttributes, "align" | "background" | "bgcolor" | "border" | "summary">;
+    tbody: Pick<HTMLCommonAttributes, "align" | "bgcolor">;
+    td: Pick<HTMLCommonAttributes, "align" | "background" | "bgcolor" | "colspan" | "headers" | "rowspan">;
     template: {};
-    textarea: Pick<HTMLCommonAttributes_core,
+    textarea: Pick<HTMLCommonAttributes,
         | "autocomplete"
         | "cols"
         | "dirname"
@@ -328,18 +324,18 @@ export interface HTMLOwnAttributesBy {
         | "rows"
         | "wrap"
     >;
-    tfoot: Pick<HTMLCommonAttributes_core, "align" | "bgcolor">;
-    th: Pick<HTMLCommonAttributes_core, "align" | "background" | "bgcolor" | "colspan" | "headers" | "rowspan">; // "scope"
-    thead: Pick<HTMLCommonAttributes_core, "align">;
-    time: Pick<HTMLCommonAttributes_core, "datetime">;
+    tfoot: Pick<HTMLCommonAttributes, "align" | "bgcolor">;
+    th: Pick<HTMLCommonAttributes, "align" | "background" | "bgcolor" | "colspan" | "headers" | "rowspan">; // "scope"
+    thead: Pick<HTMLCommonAttributes, "align">;
+    time: Pick<HTMLCommonAttributes, "datetime">;
     title: {};
-    tr: Pick<HTMLCommonAttributes_core, "align" | "bgcolor">;
-    track: Pick<HTMLCommonAttributes_core, "default" | "kind" | "label" | "src" | "srclang">;
+    tr: Pick<HTMLCommonAttributes, "align" | "bgcolor">;
+    track: Pick<HTMLCommonAttributes, "default" | "kind" | "label" | "src" | "srclang">;
     tt: {};
     u: {};
     ul: {};
     var: {};
-    video: Pick<HTMLCommonAttributes_core, "autoplay" | "controls" | "crossorigin" | "height" | "loop" | "muted" | "playsinline" | "preload" | "src" | "width">;
+    video: Pick<HTMLCommonAttributes, "autoplay" | "controls" | "crossorigin" | "height" | "loop" | "muted" | "playsinline" | "preload" | "src" | "width">;
     wbr: {};
     xmp: {};
 };
