@@ -354,7 +354,7 @@ export interface SVGOwnAttributesBy {
     view: {};
 }
 /** Get DOM attributes by tag in native case. In case fits both (like "a" tag) then gives both. Otherwise either or Fallback if not found (defaults to DOMAttributesAny). */
-export type DOMAttributes<Tag extends string, Fallback = DOMAttributesAny> = [Tag] extends [HTMLTags] ? [Tag] extends [SVGTags] ? SVGAttributes<Tag> & HTMLAttributes<Tag> : HTMLAttributes<Tag> : [Tag] extends [SVGTags] ? SVGAttributes<Tag> : Fallback;
+export type DOMAttributes<Tag extends string, Fallback = DOMAttributesAny> = Tag extends HTMLTags ? Tag extends SVGTags ? SVGAttributes<Tag> & HTMLAttributes<Tag> : HTMLAttributes<Tag> : Tag extends SVGTags ? SVGAttributes<Tag> : Fallback;
 /** All the possible attributes that DOM elements (HTML or SVG) can have - in native case. */
 export type DOMAttributesAny = HTMLAttributesAny & SVGAttributesAny;
 /** Dictionary of DOM attributes by tag in native case. */

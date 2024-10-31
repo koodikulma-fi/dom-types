@@ -1,14 +1,13 @@
 # CHANGES
 
-## v1.1.1 (2024-10-20)
+## v1.1.1 (2024-10-31)
 
 - Exported a few internal types to allow smoother building process in certain cases.
 - Added constant `domSelfClosingTags` (for external use).
-- Refined `readDOMString` to escape `'` and `"` inside attributes.
 
 ---
 
-## v1.1.0
+## v1.1.0 (2024-10-15)
 
 ### Reorganized bundling
 - The library now contains sub modules, that are useful two reasons:

@@ -52,6 +52,16 @@ export function parseDOMStyle(cssText: string, nullIfEmpty: boolean = false): CS
     return nullIfEmpty ? null : style;
 }
 
+// /** Escapes `&`, `<` and `>` characters with `&amp;`, `&lt;` and `&gt;` respectively. Only escapes `&` once. */
+// export function escapeAmpTags(htmlStr: string): string {
+//     return htmlStr.replace(/\&(?!(\w+;))/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+// }
+//
+// /** Escapes `"` and `'` characters with `&quot;` and `&#39;` respectively. Useful for escaping strings inside HTML attributes. */
+// export function escapeQuotes(attrStr: string): string {
+//     return attrStr.replace(/"/g, "&quot").replace(/'/g, "&#39");
+// }
+
 
 // - Class names - //
 
