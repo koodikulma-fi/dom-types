@@ -269,8 +269,8 @@ export declare function equalSubDictionaries<Prop extends string>(a: Partial<Rec
  * - The namespaceURI defaults to: "http://www.w3.org/2000/svg".
  */
 export declare function createDOMElement(tag: "svg", checkSVGByParentNode?: boolean | Node | null | undefined, namespaceURI?: string): SVGSVGElement;
-export declare function createDOMElement<Tag extends string>(tag: Tag, checkSVGByParentNode: true | SVGElement, namespaceURI?: string): Tag extends keyof SVGElementTagNameMap ? SVGElementTagNameMap[Tag] : SVGElement;
-export declare function createDOMElement<Tag extends string>(tag: Tag, checkSVGByParentNode?: false | null | undefined | HTMLElement, namespaceURI?: string): Tag extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[Tag] : HTMLElement;
+export declare function createDOMElement<Tag extends string>(tag: Tag, checkSVGByParentNode: true | SVGElement, namespaceURI?: string): [Tag] extends [keyof SVGElementTagNameMap] ? SVGElementTagNameMap[Tag] : SVGElement;
+export declare function createDOMElement<Tag extends string>(tag: Tag, checkSVGByParentNode?: false | null | undefined | HTMLElement, namespaceURI?: string): [Tag] extends [keyof HTMLElementTagNameMap] ? HTMLElementTagNameMap[Tag] : HTMLElement;
 export declare function createDOMElement(tag: DOMTags | AnyString, checkSVGByParentNode?: boolean | Node | null | undefined, namespaceURI?: string): HTMLElement | SVGElement;
 /** Check if a node is SVG using "ownerSVGElement" property on the SVGElement: if undefined, not an SVG (otherwise null or an element).
  * - For simple known cases, the answer is already known on the TS side, in case the node is HTMLElement or SVGElement.
