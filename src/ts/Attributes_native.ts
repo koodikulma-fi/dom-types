@@ -131,7 +131,7 @@ export interface GlobalListeners extends GlobalListeners_core {}
 
 // Attributes with tag arg.
 /** HTML element attributes by tag name with native case listener and aria attributes. */
-export type HTMLAttributes<Tag extends string, Fallback = HTMLAttributesAny> = Tag extends HTMLTags ? Partial<HTMLOwnAttributesBy[Tag] & HTMLGlobalAttributes & GlobalListeners & ARIAAttributes> : Fallback;
+export type HTMLAttributes<Tag extends string, Fallback = HTMLAttributesAny> = [Tag] extends [HTMLTags] ? Partial<HTMLOwnAttributesBy[Tag] & HTMLGlobalAttributes & GlobalListeners & ARIAAttributes> : Fallback;
 
 // Attributes without tag.
 /** The all possible attributes that HTML elements can have - in native case. */
@@ -348,7 +348,7 @@ export interface HTMLOwnAttributesBy {
 
 // Attributes with tag arg.
 /** SVG element attributes by tag name with lowercase listener and aria attributes. */
-export type SVGAttributes<Tag extends string, Fallback = SVGAttributesAny> = Tag extends SVGTags ? Partial<SVGOwnAttributesBy[Tag] & SVGGlobalAttributes & GlobalListeners & ARIAAttributes> : Fallback;
+export type SVGAttributes<Tag extends string, Fallback = SVGAttributesAny> = [Tag] extends [SVGTags] ? Partial<SVGOwnAttributesBy[Tag] & SVGGlobalAttributes & GlobalListeners & ARIAAttributes> : Fallback;
 
 // Attributes without tag.
 /** The all possible attributes that SVG elements can have - in native case. */
@@ -508,7 +508,7 @@ export interface SVGOwnAttributesBy {
 
 // Attributes with tag arg.
 /** Get DOM attributes by tag in native case. In case fits both (like "a" tag) then gives both. Otherwise either or Fallback if not found (defaults to DOMAttributesAny). */
-export type DOMAttributes<Tag extends string, Fallback = DOMAttributesAny> = Tag extends HTMLTags ? Tag extends SVGTags ? SVGAttributes<Tag> & HTMLAttributes<Tag> : HTMLAttributes<Tag> : Tag extends SVGTags ? SVGAttributes<Tag> : Fallback;
+export type DOMAttributes<Tag extends string, Fallback = DOMAttributesAny> = [Tag] extends [HTMLTags] ? [Tag] extends [SVGTags] ? SVGAttributes<Tag> & HTMLAttributes<Tag> : HTMLAttributes<Tag> : [Tag] extends [SVGTags] ? SVGAttributes<Tag> : Fallback;
 
 // Attributes without tag.
 /** All the possible attributes that DOM elements (HTML or SVG) can have - in native case. */

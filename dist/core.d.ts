@@ -23,7 +23,7 @@ type SVGTags = "a" | "animate" | "animateMotion" | "animateTransform" | "circle"
 /** All known HTML and SVG tag names. */
 type DOMTags = HTMLTags | SVGTags;
 /** Get HTML or SVG element type by DOM tag. */
-type DOMElement<Tag extends DOMTags = DOMTags> = DOMTags extends Tag ? HTMLElement | SVGElement : Tag extends keyof SVGElementTagNameMap ? SVGElementTagNameMap[Tag] : Tag extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[Tag] : HTMLElement | SVGElement;
+type DOMElement<Tag extends DOMTags = DOMTags> = [DOMTags] extends [Tag] ? HTMLElement | SVGElement : [Tag] extends [keyof SVGElementTagNameMap] ? SVGElementTagNameMap[Tag] : [Tag] extends [keyof HTMLElementTagNameMap] ? HTMLElementTagNameMap[Tag] : HTMLElement | SVGElement;
 
 /** All listener attributes (matching GlobalEventHandlers + couple more) with camelCase keys. Values are event handler types. */
 interface GlobalListeners_core {

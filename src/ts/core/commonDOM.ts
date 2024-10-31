@@ -303,4 +303,4 @@ export type DOMTags = HTMLTags | SVGTags;
 // - Element - //
 
 /** Get HTML or SVG element type by DOM tag. */
-export type DOMElement<Tag extends DOMTags = DOMTags> = DOMTags extends Tag ? HTMLElement | SVGElement : Tag extends keyof SVGElementTagNameMap ? SVGElementTagNameMap[Tag] : Tag extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[Tag] : HTMLElement | SVGElement;
+export type DOMElement<Tag extends DOMTags = DOMTags> = [DOMTags] extends [Tag] ? HTMLElement | SVGElement : [Tag] extends [keyof SVGElementTagNameMap] ? SVGElementTagNameMap[Tag] : [Tag] extends [keyof HTMLElementTagNameMap] ? HTMLElementTagNameMap[Tag] : HTMLElement | SVGElement;
