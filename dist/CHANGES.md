@@ -1,5 +1,13 @@
 # CHANGES
 
+---
+
+## v1.1.2 (2024-11-03)
+
+- Fixes `readDOMString` to read attributes correctly when using the optional 4th arg `readFromNode`.
+
+---
+
 ## v1.1.1 (2024-10-31)
 
 - Exported a few internal types to allow smoother building process in certain cases.

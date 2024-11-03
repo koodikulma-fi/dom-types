@@ -20,10 +20,10 @@ const cssProps = { class: true, className: true, style: true };
 export function readDOMProps(node: HTMLElement | SVGElement | Node): DOMCleanProps {
     // Prepare.
     const domProps: DOMCleanProps = {};
-    if (!(node instanceof Element))
+    if (!node["getAttributeNames"])
         return domProps;
     // Read from attributes.
-    for (const attr of node.getAttributeNames()) {
+    for (const attr of (node as HTMLElement | SVGElement).getAttributeNames()) {
         switch(attr) {
             case "style": {
                 const style = parseDOMStyle((node as HTMLElement | SVGElement).style.cssText, true);
@@ -32,18 +32,18 @@ export function readDOMProps(node: HTMLElement | SVGElement | Node): DOMCleanPro
                 break;
             }
             case "class":
-                domProps.className = node.className;
+                domProps.className = (node as HTMLElement | SVGElement).className;
                 break;
             default: {
                 // Data based.
                 if (attr.startsWith("data-")) {
                     domProps.data = domProps.data || {};
-                    domProps.data[camelCaseStr(attr.slice(5))] = node.getAttribute(attr);
+                    domProps.data[camelCaseStr(attr.slice(5))] = (node as HTMLElement | SVGElement).getAttribute(attr);
                 }
                 // Others are just attributes, we don't get listeners by getAttributeNames.
                 else {
                     domProps.attributes = domProps.attributes || {};
-                    domProps.attributes[attr] = node.getAttribute(attr) ?? undefined;
+                    domProps.attributes[attr] = (node as HTMLElement | SVGElement).getAttribute(attr) ?? undefined;
                 }
             }
         }
@@ -277,20 +277,24 @@ export function readDOMString(tag: string, domProps?: DOMCleanProps | null, chil
         // Read props from element.
         const { className, style, data, attributes } = readDOMProps(readFromNode);
         // Merge the props together - for conflicts use higher preference for what was just read from dom.
+        domProps = { ...domProps };
         if (className)
             domProps.className = domProps.className ? domProps.className + " " + className : className;
         if (style) {
-            domProps.style = domProps.style || {};
+            domProps.style = { ...domProps.style };
             for (const prop in style)
                 domProps.style[prop] = style[prop];
         }
         if (data) {
-            domProps.data = domProps.data || {};
+            domProps.data = { ...domProps.data };
             for (const prop in data)
                 domProps.data[prop] = data[prop];
         }
-        for (const prop in attributes)
-            domProps[prop] = attributes[prop];
+        if (attributes) {
+            domProps.attributes = { ...domProps.attributes };
+            for (const prop in attributes)
+                domProps.attributes[prop] = attributes[prop];
+        }
     }
 
     // Parse.
