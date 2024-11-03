@@ -6,12 +6,18 @@ import { GlobalListeners_native, DOMTags } from "../ts";
 
 // - DOM related constants (specific to our system here) - //
 
+/** Attributes that should always be skipped in regards to reading and applying attributes. */
 export const domSkipAttributes = {
     innerHTML: true,
     outerHTML: true,
     textContent: true,
     innerText: true,
     outerText: true,
+};
+
+/** Attributes that should be applied directly to the element. For example: `element.value = val´ vs. `element.setAttribute("value", val)`. */
+export const domDirectAttributes = {
+    value: true,
 };
 
 /** All the self closing tags. */

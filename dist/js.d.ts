@@ -279,12 +279,17 @@ export declare function isNodeSVG(node: HTMLElement): false;
 export declare function isNodeSVG(node: SVGElement): true;
 export declare function isNodeSVG(node: Node | null | undefined): boolean;
 
+/** Attributes that should always be skipped in regards to reading and applying attributes. */
 declare const domSkipAttributes: {
     innerHTML: boolean;
     outerHTML: boolean;
     textContent: boolean;
     innerText: boolean;
     outerText: boolean;
+};
+/** Attributes that should be applied directly to the element. For example: `element.value = val´ vs. `element.setAttribute("value", val)`. */
+declare const domDirectAttributes: {
+    value: boolean;
 };
 /** All the self closing tags. */
 declare const domSelfClosingTags: DOMTags[];
@@ -316,7 +321,7 @@ export declare function equalDOMProps(a: DOMCleanProps, b: DOMCleanProps): boole
  * - After the process, the given newProps then represents the appliedProps, so to speak.
  * - If element is null, just returns the diffs without applying anything.
  */
-export declare function applyDOMProps(domElement: HTMLElement | SVGElement | Element | null, newProps: DOMCleanProps, oldProps?: DOMCleanProps, logWarnings?: boolean, skipAttrs?: Record<string, any>): DOMDiffProps | null;
+export declare function applyDOMProps(domElement: HTMLElement | SVGElement | Element | null, newProps: DOMCleanProps, oldProps?: DOMCleanProps, logWarnings?: boolean, skipAttrs?: Record<string, any>, directAttrs?: Record<string, any>): DOMDiffProps | null;
 /** Helper to write a DOM string for a single tag.
  * - To write a DOM string for a tree of infos, handle the tree externally with recursion and call this with childrenContent for each.
  * @param tag The tag of the DOM element. If "", reads it from readFromNode if given, or assumes it's a text node like situation: just output the textContent.

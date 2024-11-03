@@ -6,7 +6,7 @@ import { DOMCleanProps, DOMDiffProps, DOMTags, DOMUncleanProps } from "../ts";
 // Library.
 import { equalSubDictionaries, getNameDiffs, getDictionaryDiffs, parseDOMStyle, camelCaseStr, lowerCaseStr } from "./domLib";
 // Constants.
-import { domListenerProps, domRenamedAttributes, domSkipAttributes } from "./domConstants";
+import { domDirectAttributes, domListenerProps, domRenamedAttributes, domSkipAttributes } from "./domConstants";
 
 
 // - Local constants - //
@@ -133,7 +133,7 @@ export function equalDOMProps(a: DOMCleanProps, b: DOMCleanProps): boolean {
  * - After the process, the given newProps then represents the appliedProps, so to speak.
  * - If element is null, just returns the diffs without applying anything.
  */
-export function applyDOMProps(domElement: HTMLElement | SVGElement | Element | null, newProps: DOMCleanProps, oldProps: DOMCleanProps = {}, logWarnings: boolean = true, skipAttrs: Record<string, any> = domSkipAttributes): DOMDiffProps | null {
+export function applyDOMProps(domElement: HTMLElement | SVGElement | Element | null, newProps: DOMCleanProps, oldProps: DOMCleanProps = {}, logWarnings: boolean = true, skipAttrs: Record<string, any> = domSkipAttributes, directAttrs: Record<string, any> = domDirectAttributes): DOMDiffProps | null {
     
     // Prepare.
     const diffs: DOMDiffProps = {};
@@ -195,6 +195,10 @@ export function applyDOMProps(domElement: HTMLElement | SVGElement | Element | n
                     if (logWarnings)
                         console.warn("Warning: Tried to apply a protected attribute: ", attr, " for element: ", domElement);
                     continue;
+                }
+                // Direct.
+                else if (directAttrs[attr]) {
+                    domElement[attr] = subDiffs[attr] === undefined ? "" : subDiffs[attr];
                 }
                 // Set or remove.
                 subDiffs[attr] === undefined ? domElement.removeAttribute(attr) : domElement.setAttribute(attr, subDiffs[attr]!);

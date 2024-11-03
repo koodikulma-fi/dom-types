@@ -390,7 +390,7 @@ const domListenerAttributes = {
     * `readDOMProps(node): DOMCleanProps`
     * `cleanDOMProps(uncleanProps, listenerProps?, renamedAttrs?): DOMCleanProps`
     * `equalDOMProps(aDomProps, bDomProps): boolean`
-    * `applyDOMProps(element, newProps, oldProps = {}, logWarnings = true, skipAttrs?): DOMDiffProps | null`
+    * `applyDOMProps(element, newProps, oldProps = {}, logWarnings = true, skipAttrs?, directAttrs?): DOMDiffProps | null`
 
 #### library - method: `readDOMString(tag, domProps?, childrenContent?, readFromNode?, skipAttrs?)`
 
@@ -498,7 +498,7 @@ equalDOMProps(
 
 ```
 
-#### library - method: `applyDOMProps(element, newProps, oldProps = {}, logWarnings = true, skipAttrs?)`
+#### library - method: `applyDOMProps(element, newProps, oldProps = {}, logWarnings = true, skipAttrs?, directAttrs?)`
 
 - Apply the cleaned DOM props to an element, optionally comparing against oldProps.
 - Returns info for changes (`DOMDiffProps`), or `null` if didn't apply any.
