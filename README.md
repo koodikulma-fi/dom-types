@@ -39,7 +39,7 @@ A couple of helper methods for reading and applying the type suggested features 
 - [`readDOMProps`](#library---method-readdompropsnode)`(node): DOMCleanProps`
 - [`cleanDOMProps`](#library---method-cleandompropsuncleanprops-listenerprops-renamedattrs)`(uncleanProps, listenerProps?, renamedAttrs?): DOMCleanProps`
 - [`equalDOMProps`](#library---method-equaldompropsadomprops-bdomprops)`(aDomProps, bDomProps): boolean`
-- [`applyDOMProps`](#library---method-applydompropselement-newprops-oldprops---logwarnings--true-skipattrs)`(element, newProps, oldProps = {}, logWarnings = true, skipAttrs?): DOMDiffProps | null`
+- [`applyDOMProps`](#library---method-applydompropselement-newprops-oldprops---logwarnings--true-skipattrs)`(element, newProps, oldProps = {}, logWarnings = true, skipAttrs?, dirAttrs?, falseAttrs?): DOMDiffProps | null`
 
 Other general DOM helpers:
 - [`createDOMElement`](#library---method-createdomelementtag-checksvgbyparentnode-namespaceuri)`(tag, checkSVGByParentNode?, namespaceURI?): HTMLElement | SVGElement`
@@ -390,7 +390,7 @@ const domListenerAttributes = {
     * `readDOMProps(node): DOMCleanProps`
     * `cleanDOMProps(uncleanProps, listenerProps?, renamedAttrs?): DOMCleanProps`
     * `equalDOMProps(aDomProps, bDomProps): boolean`
-    * `applyDOMProps(element, newProps, oldProps = {}, logWarnings = true, skipAttrs?, directAttrs?): DOMDiffProps | null`
+    * `applyDOMProps(element, newProps, oldProps = {}, logWarnings = true, skipAttrs?, dirAttrs?, falseAttrs?): DOMDiffProps | null`
 
 #### library - method: `readDOMString(tag, domProps?, childrenContent?, readFromNode?, skipAttrs?)`
 
@@ -498,10 +498,11 @@ equalDOMProps(
 
 ```
 
-#### library - method: `applyDOMProps(element, newProps, oldProps = {}, logWarnings = true, skipAttrs?, directAttrs?)`
+#### library - method: `applyDOMProps(element, newProps, oldProps = {}, logWarnings = true, skipAttrs?, dirAttrs?, falseAttrs?)`
 
 - Apply the cleaned DOM props to an element, optionally comparing against oldProps.
 - Returns info for changes (`DOMDiffProps`), or `null` if didn't apply any.
+- The last 3 arguments default to the respective constants.
 
 ```typescript
 

@@ -1,7 +1,7 @@
 
 // - Imports - //
 
-import { GlobalListeners_native, DOMTags } from "../ts";
+import type { GlobalListeners_native, DOMTags, HTMLCommonAttributes_core, HTMLGlobalAttributes_core } from "../ts";
 
 
 // - DOM related constants (specific to our system here) - //
@@ -15,10 +15,37 @@ export const domSkipAttributes = {
     outerText: true,
 };
 
-/** Attributes that should be applied directly to the element. For example: `element.value = val´ vs. `element.setAttribute("value", val)`. */
+/** Attributes that should be applied directly to the element. For example: `element.value = val´ vs. `element.setAttribute("value", val)`. Value of undefined, will be applied as "". */
 export const domDirectAttributes = {
     value: true,
-};
+} satisfies Partial<Record<keyof HTMLCommonAttributes_core | keyof HTMLGlobalAttributes_core, true>>;
+/** Attributes that if they have value `"" | "0" | "false"` (in lower case), will be applied by removing the attribute. Otherwise sets the attribute with the given value. */
+export const domFalseStrAttributes = {
+    async: true,
+    autocomplete: true,
+    autoplay: true,
+    contenteditable: true,
+    checked: true,
+    controls: true,
+    default: true,
+    defer: true,
+    disabled: true,
+    draggable: true,
+    hidden: true,
+    insert: true,
+    ismap: true,
+    loop: true,
+    multiple: true,
+    muted: true,
+    novalidate: true,
+    open: true,
+    playsinline: true,
+    required: true,
+    reversed: true,
+    selected: true,
+    spellcheck: true,
+    writingsuggestions: true,
+} satisfies Partial<Record<keyof HTMLCommonAttributes_core | keyof HTMLGlobalAttributes_core, true>>;
 
 /** All the self closing tags. */
 export const domSelfClosingTags: DOMTags[] = ["area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "param", "source", "track", "wbr"];

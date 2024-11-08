@@ -2,11 +2,11 @@
 // - Imports - //
 
 // Typing.
-import { DOMCleanProps, DOMDiffProps, DOMTags, DOMUncleanProps } from "../ts";
+import type { DOMCleanProps, DOMDiffProps, DOMTags, DOMUncleanProps } from "../ts";
 // Library.
 import { equalSubDictionaries, getNameDiffs, getDictionaryDiffs, parseDOMStyle, camelCaseStr, lowerCaseStr } from "./domLib";
 // Constants.
-import { domDirectAttributes, domListenerProps, domRenamedAttributes, domSkipAttributes } from "./domConstants";
+import { domDirectAttributes, domFalseStrAttributes, domListenerProps, domRenamedAttributes, domSkipAttributes } from "./domConstants";
 
 
 // - Local constants - //
@@ -62,7 +62,7 @@ export function readDOMProps(node: HTMLElement | SVGElement | Node): DOMCleanPro
  *      * _attributes_: Any other are found in `{ attributes }`. Cleans "aria" related: eg. "ariaAutoComplete" becomes "aria-autocomplete" - with both, the latter value overrides.
  * - You can customize the listenerProps and renamedAttrs. They default to the domListenerProps and domRenamedAttributes constants.
  */
-export function cleanDOMProps(origProps: DOMUncleanProps, listenerProps: Partial<Record<string, string>> = domListenerProps, renamedAttrs: Partial<Record<string, string>> = domRenamedAttributes): DOMCleanProps {
+export function cleanDOMProps(origProps: DOMUncleanProps): DOMCleanProps {
     // Loop all mixed up props.
     const props: DOMCleanProps = {};
     let lProp: string | undefined;
@@ -84,7 +84,7 @@ export function cleanDOMProps(origProps: DOMUncleanProps, listenerProps: Partial
                 props.className = props.className ? props.className + " " + origProps[prop] : origProps[prop];
         }
         // Listeners.
-        else if (lProp = listenerProps[prop.toLowerCase()]) {
+        else if (lProp = domListenerProps[prop.toLowerCase()]) {
             // Don't assign empty.
             if (!origProps[prop])
                 continue;
@@ -117,7 +117,7 @@ export function cleanDOMProps(origProps: DOMUncleanProps, listenerProps: Partial
             // Make sure has.
             props.attributes = props.attributes || {};
             // Assign and handle naming conversion for "aria" related.
-            props.attributes[renamedAttrs[prop] || prop.startsWith("aria") && prop[4] !== "-" && "aria-" + prop.slice(4).toLowerCase() || prop] = origProps[prop];
+            props.attributes[domRenamedAttributes[prop] || prop.startsWith("aria") && prop[4] !== "-" && "aria-" + prop.slice(4).toLowerCase() || prop] = origProps[prop];
         }
     }
     // Return cleaned.
@@ -133,7 +133,7 @@ export function equalDOMProps(a: DOMCleanProps, b: DOMCleanProps): boolean {
  * - After the process, the given newProps then represents the appliedProps, so to speak.
  * - If element is null, just returns the diffs without applying anything.
  */
-export function applyDOMProps(domElement: HTMLElement | SVGElement | Element | null, newProps: DOMCleanProps, oldProps: DOMCleanProps = {}, logWarnings: boolean = true, skipAttrs: Record<string, any> = domSkipAttributes, directAttrs: Record<string, any> = domDirectAttributes): DOMDiffProps | null {
+export function applyDOMProps(domElement: HTMLElement | SVGElement | Element | null, newProps: DOMCleanProps, oldProps: DOMCleanProps = {}, logWarnings: boolean = true): DOMDiffProps | null {
     
     // Prepare.
     const diffs: DOMDiffProps = {};
@@ -191,17 +191,23 @@ export function applyDOMProps(domElement: HTMLElement | SVGElement | Element | n
         if (subDiffs && domElement) {
             for (const attr in subDiffs) {
                 // Skip and warn.
-                if (skipAttrs[attr]) {
+                if (domSkipAttributes[attr]) {
                     if (logWarnings)
                         console.warn("Warning: Tried to apply a protected attribute: ", attr, " for element: ", domElement);
                     continue;
                 }
                 // Direct.
-                else if (directAttrs[attr]) {
-                    domElement[attr] = subDiffs[attr] === undefined ? "" : subDiffs[attr];
+                const v = subDiffs[attr];
+                if (domDirectAttributes[attr])
+                    domElement[attr] = v === undefined ? "" : v;
+                // False like.
+                else if (domFalseStrAttributes[attr]) {
+                    const str = v ? ((v || "") + "").trim().toLowerCase() : "";
+                    !str || str === "0" || str === "false" ? domElement.removeAttribute(attr) : domElement.setAttribute(attr, v!);
                 }
                 // Set or remove.
-                subDiffs[attr] === undefined ? domElement.removeAttribute(attr) : domElement.setAttribute(attr, subDiffs[attr]!);
+                else
+                    v === undefined ? domElement.removeAttribute(attr) : domElement.setAttribute(attr, v!);
             }
         }
     }
@@ -258,7 +264,7 @@ export function applyDOMProps(domElement: HTMLElement | SVGElement | Element | n
  * ```
  * 
  */
-export function readDOMString(tag: string, domProps?: DOMCleanProps | null, childrenContent?: string | null | boolean, readFromNode?: Node | null, skipAttrs: Record<string, any> = domSkipAttributes): string {
+export function readDOMString(tag: string, domProps?: DOMCleanProps | null, childrenContent?: string | null | boolean, readFromNode?: Node | null): string {
     
     // Prepare.
     let dom = "";
@@ -328,7 +334,7 @@ export function readDOMString(tag: string, domProps?: DOMCleanProps | null, chil
     if (attributes) {
         for (let prop in attributes)
             // Just in case, check also domListenerProps here - if was fed externally.
-            if (attributes[prop] && !skipAttrs[prop] && !domListenerProps[prop.toLowerCase()])
+            if (attributes[prop] && !domSkipAttributes[prop] && !domListenerProps[prop.toLowerCase()])
                 dom += ' ' + prop + '="' + attributes[prop]!.toString() + '"';
     }
 

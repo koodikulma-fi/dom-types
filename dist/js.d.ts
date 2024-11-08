@@ -287,9 +287,36 @@ declare const domSkipAttributes: {
     innerText: boolean;
     outerText: boolean;
 };
-/** Attributes that should be applied directly to the element. For example: `element.value = val´ vs. `element.setAttribute("value", val)`. */
+/** Attributes that should be applied directly to the element. For example: `element.value = val´ vs. `element.setAttribute("value", val)`. Value of undefined, will be applied as "". */
 declare const domDirectAttributes: {
-    value: boolean;
+    value: true;
+};
+/** Attributes that if they have value `"" | "0" | "false"` (in lower case), will be applied by removing the attribute. Otherwise sets the attribute with the given value. */
+declare const domFalseStrAttributes: {
+    async: true;
+    autocomplete: true;
+    autoplay: true;
+    contenteditable: true;
+    checked: true;
+    controls: true;
+    default: true;
+    defer: true;
+    disabled: true;
+    draggable: true;
+    hidden: true;
+    insert: true;
+    ismap: true;
+    loop: true;
+    multiple: true;
+    muted: true;
+    novalidate: true;
+    open: true;
+    playsinline: true;
+    required: true;
+    reversed: true;
+    selected: true;
+    spellcheck: true;
+    writingsuggestions: true;
 };
 /** All the self closing tags. */
 declare const domSelfClosingTags: DOMTags[];
@@ -314,14 +341,14 @@ export declare function readDOMProps(node: HTMLElement | SVGElement | Node): DOM
  *      * _attributes_: Any other are found in `{ attributes }`. Cleans "aria" related: eg. "ariaAutoComplete" becomes "aria-autocomplete" - with both, the latter value overrides.
  * - You can customize the listenerProps and renamedAttrs. They default to the domListenerProps and domRenamedAttributes constants.
  */
-export declare function cleanDOMProps(origProps: DOMUncleanProps, listenerProps?: Partial<Record<string, string>>, renamedAttrs?: Partial<Record<string, string>>): DOMCleanProps;
+export declare function cleanDOMProps(origProps: DOMUncleanProps): DOMCleanProps;
 /** Comparison method specialized into DOMCleanProps (= cleaned up attributes description of a dom element). */
 export declare function equalDOMProps(a: DOMCleanProps, b: DOMCleanProps): boolean;
 /** Returns the dictionaries for differences.
  * - After the process, the given newProps then represents the appliedProps, so to speak.
  * - If element is null, just returns the diffs without applying anything.
  */
-export declare function applyDOMProps(domElement: HTMLElement | SVGElement | Element | null, newProps: DOMCleanProps, oldProps?: DOMCleanProps, logWarnings?: boolean, skipAttrs?: Record<string, any>, directAttrs?: Record<string, any>): DOMDiffProps | null;
+export declare function applyDOMProps(domElement: HTMLElement | SVGElement | Element | null, newProps: DOMCleanProps, oldProps?: DOMCleanProps, logWarnings?: boolean): DOMDiffProps | null;
 /** Helper to write a DOM string for a single tag.
  * - To write a DOM string for a tree of infos, handle the tree externally with recursion and call this with childrenContent for each.
  * @param tag The tag of the DOM element. If "", reads it from readFromNode if given, or assumes it's a text node like situation: just output the textContent.
@@ -345,4 +372,4 @@ export declare function applyDOMProps(domElement: HTMLElement | SVGElement | Ele
  * ```
  *
  */
-export declare function readDOMString(tag: string, domProps?: DOMCleanProps | null, childrenContent?: string | null | boolean, readFromNode?: Node | null, skipAttrs?: Record<string, any>): string;
+export declare function readDOMString(tag: string, domProps?: DOMCleanProps | null, childrenContent?: string | null | boolean, readFromNode?: Node | null): string;

@@ -2,7 +2,7 @@
 // - Imports - //
 
 // Typing.
-import { CSSProperties, FalseLike, ClassNameInput } from "../ts";
+import type { CSSProperties, FalseLike, ClassNameInput } from "../ts";
 
 
 // - String helpers - //

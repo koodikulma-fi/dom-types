@@ -2,10 +2,14 @@
 
 ---
 
-## v1.1.2 (2024-11-03)
+## v1.1.2 (2024-11-09)
 
-- Fixes `readDOMString` to read attributes correctly when using the optional 4th arg `readFromNode`.
-- Refined that `value` attribute is always applied directly, not through `element.setAttribute`.
+- Removed the extra arguments referring to the constants in the methods (for clarity and simplicity).
+- Fixed `readDOMString` to read attributes correctly when using the optional 4th arg `readFromNode`.
+- Refined support for special attributes with two constants: `domDirectAttributes` and `domFalseStrAttributes`.
+    * Refined support for boolean like attributes (eg. "disabled", "hidden"): Any false or empty like values or strings result in removing the attribute, while anything else is applied normally.
+    * Refined that `value` attribute is always applied directly, not through `element.setAttribute`.
+    * The constants are added as extra arguments on the `applyDOMProps` method.
 
 ---
 
@@ -13,7 +17,7 @@
 
 - Exported a few internal types to allow smoother building process in certain cases.
 - Added constant `domSelfClosingTags` (for external use).
-- Adds a couple more listeners and refines listener typing.
+- Added a couple more listeners and refines listener typing.
 
 ---
 
