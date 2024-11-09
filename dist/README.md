@@ -35,11 +35,11 @@ A couple of (mutable) constants for enforcing the naming:
 - [`domListenerProps`](#library---constant-domlistenerprops): The known listener properties - applied as event listeners.
 
 A couple of helper methods for reading and applying the type suggested features into/from DOM:
-- [`readDOMString`](#library---method-readdomstringtag-domprops-childrencontent-readfromnode-skipattrs)`(tag, domProps?, childrenContent?, readFromNode?): string`
+- [`readDOMString`](#library---method-readdomstringtag-domprops-childrencontent-readfromnode)`(tag, domProps?, childrenContent?, readFromNode?): string`
 - [`readDOMProps`](#library---method-readdompropsnode)`(node): DOMCleanProps`
-- [`cleanDOMProps`](#library---method-cleandompropsuncleanprops-listenerprops-renamedattrs)`(uncleanProps): DOMCleanProps`
+- [`cleanDOMProps`](#library---method-cleandompropsuncleanprops)`(uncleanProps): DOMCleanProps`
 - [`equalDOMProps`](#library---method-equaldompropsadomprops-bdomprops)`(aDomProps, bDomProps): boolean`
-- [`applyDOMProps`](#library---method-applydompropselement-newprops-oldprops---logwarnings--true-skipattrs)`(element, newProps, oldProps = {}, logWarnings = true): DOMDiffProps | null`
+- [`applyDOMProps`](#library---method-applydompropselement-newprops-oldprops---logwarnings--true)`(element, newProps, oldProps = {}, logWarnings = true): DOMDiffProps | null`
 
 Other general DOM helpers:
 - [`createDOMElement`](#library---method-createdomelementtag-checksvgbyparentnode-namespaceuri)`(tag, checkSVGByParentNode?, namespaceURI?): HTMLElement | SVGElement`

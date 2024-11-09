@@ -2,7 +2,7 @@
 
 ---
 
-## v1.1.2 (2024-11-09)
+## v1.1.2 (2024-11-10)
 
 - Removed the extra arguments referring to the constants in the methods (for clarity and simplicity).
 - Fixed `readDOMString` to read attributes correctly when using the optional 4th arg `readFromNode`.
