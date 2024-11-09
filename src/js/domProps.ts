@@ -4,7 +4,7 @@
 // Typing.
 import type { DOMCleanProps, DOMDiffProps, DOMTags, DOMUncleanProps } from "../ts";
 // Library.
-import { equalSubDictionaries, getNameDiffs, getDictionaryDiffs, parseDOMStyle, camelCaseStr, lowerCaseStr } from "./domLib";
+import { equalSubDictionaries, getNameDiffs, getDictionaryDiffs, parseDOMStyle, camelCaseStr, lowerCaseStr, cleanNames } from "./domLib";
 // Constants.
 import { domDirectAttributes, domFalseStrAttributes, domListenerProps, domRenamedAttributes, domSkipAttributes } from "./domConstants";
 
@@ -289,7 +289,7 @@ export function readDOMString(tag: string, domProps?: DOMCleanProps | null, chil
         // Merge the props together - for conflicts use higher preference for what was just read from dom.
         domProps = { ...domProps };
         if (className)
-            domProps.className = domProps.className ? domProps.className + " " + className : className;
+            domProps.className = domProps.className ? cleanNames(domProps.className, className) : className;
         if (style) {
             domProps.style = { ...domProps.style };
             for (const prop in style)
