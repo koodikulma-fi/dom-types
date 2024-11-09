@@ -35,11 +35,11 @@ A couple of (mutable) constants for enforcing the naming:
 - [`domListenerProps`](#library---constant-domlistenerprops): The known listener properties - applied as event listeners.
 
 A couple of helper methods for reading and applying the type suggested features into/from DOM:
-- [`readDOMString`](#library---method-readdomstringtag-domprops-childrencontent-readfromnode-skipattrs)`(tag, domProps?, childrenContent?, readFromNode?, skipAttrs?): string`
+- [`readDOMString`](#library---method-readdomstringtag-domprops-childrencontent-readfromnode-skipattrs)`(tag, domProps?, childrenContent?, readFromNode?): string`
 - [`readDOMProps`](#library---method-readdompropsnode)`(node): DOMCleanProps`
-- [`cleanDOMProps`](#library---method-cleandompropsuncleanprops-listenerprops-renamedattrs)`(uncleanProps, listenerProps?, renamedAttrs?): DOMCleanProps`
+- [`cleanDOMProps`](#library---method-cleandompropsuncleanprops-listenerprops-renamedattrs)`(uncleanProps): DOMCleanProps`
 - [`equalDOMProps`](#library---method-equaldompropsadomprops-bdomprops)`(aDomProps, bDomProps): boolean`
-- [`applyDOMProps`](#library---method-applydompropselement-newprops-oldprops---logwarnings--true-skipattrs)`(element, newProps, oldProps = {}, logWarnings = true, skipAttrs?, dirAttrs?, falseAttrs?): DOMDiffProps | null`
+- [`applyDOMProps`](#library---method-applydompropselement-newprops-oldprops---logwarnings--true-skipattrs)`(element, newProps, oldProps = {}, logWarnings = true): DOMDiffProps | null`
 
 Other general DOM helpers:
 - [`createDOMElement`](#library---method-createdomelementtag-checksvgbyparentnode-namespaceuri)`(tag, checkSVGByParentNode?, namespaceURI?): HTMLElement | SVGElement`
@@ -386,13 +386,13 @@ const domListenerAttributes = {
 
 ### 2.2. DOM props helpers
 - The helpers are designed to meet practical needs and to enforce the naming convention:
-    * `readDOMString(tag, domProps?, childrenContent?, readFromNode?, skipAttrs?): string`
+    * `readDOMString(tag, domProps?, childrenContent?, readFromNode?): string`
     * `readDOMProps(node): DOMCleanProps`
-    * `cleanDOMProps(uncleanProps, listenerProps?, renamedAttrs?): DOMCleanProps`
+    * `cleanDOMProps(uncleanProps): DOMCleanProps`
     * `equalDOMProps(aDomProps, bDomProps): boolean`
-    * `applyDOMProps(element, newProps, oldProps = {}, logWarnings = true, skipAttrs?, dirAttrs?, falseAttrs?): DOMDiffProps | null`
+    * `applyDOMProps(element, newProps, oldProps = {}, logWarnings = true): DOMDiffProps | null`
 
-#### library - method: `readDOMString(tag, domProps?, childrenContent?, readFromNode?, skipAttrs?)`
+#### library - method: `readDOMString(tag, domProps?, childrenContent?, readFromNode?)`
 
 - The method converts the tag, domProps and childrenContent to a string.
 - Supports reading tag and domProps from the readFromNode. Skips any listener attributes.
@@ -438,7 +438,7 @@ readDOMProps(input);
 
 ```
 
-#### library - method: `cleanDOMProps(uncleanProps, listenerProps?, renamedAttrs?)`
+#### library - method: `cleanDOMProps(uncleanProps)`
 
 - Helps to clean unorganized properties into `DOMCleanProps` form.
 
@@ -498,11 +498,10 @@ equalDOMProps(
 
 ```
 
-#### library - method: `applyDOMProps(element, newProps, oldProps = {}, logWarnings = true, skipAttrs?, dirAttrs?, falseAttrs?)`
+#### library - method: `applyDOMProps(element, newProps, oldProps = {}, logWarnings = true)`
 
 - Apply the cleaned DOM props to an element, optionally comparing against oldProps.
 - Returns info for changes (`DOMDiffProps`), or `null` if didn't apply any.
-- The last 3 arguments default to the respective constants.
 
 ```typescript
 
