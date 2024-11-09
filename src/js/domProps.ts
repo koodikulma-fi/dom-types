@@ -274,8 +274,8 @@ export function readDOMString(tag: string, domProps?: DOMCleanProps | null, chil
     // No tag.
     if (!tag) {
         // From element.
-        if (readFromNode && readFromNode instanceof Element)
-            tag = readFromNode.tagName.toLowerCase() as DOMTags || "";
+        if (readFromNode && (readFromNode as Element).tagName)
+            tag = (readFromNode as Element).tagName.toLowerCase() as DOMTags || "";
         // If has no tag at this point, we stop and return the childrenContent and/or our textContent from the simple node.
         if (!tag)
             // Let's merge both contents. In practice, there should only be either.
