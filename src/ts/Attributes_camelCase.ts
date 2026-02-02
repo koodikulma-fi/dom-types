@@ -645,7 +645,7 @@ export interface HTMLOwnAttributesBy {
     figure: {};
     font: Pick<HTMLCommonAttributes, "color">;
     footer: {};
-    form: Pick<HTMLCommonAttributes, "accept" | "acceptCharset" | "action">;
+    form: Pick<HTMLCommonAttributes, "accept" | "acceptCharset" | "action" | "autoComplete" | "encType" | "method" | "name" | "noValidate" | "rel" | "target">;
     frame: {};
     frameset: {};
     h1: {};
@@ -826,7 +826,7 @@ export interface SVGGlobalAttributes extends Omit<SVGGlobalAttributes_core, "tab
 // - SVG presentation attributes - //
 
 /** All SVG presentation attributes in camelCase. They can also be used as CSS properties. */
-export interface SVGPresentationAttributes extends Pick<SVGCommonAttributes, 
+export interface SVGPresentationAttributes extends Pick<SVGCommonAttributes,
     | "alignmentBaseline"
     | "baselineShift"
     | "clip"

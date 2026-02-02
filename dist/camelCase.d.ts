@@ -560,7 +560,7 @@ export interface HTMLOwnAttributesBy {
     figure: {};
     font: Pick<HTMLCommonAttributes, "color">;
     footer: {};
-    form: Pick<HTMLCommonAttributes, "accept" | "acceptCharset" | "action">;
+    form: Pick<HTMLCommonAttributes, "accept" | "acceptCharset" | "action" | "autoComplete" | "encType" | "method" | "name" | "noValidate" | "rel" | "target">;
     frame: {};
     frameset: {};
     h1: {};

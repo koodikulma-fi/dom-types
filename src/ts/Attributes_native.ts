@@ -200,7 +200,7 @@ export interface HTMLOwnAttributesBy {
     figure: {};
     font: Pick<HTMLCommonAttributes, "color">;
     footer: {};
-    form: Pick<HTMLCommonAttributes, "accept" | "accept-charset" | "action">;
+    form: Pick<HTMLCommonAttributes, "accept" | "accept-charset" | "action" | "autocomplete" | "enctype" | "method" | "name" | "novalidate" | "rel" | "target">;
     frame: {};
     frameset: {};
     h1: {};
@@ -365,7 +365,7 @@ export type SVGAttributesBy = { [Tag in SVGTags]: SVGAttributes<Tag>; };
 export interface SVGGlobalAttributes extends SVGGlobalAttributes_core {}
 
 /** All SVG presentation attributes in native case. They can also be used as CSS properties. */
-export interface SVGPresentationAttributes extends Pick<SVGCommonAttributes_core, 
+export interface SVGPresentationAttributes extends Pick<SVGCommonAttributes_core,
     | "alignment-baseline"
     | "baseline-shift"
     | "clip"
