@@ -6,6 +6,8 @@
 
 - Added more attributes for "form" element.
 
+---
+
 ## v1.1.2 (2024-11-10)
 
 - Removed the extra arguments referring to the constants in the methods (for clarity and simplicity).
