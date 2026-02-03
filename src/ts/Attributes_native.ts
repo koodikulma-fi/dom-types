@@ -1,7 +1,7 @@
 
 // - Imports - //
 
-import { AnyString, BoolOrStr, ARIARole, GlobalEventHandler, HTMLTags, SVGTags, DOMTags, HTMLCommonAttributes_core, HTMLGlobalAttributes_core, SVGAnimationAttributes_core, SVGCommonAttributes_core, SVGGlobalAttributes_core, GlobalListeners_core } from "./index_base";
+import { AnyString, BoolOrStr, ARIARole, HTMLTags, SVGTags, DOMTags, HTMLCommonAttributes_core, HTMLGlobalAttributes_core, SVGAnimationAttributes_core, SVGCommonAttributes_core, SVGGlobalAttributes_core, GlobalListeners_core } from "./index_base";
 
 
 // - Info sources (at around Q3 2024) - //
