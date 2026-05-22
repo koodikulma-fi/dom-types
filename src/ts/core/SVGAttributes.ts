@@ -16,7 +16,7 @@ import { CSSBlendMode, CSSColorNames, CSSProperties } from "../CSSProperties";
 
 /** SVG attributes in native case available on all SVG elements. */
 export interface SVGGlobalAttributes_core extends DataAttributes {
-    "id": string | number;
+    "id": string;
     "class": string;
     "lang": string;
     "style": string | CSSProperties;
@@ -152,7 +152,7 @@ export interface SVGCommonAttributes_core {
     "horiz-adv-x": string | number;
     "horiz-origin-x": string | number;
     "horiz-origin-y": string | number;
-    "id": string | number;
+    "id": string;
     "ideographic": string | number;
     "image-rendering": string;
     "in": "SourceGraphic" | "SourceAlpha" | "BackgroundImage" | "BackgroundAlpha" | "FillPaint" | "StrokePaint" | AnyString;
@@ -218,7 +218,7 @@ export interface SVGCommonAttributes_core {
     "refX": "left" | "center" | "right" | AnyString | number;
     "refY": "left" | "center" | "right" | AnyString | number;
     "rel": string;
-    "requiredExtensions": string; 
+    "requiredExtensions": string;
     "requiredFeatures": string; // Deprecated.
     "result": string;
     "rotate": "auto" | "auto-reverse" | AnyString | number;
