@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "es2017",
-    "ignoreDeprecations": "6.0", // FOR NOW. This is for esModuleInterop
+    "ignoreDeprecations": "6.0", // FOR NOW. This is for esModuleInterop.
     "esModuleInterop": false,
     "module": "es6",
     "rootDir": "./src",
