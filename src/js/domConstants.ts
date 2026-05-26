@@ -300,4 +300,4 @@ export const domListenerProps = [
     "webkitanimationstart",
     "webkittransitionend",
     "wheel",
-].reduce((acc,evName) => (acc["on" + evName]=evName, acc), {}) as Record<keyof GlobalListeners_native & string, string>;
+].reduce((acc, evName) => ((acc as Record<string, string>)["on" + evName]=evName, acc), {}) as Record<keyof GlobalListeners_native & string, string>;

@@ -20,7 +20,7 @@ const cssProps = { class: true, className: true, style: true };
 export function readDOMProps(node: HTMLElement | SVGElement | Node): DOMCleanProps {
     // Prepare.
     const domProps: DOMCleanProps = {};
-    if (!node["getAttributeNames"])
+    if (!(node as HTMLElement | SVGElement)["getAttributeNames"])
         return domProps;
     // Read from attributes.
     for (const attr of (node as HTMLElement | SVGElement).getAttributeNames()) {
@@ -68,7 +68,7 @@ export function cleanDOMProps(origProps: DOMUncleanProps): DOMCleanProps {
     let lProp: string | undefined;
     for (const prop in origProps) {
         // Style and class.
-        if (cssProps[prop]) {
+        if (cssProps[prop as keyof typeof cssProps]) {
             // Style.
             if (prop === "style") {
                 // Parse from string, or use a dictionary directly.
@@ -84,7 +84,7 @@ export function cleanDOMProps(origProps: DOMUncleanProps): DOMCleanProps {
                 props.className = props.className ? props.className + " " + origProps[prop] : origProps[prop];
         }
         // Listeners.
-        else if (lProp = domListenerProps[prop.toLowerCase()]) {
+        else if (lProp = domListenerProps[prop.toLowerCase() as keyof typeof domListenerProps]) {
             // Don't assign empty.
             if (!origProps[prop])
                 continue;
@@ -143,9 +143,9 @@ export function applyDOMProps(domElement: HTMLElement | SVGElement | Element | n
     if (runStyleData) {
         for (const attr of runStyleData === 1 ? ["style"] : runStyleData === 2 ? ["data"] : ["style", "data"]) {
             // Collect diffs.
-            const subDiffs = getDictionaryDiffs(oldProps[attr] || {}, newProps[attr] || {});
+            const subDiffs = getDictionaryDiffs((oldProps as Record<string, any>)[attr] || {}, (newProps as Record<string, any>)[attr] || {});
             if (subDiffs)
-                diffs[attr] = subDiffs;
+                (diffs as Record<string, any>)[attr] = subDiffs;
             // Apply.
             if (subDiffs && domElement) {
                 // Data.
@@ -162,7 +162,7 @@ export function applyDOMProps(domElement: HTMLElement | SVGElement | Element | n
                     const s = (domElement as HTMLElement | { style?: undefined; }).style;
                     if (s) {
                         for (const p in subDiffs)
-                            s[p] = subDiffs[p] ?? null;
+                            s[p as "padding"] = subDiffs[p] ?? null; // Note that "padding" is here just for modern TS.
                     }
                 }
             }
@@ -191,17 +191,17 @@ export function applyDOMProps(domElement: HTMLElement | SVGElement | Element | n
         if (subDiffs && domElement) {
             for (const attr in subDiffs) {
                 // Skip and warn.
-                if (domSkipAttributes[attr]) {
+                if ((domSkipAttributes as Record<string, any>)[attr]) {
                     if (logWarnings)
                         console.warn("Warning: Tried to apply a protected attribute: ", attr, " for element: ", domElement);
                     continue;
                 }
                 // Direct.
                 const v = subDiffs[attr];
-                if (domDirectAttributes[attr])
-                    domElement[attr] = v === undefined ? "" : v;
+                if ((domDirectAttributes as Record<string, any>)[attr])
+                    (domElement as Record<string, any>)[attr] = v === undefined ? "" : v;
                 // False like.
-                else if (domFalseStrAttributes[attr]) {
+                else if ((domFalseStrAttributes as Record<string, any>)[attr]) {
                     const str = v ? ((v || "") + "").trim().toLowerCase() : "";
                     !str || str === "0" || str === "false" ? domElement.removeAttribute(attr) : domElement.setAttribute(attr, v!);
                 }
@@ -334,7 +334,7 @@ export function readDOMString(tag: string, domProps?: DOMCleanProps | null, chil
     if (attributes) {
         for (let prop in attributes)
             // Just in case, check also domListenerProps here - if was fed externally.
-            if (attributes[prop] && !domSkipAttributes[prop] && !domListenerProps[prop.toLowerCase()])
+            if (attributes[prop] && !(domSkipAttributes as Record<string, any>)[prop] && !(domListenerProps as Record<string, any>)[prop.toLowerCase()])
                 dom += ' ' + prop + '="' + attributes[prop]!.toString() + '"';
     }
 

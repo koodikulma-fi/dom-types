@@ -47,8 +47,11 @@ export function parseDOMStyle(cssText: string, nullIfEmpty: boolean = false): CS
     // Loop the pairs to create a dictionary with camelCase keys.
     const style: CSSProperties = {};
     for (const [prop, val] of pairs)
-        if (prop && val)
-            style[prop.replace(/\W+\w/g, match => match.slice(-1).toUpperCase())] = (nullIfEmpty = false) || val; // Convert key to camelCase.
+        if (prop && val) {
+            const p = prop.replace(/\W+\w/g, match => match.slice(-1).toUpperCase()); // Convert key to camelCase.
+            style[p as "padding"] = val; // Note that "padding" is here just for modern TS.
+            nullIfEmpty = false;
+        }
     return nullIfEmpty ? null : style;
 }
 
@@ -272,13 +275,13 @@ export function classNames<
             continue;
         if (typeof name === "string")
             str += " " + name;
-        else if (name[Symbol.iterator] && typeof name[Symbol.iterator] === "function")
+        else if ((name as Record<SymbolConstructor["iterator"], any>)[Symbol.iterator] && typeof (name as Record<SymbolConstructor["iterator"], any>)[Symbol.iterator] === "function")
             str += " " + [...name as Iterable<any>].filter(n => n).join(" ");
         else if (name && typeof name === "object")
-            str += " " + Object.keys(name).filter(n => name[n]).join(" ");
+            str += " " + Object.keys(name).filter(n => (name as Record<string, any>)[n]).join(" ");
     }
     // Remove the initial empty and remove any double spaces.
-    return str.trimStart().replace(/\s+/g, " ");
+    return str.replace(/^\s+/, "").replace(/\s+/g, " ");
 }
 
 /** Get diffs in class names in the form of: Record<string, boolean>, where true means added, false removed, otherwise not included.
@@ -309,7 +312,7 @@ export function getNameDiffs(origName?: string, newName?: string, splitter: stri
     // Prepare outcome.
     const origNames = splitter ? origName.split(splitter) : [origName];
     const newNames = splitter ? newName.split(splitter) : [newName];
-    const diffs = {};
+    const diffs: Record<string, boolean> = {};
     // Removed.
     let did: null | boolean = null;
     if (origNames)
@@ -371,7 +374,7 @@ export function collectKeysTo(record: Record<string, true>, keyLikes: Exclude<Cl
         }
         case "object": {
             // Array like.
-            if (keyLikes[Symbol.iterator] && typeof keyLikes[Symbol.iterator] === "function") {
+            if ((keyLikes as Record<SymbolConstructor["iterator"], FalseLike>)[Symbol.iterator] && typeof (keyLikes as Record<SymbolConstructor["iterator"], FalseLike>)[Symbol.iterator] === "function") {
                 // It's just a simple array - not recursive anymore, because the typing didn't work that nicely with deep stuff / recursion.
                 // .. So we just iterate each, split by " " and collect.
                 for (const key of keyLikes as Iterable<string>) {
@@ -385,7 +388,7 @@ export function collectKeysTo(record: Record<string, true>, keyLikes: Exclude<Cl
             // Dictionary like.
             else {
                 for (const key in keyLikes as Record<string, any>)
-                    if (key && keyLikes[key]) {
+                    if (key && (keyLikes as Record<string, any>)[key]) {
                         for (const k of (keySplitter ? key.split(keySplitter) : [key]))
                             if (k)
                                 record[k] = true;

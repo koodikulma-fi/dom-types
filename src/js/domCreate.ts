@@ -17,7 +17,7 @@ export function createDOMElement<Tag extends string>(tag: Tag, checkSVGByParentN
 export function createDOMElement<Tag extends string>(tag: Tag, checkSVGByParentNode?: false | null | undefined | HTMLElement, namespaceURI?: string): [Tag] extends [keyof HTMLElementTagNameMap] ? HTMLElementTagNameMap[Tag] : HTMLElement;
 export function createDOMElement(tag: DOMTags | AnyString, checkSVGByParentNode?: boolean | Node | null | undefined, namespaceURI?: string): HTMLElement | SVGElement;
 export function createDOMElement(tag: DOMTags | AnyString, checkSVGByParentNode?: boolean | Node | null | undefined, namespaceURI?: string): HTMLElement | SVGElement {
-    return tag === "svg" || checkSVGByParentNode && (checkSVGByParentNode === true || checkSVGByParentNode["ownerSVGElement"] !== undefined) ?
+    return tag === "svg" || checkSVGByParentNode && (checkSVGByParentNode === true || (checkSVGByParentNode as SVGElement)["ownerSVGElement"] !== undefined) ?
         document.createElementNS(namespaceURI || "http://www.w3.org/2000/svg", tag) as SVGElement :
         document.createElement(tag) as HTMLElement;
 }
@@ -29,5 +29,5 @@ export function isNodeSVG(node: HTMLElement): false;
 export function isNodeSVG(node: SVGElement): true;
 export function isNodeSVG(node: Node | null | undefined): boolean;
 export function isNodeSVG(node: Node | null | undefined): boolean {
-    return node && node["ownerSVGElement"] !== undefined || false;
+    return node && (node as SVGElement)["ownerSVGElement"] !== undefined || false;
 }
