@@ -895,7 +895,7 @@ interface HTMLCommonAttributes_core {
 
 /** SVG attributes in native case available on all SVG elements. */
 interface SVGGlobalAttributes_core extends DataAttributes {
-    "id": string | number;
+    "id": string;
     "class": string;
     "lang": string;
     "style": string | CSSProperties;
@@ -1016,7 +1016,7 @@ interface SVGCommonAttributes_core {
     "horiz-adv-x": string | number;
     "horiz-origin-x": string | number;
     "horiz-origin-y": string | number;
-    "id": string | number;
+    "id": string;
     "ideographic": string | number;
     "image-rendering": string;
     "in": "SourceGraphic" | "SourceAlpha" | "BackgroundImage" | "BackgroundAlpha" | "FillPaint" | "StrokePaint" | AnyString;
