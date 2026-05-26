@@ -2,11 +2,18 @@
 
 ---
 
+## v1.1.4 (2026-05-26)
+
+- Refined that "id" attribute only has `string` (not `string | number`) type for SVG - as it is for HTML.
+- Nonsignificant updates in the source code to be more fluent with default modern TS behaviour.
+
+---
+
 ## v1.1.3 (2025-02-03)
 
 - Added more attributes for "form" element.
 
----
+---¨
 
 ## v1.1.2 (2024-11-10)
 
