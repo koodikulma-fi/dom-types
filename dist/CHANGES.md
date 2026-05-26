@@ -13,7 +13,7 @@
 
 - Added more attributes for "form" element.
 
----¨
+---
 
 ## v1.1.2 (2024-11-10)
 
