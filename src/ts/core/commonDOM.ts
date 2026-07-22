@@ -96,7 +96,7 @@ export type ARIARole =
 // - Tags - //
 
 /** All known HTML tag names. */
-export type HTMLTags = 
+export type HTMLTags =
     | "a"
     | "abbr"
     | "acronym"
@@ -231,7 +231,7 @@ export type HTMLTags =
     ;
 
 /** All known SVG tag names. */
-export type SVGTags = 
+export type SVGTags =
     | "a"
     | "animate"
     | "animateMotion"
@@ -257,6 +257,7 @@ export type SVGTags =
     | "feFuncR"
     | "feGaussianBlur"
     | "feImage"
+    | "feMerge"
     | "feMergeNode"
     | "feMorphology"
     | "feOffset"
@@ -264,7 +265,7 @@ export type SVGTags =
     | "feSpecularLighting"
     | "feSpotLight"
     | "feTile"
-    | "feTurbulunece"
+    | "feTurbulence"
     | "filter"
     | "foreignObject"
     | "g"

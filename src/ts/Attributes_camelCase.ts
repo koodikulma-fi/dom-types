@@ -783,7 +783,7 @@ export interface HTMLOwnAttributesBy {
     video: Pick<HTMLCommonAttributes, "autoPlay" | "controls" | "crossOrigin" | "height" | "loop" | "muted" | "playsInline" | "preload" | "src" | "width">;
     wbr: {};
     xmp: {};
-};
+}
 
 // Test.
 // type HasAllTags = HTMLOwnAttributesBy extends Record<HTMLTags, Record<string, any>> ? true : false;
@@ -1078,6 +1078,7 @@ export interface SVGOwnAttributesBy {
     feFuncR: {};
     feGaussianBlur: Pick<SVGCommonAttributes, "in" | "stdDeviation" | "edgeMode">;
     feImage: Pick<SVGCommonAttributes, "in" | "crossOrigin" | "preserveAspectRatio" | "xlinkHref">;
+    feMerge: Pick<SVGCommonAttributes, "x" | "y" | "width" | "height" | "result">;
     feMergeNode: Pick<SVGCommonAttributes, "in">;
     feMorphology: Pick<SVGCommonAttributes, "in" | "operator" | "radius">;
     feOffset: Pick<SVGCommonAttributes, "in" | "dx" | "dy">;
@@ -1085,7 +1086,7 @@ export interface SVGOwnAttributesBy {
     feSpecularLighting: Pick<SVGCommonAttributes, "in" | "surfaceScale" | "specularConstant" | "specularExponent" | "kernelUnitLength">;
     feSpotLight: Pick<SVGCommonAttributes, "x" | "y" | "z" | "pointsAtX" | "pointsAtY" | "pointsAtZ" | "specularExponent" | "limitingConeAngle">;
     feTile: Pick<SVGCommonAttributes, "in">;
-    feTurbulunece: Pick<SVGCommonAttributes, "baseFrequency" | "numOctaves" | "seed" | "stitchTiles" | "type">;
+    feTurbulence: Pick<SVGCommonAttributes, "baseFrequency" | "numOctaves" | "seed" | "stitchTiles" | "type">;
     filter: Pick<SVGCommonAttributes, "x" | "y" | "width" | "height" | "filterUnits" | "primitiveUnits" | "xlinkHref">;
     foreignObject: Pick<SVGCommonAttributes, "height" | "width" | "x" | "y">;
     g: SVGPresentationAttributes;
