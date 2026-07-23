@@ -2,6 +2,12 @@
 
 ---
 
+## v1.1.5 (2026-07-23)
+
+- Added the missing SVG element `<feMerge>` and corrects the spelling of `<feTurbulence>`.
+
+---
+
 ## v1.1.4 (2026-05-26)
 
 - Refined that "id" attribute only has `string` (not `string | number`) type for SVG - as it is for HTML.
