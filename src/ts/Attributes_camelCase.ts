@@ -1107,7 +1107,7 @@ export interface SVGOwnAttributesBy {
     set: Pick<SVGCommonAttributes, "to">;
     stop: Pick<SVGCommonAttributes, "offset" | "stopColor" | "stopOpacity">;
     style: Pick<SVGCommonAttributes, "type" | "media" | "title">;
-    svg: Pick<SVGCommonAttributes, "baseProfile" | "height" | "preserveAspectRatio" | "version" | "viewBox" | "width" | "x" | "y">;
+    svg: Pick<SVGCommonAttributes, "baseProfile" | "height" | "preserveAspectRatio" | "version" | "viewBox" | "width" | "x" | "y" | "fill" | "stroke" | "strokeWidth" | "strokeLineCap" | "strokeLineJoin" | "cursor">;
     switch: {};
     symbol: Pick<SVGCommonAttributes, "height" | "preserveAspectRatio" | "refX" | "refY" | "viewBox" | "width" | "x" | "y">;
     text: SVGPresentationAttributes & Pick<SVGCommonAttributes, "x" | "y" | "dx" | "dy" | "rotate" | "lengthAdjust" | "textLength">;
