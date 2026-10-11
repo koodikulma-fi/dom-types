@@ -493,7 +493,7 @@ export interface SVGOwnAttributesBy {
     set: Pick<SVGCommonAttributes, "to">;
     stop: Pick<SVGCommonAttributes, "offset" | "stop-color" | "stop-opacity">;
     style: Pick<SVGCommonAttributes, "type" | "media"> & { title: string; };
-    svg: Pick<SVGCommonAttributes, "baseProfile" | "height" | "preserveAspectRatio" | "version" | "viewBox" | "width" | "x" | "y">;
+    svg: Pick<SVGCommonAttributes, "baseProfile" | "height" | "preserveAspectRatio" | "version" | "viewBox" | "width" | "x" | "y" | "fill" | "stroke" | "stroke-width" | "stroke-linecap" | "stroke-linejoin" | "cursor">;
     switch: {};
     symbol: Pick<SVGCommonAttributes, "height" | "preserveAspectRatio" | "refX" | "refY" | "viewBox" | "width" | "x" | "y">;
     text: SVGPresentationAttributes & Pick<SVGCommonAttributes, "x" | "y" | "dx" | "dy" | "rotate" | "lengthAdjust" | "textLength">;
