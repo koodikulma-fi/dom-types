@@ -2,9 +2,9 @@
 // - Imports - //
 
 // Local.
-import { AnyString } from "../helpers";
+import { AnyString, InheritInitial } from "../helpers";
 import { DataAttributes } from "./commonDOM";
-import { CSSBlendMode, CSSColorNames, CSSProperties } from "../CSSProperties";
+import { CSSBlendMode, CSSColorNames, CSSCursor, CSSProperties } from "../CSSProperties";
 
 
 // - Info source (at around Q3 2024) - //
@@ -101,7 +101,7 @@ export interface SVGCommonAttributes_core {
     "color-interpolation-filters": "auto" | "sRGB" | "linearRGB" | "inherit" | AnyString;
     "color-rendering": string | number;
     "crossorigin": string;
-    "cursor": string;
+    "cursor": CSSCursor | InheritInitial | AnyString;
     "cx": string | number;
     "cy": string | number;
     "d": string;
