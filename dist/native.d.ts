@@ -1,4 +1,4 @@
-import { AnyString, BoolOrStr, ARIARole, HTMLTags, SVGTags, DOMTags, HTMLCommonAttributes_core, HTMLGlobalAttributes_core, SVGAnimationAttributes_core, SVGCommonAttributes_core, SVGGlobalAttributes_core, GlobalListeners_core } from "./core";
+import type { AnyString, BoolOrStr, ARIARole, HTMLTags, SVGTags, DOMTags, HTMLCommonAttributes_core, HTMLGlobalAttributes_core, SVGAnimationAttributes_core, SVGCommonAttributes_core, SVGGlobalAttributes_core, GlobalListeners_core } from "./core";
 /** Matches somewhere around 95% with ARIAMixin values - this has a couple of more keys. See [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes) */
 export interface ARIAAttributes {
     /** [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles) */
@@ -338,7 +338,7 @@ export interface SVGOwnAttributesBy {
     style: Pick<SVGCommonAttributes, "type" | "media"> & {
         title: string;
     };
-    svg: Pick<SVGCommonAttributes, "baseProfile" | "height" | "preserveAspectRatio" | "version" | "viewBox" | "width" | "x" | "y">;
+    svg: Pick<SVGCommonAttributes, "baseProfile" | "height" | "preserveAspectRatio" | "version" | "viewBox" | "width" | "x" | "y" | "fill" | "stroke" | "stroke-width" | "stroke-linecap" | "stroke-linejoin" | "cursor">;
     switch: {};
     symbol: Pick<SVGCommonAttributes, "height" | "preserveAspectRatio" | "refX" | "refY" | "viewBox" | "width" | "x" | "y">;
     text: SVGPresentationAttributes & Pick<SVGCommonAttributes, "x" | "y" | "dx" | "dy" | "rotate" | "lengthAdjust" | "textLength">;

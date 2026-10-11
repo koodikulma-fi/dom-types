@@ -57,7 +57,7 @@ export default [
                         const i = str.indexOf("declare function");
                         const iStart = str.slice(0, i).lastIndexOf("\n\n");
                         // Note. We do this manually. If changes JS side, should re-verify.
-                        const importsStr = 'import { AnyString, CSSProperties, ClassNameInput, DOMCleanProps, DOMDiffProps, DOMTags, DOMUncleanProps, FalseLike } from "./core";\n';
+                        const importsStr = 'import type { AnyString, CSSProperties, ClassNameInput, DOMCleanProps, DOMDiffProps, DOMTags, DOMUncleanProps, FalseLike } from "./core";\n';
                         str = importsStr + str.slice(iStart).trim().replace(/\nexport {.*};/, "").replaceAll("declare function", "export declare function");
                         return str;
                     }

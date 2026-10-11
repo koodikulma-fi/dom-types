@@ -1,7 +1,7 @@
 
 // - Imports - //
 
-import { GetMethodKeys, InheritInitial, AnyString } from "./helpers";
+import type { GetMethodKeys, InheritInitial, AnyString } from "./helpers";
 
 
 // - Info source - //

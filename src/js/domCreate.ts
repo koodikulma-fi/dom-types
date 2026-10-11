@@ -1,7 +1,7 @@
 
 // - Imports - //
 
-import { DOMTags, AnyString } from "../ts";
+import type { DOMTags, AnyString } from "../ts";
 
 
 // - DOM creation - //

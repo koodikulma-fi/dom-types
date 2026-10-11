@@ -2,9 +2,9 @@
 // - Imports - //
 
 // Local.
-import { BoolOrStr, AnyString } from "../helpers";
-import { DataAttributes, ARIARole } from "./commonDOM";
-import { CSSProperties } from "../CSSProperties";
+import type { BoolOrStr, AnyString } from "../helpers";
+import type { DataAttributes, ARIARole } from "./commonDOM";
+import type { CSSProperties } from "../CSSProperties";
 
 
 // - Info source (at around Q3 2024) - //

@@ -1,4 +1,4 @@
-import { AnyString, CSSProperties, ClassNameInput, DOMCleanProps, DOMDiffProps, DOMTags, DOMUncleanProps, FalseLike } from "./core";
+import type { AnyString, CSSProperties, ClassNameInput, DOMCleanProps, DOMDiffProps, DOMTags, DOMUncleanProps, FalseLike } from "./core";
 /**
  * - With "-" (default) as delimiter, functions like this:
  *      * "testProp" => "test-prop"

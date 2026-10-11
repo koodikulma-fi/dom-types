@@ -2,9 +2,9 @@
 // - Imports - //
 
 // Local.
-import { AnyString } from "./helpers";
-import { GlobalEventHandler } from "./core/commonDOM";
-import { CSSProperties } from "./CSSProperties";
+import type { AnyString } from "./helpers";
+import type { GlobalEventHandler } from "./core/commonDOM";
+import type { CSSProperties } from "./CSSProperties";
 
 
 // - DOM processing props - //

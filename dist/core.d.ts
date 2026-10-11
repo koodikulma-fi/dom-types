@@ -966,7 +966,7 @@ interface SVGCommonAttributes_core {
     "color-interpolation-filters": "auto" | "sRGB" | "linearRGB" | "inherit" | AnyString;
     "color-rendering": string | number;
     "crossorigin": string;
-    "cursor": string;
+    "cursor": CSSCursor | InheritInitial | AnyString;
     "cx": string | number;
     "cy": string | number;
     "d": string;

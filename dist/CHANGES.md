@@ -2,6 +2,13 @@
 
 ---
 
+## v1.1.6 (2026-10-11)
+
+- Adds missing attributes to the SVG element types
+- Refines the type definition for the `cursor` attribute within SVG core attributes.
+
+---
+
 ## v1.1.5 (2026-07-23)
 
 - Added the missing SVG element `<feMerge>` and corrects the spelling of `<feTurbulence>`.

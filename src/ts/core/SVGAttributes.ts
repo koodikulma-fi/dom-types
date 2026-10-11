@@ -2,9 +2,9 @@
 // - Imports - //
 
 // Local.
-import { AnyString, InheritInitial } from "../helpers";
-import { DataAttributes } from "./commonDOM";
-import { CSSBlendMode, CSSColorNames, CSSCursor, CSSProperties } from "../CSSProperties";
+import type { AnyString, InheritInitial } from "../helpers";
+import type { DataAttributes } from "./commonDOM";
+import type { CSSBlendMode, CSSColorNames, CSSCursor, CSSProperties } from "../CSSProperties";
 
 
 // - Info source (at around Q3 2024) - //
