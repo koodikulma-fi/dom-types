@@ -175,12 +175,10 @@ export interface HTMLOwnAttributesBy {
     body: Pick<HTMLCommonAttributes, "background" | "bgcolor">;
     br: {};
     button: Pick<HTMLCommonAttributes, "disabled" | "form" | "formaction" | "formenctype" | "formmethod" | "formnovalidate" | "formtarget" | "name" | "value"> & {
-        /**
-         * The default behavior of the button.
-         *
+        /** The default behavior of the button.
          * [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/button#type)
-         * */
-        type: 'submit' | 'reset' | 'button';
+         */
+        type: "submit" | "reset" | "button";
     };
     canvas: Pick<HTMLCommonAttributes, "height" | "width">;
     caption: Pick<HTMLCommonAttributes, "align">;

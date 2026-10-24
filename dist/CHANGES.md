@@ -2,10 +2,16 @@
 
 ---
 
+## v1.1.7 (2026-10-24)
+
+- Restricted the button `type` attribute to only support valid values (`"submit" | "reset" | "button"`).
+
+---
+
 ## v1.1.6 (2026-10-11)
 
-- Adds missing attributes to the SVG element types
-- Refines the type definition for the `cursor` attribute within SVG core attributes.
+- Added missing attributes to the SVG element types
+- Refined the type definition for the `cursor` attribute within SVG core attributes.
 
 ---
 
